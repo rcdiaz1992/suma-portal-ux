@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SUMA · Portal operativo — Propuesta UX</title>
+    <link rel="stylesheet" href="assets/css/portal.css" />
+  </head>
+  <body>
+    <div class="shell">
+      <div data-suma-banner="compact"></div>
+
+      <!-- App shell: menú parametrizado (fuente de verdad) -->
+      <aside class="shell-side">
+        <div class="side-brand">
+          <div class="brand-mark" aria-hidden="true">AN</div>
+          <div>
+            <strong>SUMA</strong>
+            <small>Menú por perfil · MenuService</small>
+          </div>
+        </div>
+        <label class="nav-search">
+          <input type="search" placeholder="Buscar en el menú…" data-menu-filter />
+        </label>
+        <nav class="side-nav" data-menu aria-label="Menú parametrizado SUMA"></nav>
+        <div class="side-foot">
+          <small>Línea 800-10-5001</small>
+          <small>soportesuma@aduana.gob.bo</small>
+        </div>
+      </aside>
+
+      <header class="shell-top">
+        <div class="top-left">
+          <button class="menu-toggle" type="button" data-nav-toggle aria-label="Abrir menú">
+            ☰
+          </button>
+          <div>
+            <div class="crumb">Portal SUMA · Inicio</div>
+            <strong class="top-perfil">Perfil: <span data-perfil>Operador OCE</span></strong>
+          </div>
+        </div>
+        <div class="top-right">
+          <span class="chip">PRE · propuesta operativa</span>
+          <div class="user-pill">
+            <span class="avatar">OY</span>
+            <span>Operador OCE</span>
+          </div>
+          <a class="btn btn-soft" href="index.html">Salir</a>
+        </div>
+      </header>
+
+      <!-- Home lanzador: búsqueda + favoritos + recientes + catálogo operativo -->
+      <main class="shell-main">
+        <div class="page-head">
+          <div>
+            <h1>Inicio operativo</h1>
+            <p>
+              Estándar app shell: el lateral es la navegación parametrizada;
+              aquí están los atajos de trabajo diario del operador ante la Aduana Nacional.
+            </p>
+          </div>
+          <div class="toolbar">
+            <label class="search search--portal">
+              <span aria-hidden="true">⌕</span>
+              <input
+                type="search"
+                placeholder="Buscar módulo, DAM, pagos, padrón…"
+                data-module-filter
+              />
+            </label>
+          </div>
+        </div>
+
+        <section class="launch-strip" aria-label="Favoritos">
+          <div class="launch-strip-head">
+            <h2>Favoritos</h2>
+            <span>Atajos frecuentes del operador</span>
+          </div>
+          <div data-favs></div>
+        </section>
+
+        <section class="launch-strip" aria-label="Recientes">
+          <div class="launch-strip-head">
+            <h2>Recientes</h2>
+            <span>Últimos módulos abiertos en este equipo</span>
+          </div>
+          <div data-recent></div>
+        </section>
+
+        <div class="filters-bar" role="toolbar" aria-label="Filtrar por ciclo operativo">
+          <div class="seg" role="tablist">
+            <button type="button" class="seg-btn active" data-group="all" role="tab" aria-selected="true">Todos</button>
+            <button type="button" class="seg-btn" data-group="operaciones" role="tab" aria-selected="false">Operaciones</button>
+            <button type="button" class="seg-btn" data-group="padron" role="tab" aria-selected="false">Padrón OCE</button>
+            <button type="button" class="seg-btn" data-group="servicios" role="tab" aria-selected="false">Pagos y servicios</button>
+            <button type="button" class="seg-btn" data-group="consultas" role="tab" aria-selected="false">Consultas</button>
+          </div>
+          <span class="filter-count" data-module-count></span>
+        </div>
+
+        <div data-modules></div>
+
+        <div class="section-note">
+          <strong>Modelo:</strong> menú lateral = <code>MenuService.downloadMenu</code> (roles/perfil).
+          Home = lanzador por ciclo operativo SUMA (ingreso → salida → padrón → pagos → consultas).
+          Favoritos y recientes se guardan en el navegador (prototipo).
+        </div>
+      </main>
+    </div>
+
+    <script src="assets/vendor/tsparticles.bundle.min.js"></script>
+    <script src="assets/js/particles-bg.js"></script>
+    <script src="assets/js/suma-banner.js"></script>
+    <script src="assets/js/menu-data.js"></script>
+    <script src="assets/js/portal.js"></script>
+  </body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SUMA · Login Keycloak MFA — Propuesta UX</title>
+    <link rel="stylesheet" href="assets/css/portal.css" />
+  </head>
+  <body>
+    <div class="auth-shell">
+      <div data-suma-banner="compact"></div>
+
+      <aside
+        class="auth-visual"
+        data-particles
+        data-density="1.1"
+        data-speed="1.05"
+        data-color="#c9a227"
+        data-link="#d4af37"
+      >
+        <div>
+          <div class="brand">
+            <div class="brand-mark" aria-hidden="true">AN</div>
+            <div class="brand-text">
+              <strong>SUMA</strong>
+              <span>SSO · Keycloak (emulado)</span>
+            </div>
+          </div>
+          <nav class="flow flow--light" aria-label="Recorrido" style="margin-top: 1.25rem">
+            <a class="flow-step is-done" href="index.html"><span class="n">1</span> Acceso</a>
+            <span class="flow-sep" aria-hidden="true"></span>
+            <span class="flow-step is-current"><span class="n">2</span> Login</span>
+            <span class="flow-sep" aria-hidden="true"></span>
+            <a class="flow-step" href="portal.html"><span class="n">3</span> Portal</a>
+          </nav>
+          <h1>Ingreso con doble factor</h1>
+          <p>
+            Flujo tipo Keycloak: credenciales → desafío MFA (correo, WhatsApp o QR)
+            → portal. Prototipo local; no envía mensajes reales.
+          </p>
+          <ol class="mfa-legend">
+            <li>Usuario y contraseña (realm SUMA)</li>
+            <li>Elegir canal 2FA</li>
+            <li>Verificar OTP o escanear QR</li>
+          </ol>
+        </div>
+        <p>
+          <span class="kc-pill" data-kc-session>Keycloak · sesión login</span>
+        </p>
+      </aside>
+
+      <main class="auth-panel">
+        <section class="auth-card" data-auth-step="credentials">
+          <nav class="flow flow--dark" aria-label="Paso actual">
+            <span class="flow-step is-done"><span class="n">1</span> Acceso</span>
+            <span class="flow-sep" aria-hidden="true"></span>
+            <span class="flow-step is-current"><span class="n">2</span> <span data-flow-login>Credenciales</span></span>
+            <span class="flow-sep" aria-hidden="true"></span>
+            <span class="flow-step"><span class="n">3</span> Portal</span>
+          </nav>
+
+          <div class="kc-head">
+            <span class="kc-logo" aria-hidden="true">KC</span>
+            <div>
+              <h2>Iniciar sesión</h2>
+              <p class="sub">Realm <strong>suma</strong> · client <strong>portal-suma</strong></p>
+            </div>
+          </div>
+
+          <form data-form-credentials>
+            <div class="field">
+              <label for="user">Usuario</label>
+              <input id="user" name="user" autocomplete="username" placeholder="usuario" required />
+            </div>
+            <div class="field">
+              <label for="pass">Contraseña</label>
+              <input
+                id="pass"
+                name="pass"
+                type="password"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <div class="auth-meta">
+              <label><input type="checkbox" /> Recordar usuario</label>
+              <a href="#">¿Olvidaste tu clave?</a>
+            </div>
+
+            <button class="btn btn-solid" type="submit">Continuar</button>
+          </form>
+          <p class="auth-alt">
+            <a href="index.html">← Volver al acceso por perfil</a>
+          </p>
+        </section>
+
+        <section class="auth-card hidden" data-auth-step="method">
+          <button type="button" class="link-back" data-auth-back="credentials">← Cambiar usuario</button>
+          <h2>Segundo factor</h2>
+          <p class="sub">
+            Hola <strong data-user-label>usuario</strong>. Elige cómo verificar tu identidad
+            (emulación Conditional OTP / WebAuthn QR).
+          </p>
+
+          <div class="mfa-methods" role="list">
+            <button type="button" class="mfa-method" data-mfa-method="email" role="listitem">
+              <span class="mfa-ico" aria-hidden="true">✉</span>
+              <span class="mfa-body">
+                <strong>Correo electrónico</strong>
+                <small>OTP por email registrado en Keycloak</small>
+              </span>
+              <span class="mfa-go" aria-hidden="true">→</span>
+            </button>
+            <button type="button" class="mfa-method" data-mfa-method="whatsapp" role="listitem">
+              <span class="mfa-ico mfa-ico-wa" aria-hidden="true">WA</span>
+              <span class="mfa-body">
+                <strong>Mensaje WhatsApp</strong>
+                <small>Código de 6 dígitos al celular vinculado</small>
+              </span>
+              <span class="mfa-go" aria-hidden="true">→</span>
+            </button>
+            <button type="button" class="mfa-method" data-mfa-method="qr" role="listitem">
+              <span class="mfa-ico" aria-hidden="true">▣</span>
+              <span class="mfa-body">
+                <strong>Código QR</strong>
+                <small>Escanear con app autenticadora / dispositivo</small>
+              </span>
+              <span class="mfa-go" aria-hidden="true">→</span>
+            </button>
+          </div>
+        </section>
+
+        <section class="auth-card hidden" data-auth-step="otp">
+          <button type="button" class="link-back" data-auth-back="method">← Otro método</button>
+          <h2>Verificar código</h2>
+          <p class="sub">
+            Enviado por <strong data-method-label>…</strong> a
+            <strong data-dest-label>…</strong>
+          </p>
+
+          <div class="otp-demo-hint">
+            Prototipo: usa el código <strong>123456</strong>
+          </div>
+
+          <form data-form-otp>
+            <div class="otp-row" role="group" aria-label="Código de 6 dígitos">
+              <input class="otp-digit" data-otp-digit inputmode="numeric" maxlength="1" aria-label="Dígito 1" />
+              <input class="otp-digit" data-otp-digit inputmode="numeric" maxlength="1" aria-label="Dígito 2" />
+              <input class="otp-digit" data-otp-digit inputmode="numeric" maxlength="1" aria-label="Dígito 3" />
+              <input class="otp-digit" data-otp-digit inputmode="numeric" maxlength="1" aria-label="Dígito 4" />
+              <input class="otp-digit" data-otp-digit inputmode="numeric" maxlength="1" aria-label="Dígito 5" />
+              <input class="otp-digit" data-otp-digit inputmode="numeric" maxlength="1" aria-label="Dígito 6" />
+            </div>
+            <p class="otp-timer" data-otp-timer>Expira en 01:00</p>
+            <p class="otp-error hidden" data-otp-error role="alert"></p>
+            <button class="btn btn-solid" type="submit">Verificar e ingresar</button>
+          </form>
+          <div class="auth-alt otp-actions">
+            <button type="button" class="btn-text" data-otp-resend disabled>Reenviar código</button>
+          </div>
+        </section>
+
+        <section class="auth-card hidden" data-auth-step="qr">
+          <button type="button" class="link-back" data-auth-back="method">← Otro método</button>
+          <h2>Escanear QR</h2>
+          <p class="sub">
+            Abre tu app autenticadora o el escáner SUMA y apunta al código.
+            Destino: <strong data-dest-label>…</strong>
+          </p>
+
+          <div class="qr-wrap">
+            <div class="qr-box" data-qr-box></div>
+            <p class="otp-timer" data-qr-timer>QR válido 01:30</p>
+          </div>
+
+          <button class="btn btn-solid" type="button" data-qr-simulate>
+            Simular escaneo correcto
+          </button>
+          <div class="auth-alt otp-actions">
+            <button type="button" class="btn-text" data-qr-refresh>Generar nuevo QR</button>
+          </div>
+        </section>
+
+        <section class="auth-card hidden" data-auth-step="success">
+          <div class="auth-success">
+            <div class="auth-success-ico" aria-hidden="true">✓</div>
+            <h2>Autenticación correcta</h2>
+            <p class="sub">Redirigiendo al portal SUMA…</p>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="assets/vendor/tsparticles.bundle.min.js"></script>
+    <script src="assets/js/particles-bg.js"></script>
+    <script src="assets/js/suma-banner.js"></script>
+    <script src="assets/js/login-mfa.js"></script>
+  </body>
+</html>
