@@ -4,7 +4,9 @@ Prototipo visual del acceso y home del Portal SUMA (Aduana Nacional), alineado a
 
 ## Ver la maqueta
 
-Abrir en el navegador:
+**GitHub Pages (público):** https://rcdiaz1992.github.io/suma-portal-ux/
+
+Abrir en local:
 
 ```bash
 # desde esta carpeta
@@ -12,6 +14,8 @@ xdg-open proposal/index.html
 # o servir estático
 npx --yes serve proposal -p 5173
 ```
+
+La copia publicada en Pages está en `docs/` (espejo de `proposal/`).
 
 Páginas:
 
