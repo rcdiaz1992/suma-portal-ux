@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SUMA · Acceso — Propuesta UX</title>
     <link rel="stylesheet" href="assets/css/portal.css" />
+    <link rel="stylesheet" href="assets/vendor/banner-hero.css" />
+    <script src="assets/js/prefs.js"></script>
   </head>
   <body>
     <a class="skip" href="#acceso">Saltar al acceso</a>
@@ -25,14 +27,21 @@
           </div>
         </div>
         <div class="top-actions">
+          <div class="cfg-seg" role="group" aria-label="Tema">
+            <button type="button" class="cfg-btn cfg-btn--icon" data-theme-btn="light" aria-pressed="true" aria-label="Tema claro" title="Tema claro">
+              <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg></span>
+            </button>
+            <button type="button" class="cfg-btn cfg-btn--icon" data-theme-btn="dark" aria-pressed="false" aria-label="Tema oscuro" title="Tema oscuro">
+              <span class="ico ico--fill" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 13.5A7.5 7.5 0 1 1 10.5 5 6 6 0 0 0 19 13.5z"/></svg></span>
+            </button>
+          </div>
           <nav class="flow flow--light" aria-label="Recorrido">
             <span class="flow-step is-current"><span class="n">1</span> Acceso</span>
             <span class="flow-sep" aria-hidden="true"></span>
-            <a class="flow-step" href="login.html"><span class="n">2</span> Login</a>
+            <a class="flow-step" href="login?flow=keycloak&amp;ctx=externo"><span class="n">2</span> Login</a>
             <span class="flow-sep" aria-hidden="true"></span>
-            <a class="flow-step" href="portal.html"><span class="n">3</span> Portal</a>
+            <a class="flow-step" href="portal"><span class="n">3</span> Portal</a>
           </nav>
-          <a class="btn btn-ghost" href="login.html">Ingresar</a>
         </div>
       </header>
 
@@ -40,89 +49,108 @@
 
       <section class="hero hero--under-banner">
         <p>
-          Acceso operativo SUMA: identifique su tipo de operador OCE,
-          ingrese con SSO y trabaje desde el portal (menú parametrizado + lanzador).
+          Acceso SUMA alineado a <strong>indexOce</strong>: registro y operaciones con SSO Keycloak,
+          no habituales con doble factor, y servicios públicos en el inicio.
         </p>
         <div class="hero-cta">
-          <a class="btn btn-primary" href="#acceso">Elegir tipo de operador</a>
-          <a class="btn btn-ghost" href="login.html">Ya estoy habilitado en SUMA</a>
+          <a class="btn btn-primary" href="#acceso">Ver opciones de acceso</a>
+          <a class="btn btn-ghost" href="login?flow=keycloak&amp;ctx=externo">Operador habitual</a>
+          <a class="btn btn-ghost" href="login?flow=keycloak&amp;ctx=interno">Usuario interno</a>
         </div>
       </section>
 
       <section class="access" id="acceso">
         <div class="access-head">
           <div>
-            <h2>¿Qué necesita hacer ante la Aduana?</h2>
-            <p>Caminos según normativa OCE / indexOce — un clic por intención.</p>
+            <h2>Inicio · canales SUMA</h2>
+            <p>
+              Cubos según indexOce: autenticados (Keycloak / MFA) y opciones públicas de información.
+            </p>
           </div>
           <label class="search">
             <span aria-hidden="true">⌕</span>
-            <input
-              type="search"
-              placeholder="Buscar: courier, DAM, menaje…"
-              data-profile-filter
-            />
+            <input type="search" placeholder="Buscar canal…" data-profile-filter />
           </label>
         </div>
 
+        <div class="oce-bar" aria-hidden="true">
+          <span class="oce-bar-seg" style="--c:#e67e22"></span>
+          <span class="oce-bar-seg" style="--c:#27ae60"></span>
+          <span class="oce-bar-seg" style="--c:#3498db"></span>
+          <span class="oce-bar-seg" style="--c:#f1c40f"></span>
+          <span class="oce-bar-seg" style="--c:#8d6e63"></span>
+          <span class="oce-bar-seg" style="--c:#d35400"></span>
+        </div>
+
         <div class="profile-grid">
-          <a class="profile" data-profile href="login.html">
-            <span class="tag"><span class="ord">1</span> Habitual</span>
-            <h3>Importador / Exportador habitual</h3>
-            <p>Empresas y RAU con operaciones regulares. Acceso al portal SUMA.</p>
-            <span class="go">Continuar →</span>
+          <a class="profile" data-profile href="login?flow=keycloak&amp;ctx=registro">
+            <span class="tag"><span class="ord">1</span> SSO</span>
+            <h3>Registro Nuevos Operadores</h3>
+            <p>
+              Login Keycloak (usuario y contraseña). Aplica a usuario
+              <strong>externo</strong> e <strong>interno</strong> — sin doble factor.
+            </p>
+            <span class="go">Ingresar con Keycloak →</span>
           </a>
-          <a class="profile" data-profile href="login.html">
-            <span class="tag"><span class="ord">2</span> No habitual</span>
-            <h3>Importación / Exportación simplificada</h3>
-            <p>Menor cuantía, equipaje, menaje, courier y DIMS / exportación simplificada.</p>
-            <span class="go">Continuar →</span>
+
+          <a class="profile" data-profile href="login?flow=mfa&amp;ctx=nohabitual">
+            <span class="tag"><span class="ord">2</span> MFA</span>
+            <h3>Operaciones No Habituales</h3>
+            <p>
+              Sin usuario/clave Keycloak: primero un código (Google Authenticator / correo / WhatsApp)
+              y luego las opciones concretas de importación y exportación.
+            </p>
+            <span class="go">Ingresar con 2FA →</span>
           </a>
-          <a class="profile" data-profile href="login.html">
-            <span class="tag"><span class="ord">3</span> OCE</span>
-            <h3>Otros operadores de comercio</h3>
-            <p>Despachantes, transportadores, zonas francas, courier y depósitos.</p>
-            <span class="go">Continuar →</span>
+
+          <a class="profile" data-profile href="publico?s=consultas">
+            <span class="tag"><span class="ord">3</span> Público</span>
+            <h3>Consultas Públicas</h3>
+            <p>Consulta de documentos, estado de trámite y servicios abiertos sin sesión completa.</p>
+            <span class="go">Abrir consultas →</span>
           </a>
-          <a class="profile" data-profile href="login.html">
-            <span class="tag"><span class="ord">4</span> Registro</span>
-            <h3>Ferial, charter y especiales</h3>
-            <p>Organizador ferial, empresas charter, valija diplomática y envíos de socorro.</p>
-            <span class="go">Continuar →</span>
+
+          <a class="profile" data-profile href="publico?s=utilitarios">
+            <span class="tag"><span class="ord">4</span> Público</span>
+            <h3>Utilitarios</h3>
+            <p>Herramientas de apoyo: calculadoras, convertidores y utilidades SUMA.</p>
+            <span class="go">Abrir utilitarios →</span>
           </a>
-          <a class="profile" data-profile href="login.html">
-            <span class="tag"><span class="ord">5</span> Consulta</span>
-            <h3>Consultas sin sesión completa</h3>
-            <p>Estado de operador, trámite de registro, DAM e impresión de documentos.</p>
-            <span class="go">Continuar →</span>
+
+          <a class="profile" data-profile href="publico?s=infosuma">
+            <span class="tag"><span class="ord">5</span> Info</span>
+            <h3>InfoSUMA</h3>
+            <p>Instructivos, novedades y material informativo de la Aduana Nacional.</p>
+            <span class="go">Ver información →</span>
           </a>
-          <a class="profile" data-profile href="portal.html">
-            <span class="tag"><span class="ord">6</span> Portal</span>
-            <h3>Entrar al portal SUMA (vista operativa)</h3>
-            <p>Shell con menú parametrizado, favoritos, recientes y módulos de comercio exterior.</p>
-            <span class="go">Ir al portal →</span>
+
+          <a class="profile" data-profile href="publico?s=tablero">
+            <span class="tag"><span class="ord">6</span> Info</span>
+            <h3>Tablero Virtual de Notificaciones</h3>
+            <p>Avisos y notificaciones públicas del ecosistema SUMA.</p>
+            <span class="go">Ver tablero →</span>
           </a>
+        </div>
+
+        <div class="access-note">
+          <strong>Operador habitual (externo):</strong> demo <code>Tecnopor</code> /
+          <code>password</code> → portal con menú operativo completo.
+          <strong>Interno AN:</strong> demo <code>jyampassi</code> / <code>password</code> + captcha.
+          <strong>No habitual MFA:</strong> OTP demo <code>123456</code>.
         </div>
       </section>
 
-      <footer class="landing-footer">
-        <div class="landing-footer-row">
-          <span>Prototipo UX · Mesa de ayuda 800-10-5001 · soportesuma@aduana.gob.bo</span>
-          <div class="suma-socials suma-socials--footer" data-footer-socials></div>
+      <footer class="landing-footer landing-footer--an">
+        <div data-an-contact-mount></div>
+        <div class="landing-footer-row landing-footer-meta">
+          <span>Prototipo UX · Enlaces oficiales de <a href="https://www.aduana.gob.bo/" target="_blank" rel="noopener noreferrer">www.aduana.gob.bo</a></span>
         </div>
       </footer>
     </div>
     <script src="assets/vendor/tsparticles.bundle.min.js"></script>
     <script src="assets/js/particles-bg.js"></script>
     <script src="assets/js/suma-banner.js"></script>
-    <script src="assets/js/menu-data.js"></script>
+    <script src="assets/vendor/banner-hero.js" defer></script>
     <script src="assets/js/portal.js"></script>
-    <script>
-      (function () {
-        const foot = document.querySelector("[data-footer-socials]");
-        const source = document.querySelector(".suma-socials");
-        if (foot && source) foot.innerHTML = source.innerHTML;
-      })();
-    </script>
   </body>
 </html>

@@ -1,0 +1,21 @@
+{
+  "name": "suma-portal-ux",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build:banner": "vite build --config vite.banner.config.js",
+    "dev:banner": "vite build --config vite.banner.config.js --watch"
+  },
+  "dependencies": {
+    "@crazygl/core": "^0.1.1",
+    "@crazygl/hero-particle-slider": "^0.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.4",
+    "vite": "^6.0.0"
+  }
+}

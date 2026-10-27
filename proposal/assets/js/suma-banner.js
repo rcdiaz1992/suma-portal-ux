@@ -1,16 +1,28 @@
 /**
- * Banner SUMA tipográfico + redes sociales.
- * Fondo: tsParticles (data-particles), sin imágenes.
+ * Banner SUMA: redes/contacto oficiales (pie).
+ * El hero visual usa @crazygl/hero-particle-slider (banner-hero.js).
  */
 (function () {
   const REDES = [
     { id: "facebook", label: "Facebook", href: "https://www.facebook.com/AduanaBolivia", icon: "f" },
+    { id: "youtube", label: "YouTube", href: "https://www.youtube.com/channel/UCc9n7j3xby8c_j2O42YQSjQ", icon: "▶" },
     { id: "instagram", label: "Instagram", href: "https://www.instagram.com/aduanabolivia/", icon: "ig" },
-    { id: "x", label: "X", href: "https://twitter.com/aduanabolivia", icon: "𝕏" },
-    { id: "youtube", label: "YouTube", href: "https://www.youtube.com/@aduanainforma-bolivia", icon: "▶" },
-    { id: "tiktok", label: "TikTok", href: "https://www.tiktok.com/@aduana.bolivia", icon: "♪" },
     { id: "whatsapp", label: "WhatsApp", href: "https://wa.me/59171551800", icon: "wa" },
+    { id: "x", label: "X", href: "https://x.com/aduanabolivia", icon: "𝕏" },
+    { id: "tiktok", label: "TikTok", href: "https://www.tiktok.com/@aduanabolivia", icon: "♪" },
   ];
+
+  const CONTACTO = {
+    org: "Aduana Nacional",
+    direccionesHref: "https://www.aduana.gob.bo/pagina-de-direcciones",
+    telefono: "(591) - 2 -2128008",
+    telefonoHref: "tel:+59122128008",
+    linea: "800-10-5001",
+    lineaHref: "tel:800105001",
+    correo: "infocc@aduana.gob.bo",
+    correoHref: "mailto:infocc@aduana.gob.bo",
+    sitio: "https://www.aduana.gob.bo/",
+  };
 
   function socialHtml() {
     return REDES.map(
@@ -19,35 +31,30 @@
     ).join("");
   }
 
-  function bannerHtml(mode) {
-    const compact = mode === "compact";
+  function contactHtml() {
     return `
-      <section class="suma-banner${compact ? " suma-banner--compact" : ""}" aria-label="Banner SUMA"
-        data-particles
-        data-density="${compact ? "0.9" : "1.2"}"
-        data-speed="1.1"
-        data-color="#c9a227"
-        data-link="#d4af37">
-        <div class="suma-banner-inner">
-          <div class="suma-banner-brand">
-            <span class="suma-banner-eyebrow">Aduana Nacional de Bolivia</span>
-            <h1 class="suma-banner-title">SUMA</h1>
-            <p class="suma-banner-sub">Sistema Único de Modernización Aduanera</p>
+      <div class="an-contact" data-an-contact>
+        <div class="an-contact-title">— Contacto —</div>
+        <div class="an-contact-grid">
+          <div class="an-contact-info">
+            <strong>${CONTACTO.org}.</strong>
+            <a href="${CONTACTO.direccionesHref}" target="_blank" rel="noopener noreferrer">Direcciones: Ver todas las direcciones →</a>
+            <a href="${CONTACTO.telefonoHref}">Teléfono: ${CONTACTO.telefono}</a>
+            <a href="${CONTACTO.lineaHref}">Línea gratuita: ${CONTACTO.linea}</a>
+            <a href="${CONTACTO.correoHref}">Correo electrónico: ${CONTACTO.correo}</a>
           </div>
-          <div class="suma-banner-redes">
-            <span class="suma-banner-redes-label">Síguenos</span>
-            <div class="suma-socials" role="list">${socialHtml()}</div>
+          <div class="an-contact-social">
+            <strong>Encuéntranos en nuestras redes sociales</strong>
+            <div class="suma-socials suma-socials--brand" role="list">${socialHtml()}</div>
           </div>
         </div>
-      </section>`;
+      </div>`;
   }
 
-  document.querySelectorAll("[data-suma-banner]").forEach((el) => {
-    const mode = el.getAttribute("data-suma-banner") || "full";
-    el.outerHTML = bannerHtml(mode);
+  document.querySelectorAll("[data-an-contact-mount]").forEach((el) => {
+    el.innerHTML = contactHtml();
   });
 
-  if (window.ParticlesBg && typeof window.ParticlesBg.autoMount === "function") {
-    window.ParticlesBg.autoMount();
-  }
+  window.SUMA_REDES = REDES;
+  window.SUMA_CONTACTO = CONTACTO;
 })();

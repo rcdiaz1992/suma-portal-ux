@@ -1,14 +1,25 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SUMA · Login Keycloak MFA — Propuesta UX</title>
+    <title>SUMA · Login Keycloak — Propuesta UX</title>
     <link rel="stylesheet" href="assets/css/portal.css" />
+    <link rel="stylesheet" href="assets/vendor/banner-hero.css" />
+    <script src="assets/js/prefs.js"></script>
   </head>
   <body>
     <div class="auth-shell">
-      <div data-suma-banner="compact"></div>
+      <div
+        class="suma-banner-slot"
+        data-particles
+        data-density="1.05"
+        data-speed="1"
+        data-color="#c9a227"
+        data-link="#d4af37"
+      >
+        <div data-suma-banner="compact"></div>
+      </div>
 
       <aside
         class="auth-visual"
@@ -23,8 +34,16 @@
             <div class="brand-mark" aria-hidden="true">AN</div>
             <div class="brand-text">
               <strong>SUMA</strong>
-              <span>SSO · Keycloak (emulado)</span>
+              <span data-login-aside-sub>SSO · Keycloak (emulado)</span>
             </div>
+          </div>
+          <div class="cfg-seg" role="group" aria-label="Tema" style="margin-top: 1rem">
+            <button type="button" class="cfg-btn cfg-btn--icon" data-theme-btn="light" aria-pressed="true" aria-label="Tema claro" title="Tema claro">
+              <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg></span>
+            </button>
+            <button type="button" class="cfg-btn cfg-btn--icon" data-theme-btn="dark" aria-pressed="false" aria-label="Tema oscuro" title="Tema oscuro">
+              <span class="ico ico--fill" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 13.5A7.5 7.5 0 1 1 10.5 5 6 6 0 0 0 19 13.5z"/></svg></span>
+            </button>
           </div>
           <nav class="flow flow--light" aria-label="Recorrido" style="margin-top: 1.25rem">
             <a class="flow-step is-done" href="index.html"><span class="n">1</span> Acceso</a>
@@ -33,16 +52,11 @@
             <span class="flow-sep" aria-hidden="true"></span>
             <a class="flow-step" href="portal.html"><span class="n">3</span> Portal</a>
           </nav>
-          <h1>Ingreso con doble factor</h1>
-          <p>
-            Flujo tipo Keycloak: credenciales → desafío MFA (correo, WhatsApp o QR)
-            → portal. Prototipo local; no envía mensajes reales.
+          <h1 data-login-aside-title>Ingreso SSO</h1>
+          <p data-login-aside-text>
+            Flujo Keycloak: usuario y contraseña. Según el canal puede pedir captcha o doble factor.
           </p>
-          <ol class="mfa-legend">
-            <li>Usuario y contraseña (realm SUMA)</li>
-            <li>Elegir canal 2FA</li>
-            <li>Verificar OTP o escanear QR</li>
-          </ol>
+          <ol class="mfa-legend" data-login-aside-steps></ol>
         </div>
         <p>
           <span class="kc-pill" data-kc-session>Keycloak · sesión login</span>
@@ -50,20 +64,102 @@
       </aside>
 
       <main class="auth-panel">
+        <!-- No habituales: solo código (sin usuario/clave) -->
+        <section class="auth-card hidden" data-auth-step="code-gate">
+          <nav class="flow flow--dark" aria-label="Paso actual">
+            <span class="flow-step is-done"><span class="n">1</span> Acceso</span>
+            <span class="flow-sep" aria-hidden="true"></span>
+            <span class="flow-step is-current"><span class="n">2</span> Código</span>
+            <span class="flow-sep" aria-hidden="true"></span>
+            <span class="flow-step"><span class="n">3</span> Opciones</span>
+          </nav>
+
+          <div class="kc-head">
+            <span class="kc-logo mfa-ico-ga" aria-hidden="true">GA</span>
+            <div>
+              <h2>No habituales · código</h2>
+              <p class="sub">Ingrese el código de verificación para abrir importación / exportación.</p>
+            </div>
+          </div>
+
+          <div class="mfa-banner">
+            <strong>Sin usuario ni contraseña</strong>
+            <span>Use el código de <strong>Google Authenticator</strong>, correo o WhatsApp (OTP demo <strong>123456</strong>).</span>
+          </div>
+
+          <div class="mfa-methods" role="list" style="margin-bottom:1rem">
+            <button type="button" class="mfa-method is-picked" data-gate-method="qr" role="listitem">
+              <span class="mfa-ico mfa-ico-ga" aria-hidden="true">GA</span>
+              <span class="mfa-body">
+                <strong>Google Authenticator</strong>
+                <small>Código TOTP de 6 dígitos en la app</small>
+              </span>
+            </button>
+            <button type="button" class="mfa-method" data-gate-method="email" role="listitem">
+              <span class="mfa-ico" aria-hidden="true">✉</span>
+              <span class="mfa-body">
+                <strong>Correo electrónico</strong>
+                <small>Código enviado al correo registrado</small>
+              </span>
+            </button>
+            <button type="button" class="mfa-method" data-gate-method="whatsapp" role="listitem">
+              <span class="mfa-ico mfa-ico-wa" aria-hidden="true">WA</span>
+              <span class="mfa-body">
+                <strong>WhatsApp</strong>
+                <small>Código de 6 dígitos al celular</small>
+              </span>
+            </button>
+          </div>
+
+          <form data-form-code-gate>
+            <div class="field">
+              <label for="access-code">Código de verificación</label>
+              <input
+                id="access-code"
+                name="access-code"
+                inputmode="numeric"
+                maxlength="6"
+                placeholder="000000"
+                autocomplete="one-time-code"
+                required
+              />
+            </div>
+            <p class="otp-error hidden" data-gate-error role="alert"></p>
+            <div class="demo-hint">Demo: cualquier canal · código <code>123456</code></div>
+            <button class="btn btn-solid" type="submit">Ingresar a opciones</button>
+          </form>
+          <p class="auth-alt">
+            <a href="index.html">← Volver al inicio</a>
+          </p>
+        </section>
+
         <section class="auth-card" data-auth-step="credentials">
           <nav class="flow flow--dark" aria-label="Paso actual">
             <span class="flow-step is-done"><span class="n">1</span> Acceso</span>
             <span class="flow-sep" aria-hidden="true"></span>
             <span class="flow-step is-current"><span class="n">2</span> <span data-flow-login>Credenciales</span></span>
             <span class="flow-sep" aria-hidden="true"></span>
-            <span class="flow-step"><span class="n">3</span> Portal</span>
+            <span class="flow-step"><span class="n">3</span> Destino</span>
           </nav>
 
           <div class="kc-head">
             <span class="kc-logo" aria-hidden="true">KC</span>
             <div>
-              <h2>Iniciar sesión</h2>
-              <p class="sub">Realm <strong>suma</strong> · client <strong>portal-suma</strong></p>
+              <h2 data-login-card-title>Iniciar sesión</h2>
+              <p class="sub" data-login-card-sub>Realm <strong>suma</strong> · client <strong>portal-suma</strong></p>
+            </div>
+          </div>
+
+          <div class="mfa-banner hidden" data-mfa-banner>
+            <strong>Doble factor activo</strong>
+            <span>Canal no habitual usa código (Google Authenticator / correo / WhatsApp), sin clave Keycloak.</span>
+          </div>
+
+          <div class="role-seg" data-role-seg hidden>
+            <span class="cfg-label">Tipo de usuario</span>
+            <div class="cfg-seg" role="group" aria-label="Tipo de usuario">
+              <button type="button" class="cfg-btn is-active" data-role-btn="externo" aria-pressed="true">Externo</button>
+              <button type="button" class="cfg-btn" data-role-btn="interno" aria-pressed="false">Interno</button>
             </div>
           </div>
 
@@ -84,24 +180,37 @@
               />
             </div>
 
+            <div class="field captcha-field hidden" data-captcha-wrap>
+              <label for="captcha">Captcha</label>
+              <div class="captcha-row">
+                <div class="captcha-box" data-captcha-box aria-hidden="true"></div>
+                <button type="button" class="captcha-refresh" data-captcha-refresh title="Otro captcha" aria-label="Generar otro captcha">↻</button>
+                <input id="captcha" name="captcha" inputmode="numeric" placeholder="Resultado" autocomplete="off" />
+              </div>
+              <small class="captcha-hint">Resuelva la operación (emulación del captcha interno AN).</small>
+            </div>
+
+            <p class="otp-error hidden" data-cred-error role="alert"></p>
+
             <div class="auth-meta">
               <label><input type="checkbox" /> Recordar usuario</label>
               <a href="#">¿Olvidaste tu clave?</a>
             </div>
 
+            <div class="demo-hint" data-demo-hint></div>
+
             <button class="btn btn-solid" type="submit">Continuar</button>
           </form>
           <p class="auth-alt">
-            <a href="index.html">← Volver al acceso por perfil</a>
+            <a href="index.html">← Volver al inicio</a>
           </p>
         </section>
 
         <section class="auth-card hidden" data-auth-step="method">
-          <button type="button" class="link-back" data-auth-back="credentials">← Cambiar usuario</button>
+          <button type="button" class="link-back" data-auth-back="code-gate">← Volver al código</button>
           <h2>Segundo factor</h2>
           <p class="sub">
-            Hola <strong data-user-label>usuario</strong>. Elige cómo verificar tu identidad
-            (emulación Conditional OTP / WebAuthn QR).
+            Elige cómo verificar tu identidad (canal no habitual — sin usuario/contraseña Keycloak).
           </p>
 
           <div class="mfa-methods" role="list">
@@ -109,7 +218,7 @@
               <span class="mfa-ico" aria-hidden="true">✉</span>
               <span class="mfa-body">
                 <strong>Correo electrónico</strong>
-                <small>OTP por email registrado en Keycloak</small>
+                <small>OTP por email registrado</small>
               </span>
               <span class="mfa-go" aria-hidden="true">→</span>
             </button>
@@ -122,10 +231,10 @@
               <span class="mfa-go" aria-hidden="true">→</span>
             </button>
             <button type="button" class="mfa-method" data-mfa-method="qr" role="listitem">
-              <span class="mfa-ico" aria-hidden="true">▣</span>
+              <span class="mfa-ico mfa-ico-ga" aria-hidden="true">GA</span>
               <span class="mfa-body">
-                <strong>Código QR</strong>
-                <small>Escanear con app autenticadora / dispositivo</small>
+                <strong>Google Authenticator</strong>
+                <small>OTP TOTP · escanear QR o código de 6 dígitos en la app</small>
               </span>
               <span class="mfa-go" aria-hidden="true">→</span>
             </button>
@@ -164,19 +273,30 @@
 
         <section class="auth-card hidden" data-auth-step="qr">
           <button type="button" class="link-back" data-auth-back="method">← Otro método</button>
-          <h2>Escanear QR</h2>
+          <h2>Google Authenticator</h2>
           <p class="sub">
-            Abre tu app autenticadora o el escáner SUMA y apunta al código.
+            Abre <strong>Google Authenticator</strong> y escanea el QR, o ingresa el código TOTP de 6 dígitos.
             Destino: <strong data-dest-label>…</strong>
           </p>
+
+          <div class="otp-demo-hint">
+            Prototipo: OTP demo <strong>123456</strong> (simula el código de la app)
+          </div>
 
           <div class="qr-wrap">
             <div class="qr-box" data-qr-box></div>
             <p class="otp-timer" data-qr-timer>QR válido 01:30</p>
           </div>
 
-          <button class="btn btn-solid" type="button" data-qr-simulate>
-            Simular escaneo correcto
+          <form data-form-ga-otp class="ga-otp-form">
+            <label for="ga-otp">Código de Google Authenticator</label>
+            <input id="ga-otp" name="ga-otp" inputmode="numeric" maxlength="6" placeholder="000000" autocomplete="one-time-code" />
+            <p class="otp-error hidden" data-ga-otp-error role="alert"></p>
+            <button class="btn btn-solid" type="submit">Verificar código</button>
+          </form>
+
+          <button class="btn btn-soft" type="button" data-qr-simulate style="width:100%;margin-top:0.65rem">
+            Simular escaneo QR correcto
           </button>
           <div class="auth-alt otp-actions">
             <button type="button" class="btn-text" data-qr-refresh>Generar nuevo QR</button>
@@ -187,7 +307,7 @@
           <div class="auth-success">
             <div class="auth-success-ico" aria-hidden="true">✓</div>
             <h2>Autenticación correcta</h2>
-            <p class="sub">Redirigiendo al portal SUMA…</p>
+            <p class="sub" data-success-msg>Redirigiendo…</p>
           </div>
         </section>
       </main>
@@ -196,6 +316,7 @@
     <script src="assets/vendor/tsparticles.bundle.min.js"></script>
     <script src="assets/js/particles-bg.js"></script>
     <script src="assets/js/suma-banner.js"></script>
+    <script src="assets/vendor/banner-hero.js" defer></script>
     <script src="assets/js/login-mfa.js"></script>
   </body>
 </html>

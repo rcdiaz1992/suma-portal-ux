@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SUMA · Servicios públicos</title>
+    <link rel="stylesheet" href="assets/css/portal.css" />
+    <script src="assets/js/prefs.js"></script>
+  </head>
+  <body>
+    <div class="public-page">
+      <header class="topbar public-top">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">AN</div>
+          <div class="brand-text">
+            <strong>SUMA</strong>
+            <span data-public-eyebrow>Servicio público</span>
+          </div>
+        </div>
+        <div class="top-actions">
+          <div class="cfg-seg" role="group" aria-label="Tema">
+            <button type="button" class="cfg-btn cfg-btn--icon" data-theme-btn="light" aria-pressed="true" aria-label="Tema claro" title="Tema claro">
+              <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg></span>
+            </button>
+            <button type="button" class="cfg-btn cfg-btn--icon" data-theme-btn="dark" aria-pressed="false" aria-label="Tema oscuro" title="Tema oscuro">
+              <span class="ico ico--fill" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 13.5A7.5 7.5 0 1 1 10.5 5 6 6 0 0 0 19 13.5z"/></svg></span>
+            </button>
+          </div>
+          <a class="btn btn-soft" href="index.html">← Inicio</a>
+        </div>
+      </header>
+
+      <main class="public-main">
+        <h1 data-public-title>Servicio</h1>
+        <p class="public-lead" data-public-lead></p>
+        <div class="public-card" data-public-body></div>
+      </main>
+    </div>
+    <script>
+      (function () {
+        const params = new URLSearchParams(location.search);
+        const s = params.get("s") || "consultas";
+        const map = {
+          consultas: {
+            title: "Consultas Públicas",
+            eyebrow: "Canal público · sin SSO",
+            lead: "Consultas abiertas alineadas a indexOce — sin iniciar sesión completa.",
+            body:
+              "<ul class='public-list'>" +
+              "<li>Consulta de documento / DAM</li>" +
+              "<li>Estado de trámite de registro</li>" +
+              "<li>Impresión de documentos (DEX, CRT, MIC)</li>" +
+              "<li>Estado de operador OCE</li>" +
+              "</ul><p class='public-hint'>Prototipo: listado referencial. En producción enlaza a los formularios públicos SUMA.</p>",
+          },
+          utilitarios: {
+            title: "Utilitarios",
+            eyebrow: "Canal público · herramientas",
+            lead: "Utilidades de apoyo al operador y ciudadanía.",
+            body:
+              "<ul class='public-list'>" +
+              "<li>Calculadora de tributos (demo)</li>" +
+              "<li>Conversor de unidades / moneda</li>" +
+              "<li>Validación de NIT / documento</li>" +
+              "</ul><p class='public-hint'>Prototipo visual — sin backend.</p>",
+          },
+          infosuma: {
+            title: "InfoSUMA",
+            eyebrow: "Información institucional",
+            lead: "Instructivos, novedades y material de la Aduana Nacional.",
+            body:
+              "<ul class='public-list'>" +
+              "<li>Instructivos de llenado DAM / DIM / manifiestos</li>" +
+              "<li>Novedades del portal SUMA</li>" +
+              "<li>Guías para operadores OCE</li>" +
+              "</ul>",
+          },
+          tablero: {
+            title: "Tablero Virtual de Notificaciones",
+            eyebrow: "Avisos públicos",
+            lead: "Tablero de notificaciones y comunicados SUMA.",
+            body:
+              "<ul class='public-list'>" +
+              "<li>Mantenimientos programados</li>" +
+              "<li>Comunicados de operaciones</li>" +
+              "<li>Alertas de servicio</li>" +
+              "</ul><p class='public-hint'>Vista pública de referencia (prototipo).</p>",
+          },
+        };
+        const conf = map[s] || map.consultas;
+        document.title = "SUMA · " + conf.title;
+        document.querySelector("[data-public-title]").textContent = conf.title;
+        document.querySelector("[data-public-eyebrow]").textContent = conf.eyebrow;
+        document.querySelector("[data-public-lead]").textContent = conf.lead;
+        document.querySelector("[data-public-body]").innerHTML = conf.body;
+      })();
+    </script>
+  </body>
+</html>

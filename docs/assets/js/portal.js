@@ -1,18 +1,16 @@
 /**
  * Portal SUMA — estándar App Shell:
  * - Lateral: menú parametrizado (SUMA_MENU)
- * - Home: búsqueda + favoritos + recientes + lanzador por ciclo operativo
+ * - Home: búsqueda + favoritos + lanzador por ciclo operativo
  */
 (function () {
   const STORAGE_FAV = "suma.portal.favs";
-  const STORAGE_RECENT = "suma.portal.recent";
-  const MAX_RECENT = 6;
 
   const GROUP_ORDER = window.SUMA_GROUP_ORDER || [];
   const menuRoot = document.querySelector("[data-menu]");
   const moduleRoot = document.querySelector("[data-modules]");
   const favRoot = document.querySelector("[data-favs]");
-  const recentRoot = document.querySelector("[data-recent]");
+  const favSideRoot = document.querySelector("[data-favs-side]");
   const menuFilter = document.querySelector("[data-menu-filter]");
   const moduleFilter = document.querySelector("[data-module-filter]");
   const chips = document.querySelectorAll(".seg-btn[data-group]");
@@ -50,7 +48,6 @@
 
   let favs = loadJson(STORAGE_FAV, null);
   if (!Array.isArray(favs)) favs = defaultFavs();
-  let recent = loadJson(STORAGE_RECENT, []);
   let activeGroup = "all";
 
   function moduleById(id) {
@@ -62,26 +59,60 @@
   }
 
   function toggleFav(id) {
+    if (!id || !moduleById(id)) return;
     if (isFav(id)) favs = favs.filter((x) => x !== id);
     else favs = favs.concat(id);
     saveJson(STORAGE_FAV, favs);
     refreshHome();
+    renderMenu(menuFilter ? menuFilter.value : "");
   }
 
-  function pushRecent(id) {
-    recent = [id].concat(recent.filter((x) => x !== id)).slice(0, MAX_RECENT);
-    saveJson(STORAGE_RECENT, recent);
+  function favToggleBtn(id) {
+    const on = isFav(id);
+    return (
+      '<button type="button" class="fav-btn' +
+      (on ? " on" : "") +
+      '" data-fav="' +
+      id +
+      '" aria-label="' +
+      (on ? "Quitar de favoritos" : "Agregar a favoritos") +
+      '" title="' +
+      (on ? "Quitar de favoritos" : "Agregar a favoritos") +
+      '">★</button>'
+    );
   }
 
   function openModule(m) {
-    pushRecent(m.id);
-    refreshHome(false);
     alert(
       "Prototipo SUMA\nMódulo: " +
         m.titulo +
         "\nRuta: " +
         (m.ruta || "/" + m.id) +
         "\n\nEn Angular abriría el microfrontend correspondiente."
+    );
+  }
+
+  function abbrOf(text, fallback) {
+    if (fallback) return String(fallback).slice(0, 3).toUpperCase();
+    const clean = String(text || "")
+      .replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ0-9\s]/g, " ")
+      .trim();
+    const parts = clean.split(/\s+/).filter(Boolean);
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[1][0] + (parts[2] ? parts[2][0] : "")).toUpperCase();
+    }
+    return clean.slice(0, 3).toUpperCase() || "•";
+  }
+
+  function menuIcon(key, label, code) {
+    const ico = typeof window.SUMA_ICON === "function" ? window.SUMA_ICON(key) : "";
+    const abbr = abbrOf(label, code);
+    return (
+      '<span class="icon-dot" data-abbr="' +
+      abbr +
+      '">' +
+      ico +
+      "</span>"
     );
   }
 
@@ -102,10 +133,11 @@
         a.className =
           "nav-link" + (String(item.url).indexOf("portal") !== -1 ? " active" : "");
         a.href = item.url;
+        a.title = item.titulo;
+        const mod = item.moduleId ? moduleById(item.moduleId) : null;
         a.innerHTML =
-          '<span class="icon-dot">' +
-          item.icon +
-          "</span><span>" +
+          menuIcon(item.icon, item.titulo, mod && mod.code) +
+          '<span class="nav-label">' +
           item.titulo +
           "</span>";
         menuRoot.appendChild(a);
@@ -116,31 +148,49 @@
       details.className = "nav-group";
       details.open = !q || selfHit || childHit.length > 0;
       details.innerHTML =
-        "<summary><span class=\"icon-dot\">" +
-        item.icon +
-        "</span><span>" +
+        "<summary title=\"" +
+        item.titulo +
+        "\">" +
+        menuIcon(item.icon, item.titulo) +
+        '<span class="nav-label">' +
         item.titulo +
         "</span></summary>";
       const wrap = document.createElement("div");
       wrap.className = "nav-children";
       (q ? childHit : item.opciones).forEach((o) => {
+        const row = document.createElement("div");
+        row.className = "nav-link-row";
+
         const a = document.createElement("a");
         a.className = "nav-link";
         a.href = o.url;
+        a.title = o.descripcion;
+        if (o.moduleId) {
+          a.setAttribute("data-open", o.moduleId);
+        }
+        const mod = o.moduleId ? moduleById(o.moduleId) : null;
         a.innerHTML =
-          '<span class="icon-dot">' +
-          (o.icon || "•") +
-          "</span><span>" +
+          menuIcon(o.icon || "dot", o.descripcion, mod && mod.code) +
+          '<span class="nav-label">' +
           o.descripcion +
           "</span>";
-        wrap.appendChild(a);
+        row.appendChild(a);
+
+        if (o.moduleId) {
+          const favWrap = document.createElement("span");
+          favWrap.className = "nav-fav-wrap";
+          favWrap.innerHTML = favToggleBtn(o.moduleId);
+          row.appendChild(favWrap);
+        }
+
+        wrap.appendChild(row);
       });
       details.appendChild(wrap);
       menuRoot.appendChild(details);
     });
   }
 
-  function chipRow(list, emptyMsg) {
+  function chipRow(list, emptyMsg, withStar) {
     if (!list.length) {
       return '<p class="launch-empty">' + emptyMsg + "</p>";
     }
@@ -149,7 +199,10 @@
       list
         .map((m) => {
           return (
-            '<button type="button" class="launch-chip" data-open="' +
+            '<div class="launch-chip-row">' +
+            '<button type="button" class="launch-chip' +
+            (withStar ? " launch-chip--fav" : "") +
+            '" data-open="' +
             m.id +
             '">' +
             '<span class="launch-chip-code">' +
@@ -158,7 +211,9 @@
             "<span>" +
             m.titulo +
             "</span>" +
-            "</button>"
+            "</button>" +
+            (withStar ? favToggleBtn(m.id) : "") +
+            "</div>"
           );
         })
         .join("") +
@@ -166,19 +221,54 @@
     );
   }
 
+  function sideShortcutRow(list, emptyMsg, withStar) {
+    if (!list.length) {
+      return '<p class="side-shortcuts-empty">' + emptyMsg + "</p>";
+    }
+    return list
+      .map((m) => {
+        return (
+          '<div class="side-shortcut-row">' +
+          '<button type="button" class="side-shortcut' +
+          (withStar ? " side-shortcut--fav" : "") +
+          '" data-open="' +
+          m.id +
+          '" title="' +
+          m.titulo +
+          '">' +
+          (withStar
+            ? '<span class="fav-star side-shortcut-ico" aria-hidden="true">★</span>'
+            : "") +
+          '<span class="side-shortcut-code">' +
+          m.code +
+          "</span>" +
+          '<span class="nav-label">' +
+          m.titulo +
+          "</span>" +
+          "</button>" +
+          (withStar ? favToggleBtn(m.id) : "") +
+          "</div>"
+        );
+      })
+      .join("");
+  }
+
   function renderShortcuts() {
+    const favList = favs.map(moduleById).filter(Boolean);
+
     if (favRoot) {
-      const list = favs.map(moduleById).filter(Boolean);
       favRoot.innerHTML = chipRow(
-        list,
-        "Marque módulos con ★ para tenerlos aquí (atajos operativos)."
+        favList,
+        "Marque módulos con ★ para tenerlos aquí (atajos operativos).",
+        true
       );
     }
-    if (recentRoot) {
-      const list = recent.map(moduleById).filter(Boolean);
-      recentRoot.innerHTML = chipRow(
-        list,
-        "Los módulos que abra aparecerán aquí."
+
+    if (favSideRoot) {
+      favSideRoot.innerHTML = sideShortcutRow(
+        favList,
+        "Sin favoritos aún.",
+        true
       );
     }
   }
@@ -193,11 +283,7 @@
       '<div class="module-icon">' +
       m.code.slice(0, 2) +
       "</div>" +
-      '<button type="button" class="fav-btn' +
-      (isFav(m.id) ? " on" : "") +
-      '" data-fav="' +
-      m.id +
-      '" aria-label="Favorito">★</button>' +
+      favToggleBtn(m.id) +
       "</div>" +
       "<h3>" +
       m.titulo +
@@ -301,6 +387,7 @@
     const fav = e.target.closest("[data-fav]");
     if (fav) {
       e.preventDefault();
+      e.stopPropagation();
       toggleFav(fav.getAttribute("data-fav"));
       return;
     }

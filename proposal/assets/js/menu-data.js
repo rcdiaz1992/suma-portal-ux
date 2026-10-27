@@ -1,112 +1,138 @@
 /**
  * IA operativa SUMA / Aduana Nacional Bolivia (propuesta).
- *
- * Lateral = menú parametrizado (equivalente MenuService / IFindMenuDto).
- * Home   = lanzador de módulos operativos (atajos), no duplica el árbol.
- *
- * Orden de grupos: ciclo operativo aduanero
- *   1) Operaciones (ingreso/salida/declaraciones/aforo)
- *   2) Padrón OCE
- *   3) Obligaciones y servicios (pagos, firma, notificaciones)
- *   4) Consultas y soporte
+ * Menú lateral habitual externo alineado a portal PRE (vista operativa).
  */
 window.SUMA_IA = {
   sistema: "SUMA_PORTAL",
   perfilDemo: "Importador / Exportador habitual",
   soporte: {
     linea: "800-10-5001",
+    telefono: "(591) - 2 -2128008",
     whatsapp: "715-51800",
-    correo: "soportesuma@aduana.gob.bo",
+    correo: "infocc@aduana.gob.bo",
+    sitio: "https://www.aduana.gob.bo/",
+    direcciones: "https://www.aduana.gob.bo/pagina-de-direcciones",
   },
 };
 
-/** Menú lateral — fuente de verdad (mock alineado a operación SUMA) */
+/** Menú lateral — habitual externo (mock PRE) */
 window.SUMA_MENU = [
   {
     menuId: "10",
     titulo: "Inicio",
     url: "portal.html",
-    icon: "IN",
+    icon: "home",
     orden: "10",
     opciones: [],
   },
   {
     menuId: "20",
-    titulo: "Operaciones",
+    titulo: "GESTION OCE",
     url: "#",
-    icon: "OP",
+    icon: "oce",
     orden: "20",
     opciones: [
-      { opcionId: "21", descripcion: "Ingreso / Manifiestos", url: "#ingreso", icon: "IG", orden: "21" },
-      { opcionId: "22", descripcion: "Salida / Exportación", url: "#salida", icon: "SL", orden: "22" },
-      { opcionId: "23", descripcion: "Declaraciones DAM / DIM", url: "#dam", icon: "DM", orden: "23" },
-      { opcionId: "24", descripcion: "Aforo", url: "#aforo", icon: "AF", orden: "24" },
-      { opcionId: "25", descripcion: "Declaración simplificada", url: "#dims", icon: "DS", orden: "25" },
+      { opcionId: "21", descripcion: "Actualizar datos del operador", url: "#padron-act", icon: "oce", orden: "21", moduleId: "oce" },
+      { opcionId: "22", descripcion: "Consulta estado operador", url: "#padron-est", icon: "estado", orden: "22", moduleId: "estado-operador" },
+      { opcionId: "23", descripcion: "Estado de trámite de registro", url: "#padron-tr", icon: "tramite", orden: "23", moduleId: "tramites" },
     ],
   },
   {
     menuId: "30",
-    titulo: "Padrón OCE",
+    titulo: "Operaciones",
     url: "#",
-    icon: "OC",
+    icon: "ops",
     orden: "30",
     opciones: [
-      { opcionId: "31", descripcion: "Actualizar datos del operador", url: "#padron-act", icon: "AC", orden: "31" },
-      { opcionId: "32", descripcion: "Consulta estado operador", url: "#padron-est", icon: "ES", orden: "32" },
-      { opcionId: "33", descripcion: "Estado de trámite de registro", url: "#padron-tr", icon: "TR", orden: "33" },
+      { opcionId: "31", descripcion: "Ingreso de Mercancías", url: "#ingreso", icon: "ingreso", orden: "31", moduleId: "ingreso" },
+      { opcionId: "32", descripcion: "Salida de Mercancías", url: "#salida", icon: "salida", orden: "32", moduleId: "salida" },
+      { opcionId: "33", descripcion: "Declaraciones DAM / DIM", url: "#dam", icon: "dam", orden: "33", moduleId: "declaraciones" },
+      { opcionId: "34", descripcion: "Aforo", url: "#aforo", icon: "aforo", orden: "34", moduleId: "aforo" },
+      { opcionId: "35", descripcion: "Tránsito", url: "#transito", icon: "ops", orden: "35", moduleId: "ingreso" },
+      { opcionId: "36", descripcion: "Depósito", url: "#deposito", icon: "dims", orden: "36", moduleId: "aforo" },
+      { opcionId: "37", descripcion: "Constancia de entrega", url: "#constancia", icon: "registro", orden: "37", moduleId: "tramites" },
     ],
   },
   {
     menuId: "40",
-    titulo: "Pagos y obligaciones",
+    titulo: "Pagos y servicios",
     url: "#",
-    icon: "PG",
+    icon: "pagos",
     orden: "40",
     opciones: [
-      { opcionId: "41", descripcion: "Pagos aduaneros", url: "#pagos", icon: "PA", orden: "41" },
-      { opcionId: "42", descripcion: "Comprobantes / QR", url: "#pagos-qr", icon: "QR", orden: "42" },
+      { opcionId: "41", descripcion: "Pagos aduaneros", url: "#pagos", icon: "pagos", orden: "41", moduleId: "pagos" },
+      { opcionId: "42", descripcion: "Pagos Diferidos", url: "#pagos-dif", icon: "pagos", orden: "42", moduleId: "pagos" },
+      { opcionId: "43", descripcion: "Comprobantes / QR", url: "#pagos-qr", icon: "qr", orden: "43", moduleId: "pagos" },
+      { opcionId: "44", descripcion: "DIM SALDO", url: "#dim-saldo", icon: "dam", orden: "44", moduleId: "declaraciones" },
     ],
   },
   {
     menuId: "50",
     titulo: "Notificaciones",
     url: "#notif",
-    icon: "NO",
+    icon: "notif",
     orden: "50",
     opciones: [
-      { opcionId: "51", descripcion: "Bandeja de notificaciones", url: "#notif-bandeja", icon: "BJ", orden: "51" },
-      { opcionId: "52", descripcion: "Registro notificación electrónica", url: "#notif-reg", icon: "RE", orden: "52" },
+      { opcionId: "51", descripcion: "Bandeja de notificaciones", url: "#notif-bandeja", icon: "bandeja", orden: "51", moduleId: "notificacion" },
+      { opcionId: "52", descripcion: "Registro notificación electrónica", url: "#notif-reg", icon: "registro", orden: "52", moduleId: "notificacion" },
     ],
   },
   {
     menuId: "60",
-    titulo: "Consultas",
+    titulo: "Documentos y certificados",
     url: "#",
-    icon: "CO",
+    icon: "instructivo",
     orden: "60",
     opciones: [
-      { opcionId: "61", descripcion: "Consulta DAM", url: "#consulta-dam", icon: "DA", orden: "61" },
-      { opcionId: "62", descripcion: "Estado de trámite", url: "#consulta-tr", icon: "ET", orden: "62" },
-      { opcionId: "63", descripcion: "Instructivos de llenado", url: "#instructivos", icon: "IN", orden: "63" },
+      { opcionId: "61", descripcion: "Certificado de Origen Digital", url: "#cod", icon: "verify", orden: "61", moduleId: "firma" },
+      { opcionId: "62", descripcion: "Traslado Parcial", url: "#traslado", icon: "dims", orden: "62", moduleId: "declaraciones" },
+      { opcionId: "63", descripcion: "FRVMR", url: "#frvmr", icon: "ops", orden: "63", moduleId: "ingreso" },
+      { opcionId: "64", descripcion: "BCTP", url: "#bctp", icon: "dam", orden: "64", moduleId: "declaraciones" },
+      { opcionId: "65", descripcion: "Agenda", url: "#agenda", icon: "tramite", orden: "65", moduleId: "tramites" },
+      { opcionId: "66", descripcion: "AR.PAR 4", url: "#arpar", icon: "consultas", orden: "66", moduleId: "consulta-dam" },
     ],
   },
   {
     menuId: "70",
     titulo: "Herramientas",
     url: "#",
-    icon: "HZ",
+    icon: "tools",
     orden: "70",
     opciones: [
-      { opcionId: "71", descripcion: "Firma digital", url: "#firma", icon: "FD", orden: "71" },
-      { opcionId: "72", descripcion: "Verificar documento firmado", url: "#firma-ver", icon: "VF", orden: "72" },
+      { opcionId: "71", descripcion: "Firma Digital", url: "#firma", icon: "firma", orden: "71", moduleId: "firma" },
+      { opcionId: "72", descripcion: "Verificar documento firmado", url: "#firma-ver", icon: "verify", orden: "72", moduleId: "firma" },
+      { opcionId: "73", descripcion: "Tareas", url: "#tareas", icon: "bandeja", orden: "73", moduleId: "tramites" },
+    ],
+  },
+  {
+    menuId: "80",
+    titulo: "Consultas",
+    url: "#",
+    icon: "consultas",
+    orden: "80",
+    opciones: [
+      { opcionId: "81", descripcion: "Consulta DAM", url: "#consulta-dam", icon: "dam", orden: "81", moduleId: "consulta-dam" },
+      { opcionId: "82", descripcion: "Consulta Ingreso", url: "#c-ingreso", icon: "ingreso", orden: "82", moduleId: "ingreso" },
+      { opcionId: "83", descripcion: "Consulta Salida", url: "#c-salida", icon: "salida", orden: "83", moduleId: "salida" },
+      { opcionId: "84", descripcion: "Instructivos de llenado", url: "#instructivos", icon: "instructivo", orden: "84", moduleId: "instructivos" },
+    ],
+  },
+  {
+    menuId: "90",
+    titulo: "Soporte",
+    url: "#",
+    icon: "tools",
+    orden: "90",
+    opciones: [
+      { opcionId: "91", descripcion: "SOPORTE", url: "#soporte", icon: "tools", orden: "91", moduleId: "instructivos" },
+      { opcionId: "92", descripcion: "OPCIONES SOPORTE", url: "#soporte-opc", icon: "tools", orden: "92", moduleId: "instructivos" },
+      { opcionId: "93", descripcion: "GESTION ADUANA", url: "#gestion-aduana", icon: "tramite", orden: "93", moduleId: "tramites" },
+      { opcionId: "94", descripcion: "Indira", url: "#indira", icon: "consultas", orden: "94", moduleId: "consulta-dam" },
+      { opcionId: "95", descripcion: "Sintia", url: "#sintia", icon: "dam", orden: "95", moduleId: "declaraciones" },
     ],
   },
 ];
 
-/**
- * Grupos del home (lanzador) — ciclo operativo, no organigrama.
- * Coincide con filtros del segmented control.
- */
 window.SUMA_GROUP_ORDER = [
   { id: "operaciones", label: "Operaciones de comercio", orden: 1, hint: "Ingreso, salida, declaraciones y aforo" },
   { id: "padron", label: "Padrón OCE", orden: 2, hint: "Datos y habilitación del operador" },
@@ -114,13 +140,12 @@ window.SUMA_GROUP_ORDER = [
   { id: "consultas", label: "Consultas y soporte", orden: 4, hint: "Seguimiento y ayuda operativa" },
 ];
 
-/** Módulos del home (atajos a microfrontends / rutas SUMA) */
 window.SUMA_MODULES = [
   {
     id: "ingreso",
     grupo: "operaciones",
-    titulo: "Ingreso",
-    desc: "Documentos de embarque, manifiestos y control de ingreso de mercancías.",
+    titulo: "Ingreso de Mercancías",
+    desc: "Documentos de embarque, manifiestos y control de ingreso.",
     code: "ING",
     badge: "Operativo",
     ruta: "/ingreso",
@@ -129,7 +154,7 @@ window.SUMA_MODULES = [
   {
     id: "salida",
     grupo: "operaciones",
-    titulo: "Salida / Exportación",
+    titulo: "Salida de Mercancías",
     desc: "DAM de exportación, reexportación y operaciones de salida.",
     code: "SAL",
     badge: "Operativo",
@@ -160,7 +185,7 @@ window.SUMA_MODULES = [
     id: "simplificada",
     grupo: "operaciones",
     titulo: "Declaración simplificada",
-    desc: "DIMS / exportación de menor cuantía (no habituales y casos habilitados).",
+    desc: "DIMS / exportación de menor cuantía (no habituales).",
     code: "DIMS",
     badge: "Simplificado",
     ruta: "/simplificada",
@@ -169,7 +194,7 @@ window.SUMA_MODULES = [
   {
     id: "oce",
     grupo: "padron",
-    titulo: "Padrón de Operadores",
+    titulo: "GESTION OCE",
     desc: "Actualización de datos del OCE ante la Aduana Nacional.",
     code: "OCE",
     badge: "Obligatorio",
@@ -190,7 +215,7 @@ window.SUMA_MODULES = [
     id: "pagos",
     grupo: "servicios",
     titulo: "Pagos aduaneros",
-    desc: "Liquidaciones, obligaciones y seguimiento de pagos SUMA.",
+    desc: "Liquidaciones, obligaciones y pagos diferidos SUMA.",
     code: "PAG",
     badge: "Operativo",
     ruta: "/pagos",
@@ -209,7 +234,7 @@ window.SUMA_MODULES = [
   {
     id: "firma",
     grupo: "servicios",
-    titulo: "Firma digital",
+    titulo: "Firma Digital",
     desc: "Firmado y verificación de documentos en el ecosistema SUMA.",
     code: "FIR",
     badge: "Herramienta",

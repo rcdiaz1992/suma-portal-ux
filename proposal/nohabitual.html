@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SUMA · Operaciones No Habituales</title>
+    <link rel="stylesheet" href="assets/css/portal.css" />
+    <script src="assets/js/prefs.js"></script>
+  </head>
+  <body>
+    <div class="nh-page">
+      <header class="shell-top nh-top">
+        <div class="top-left">
+          <div>
+            <div class="crumb">SUMA · No habituales</div>
+            <strong class="top-perfil">Perfil: operaciones simplificadas</strong>
+          </div>
+        </div>
+        <div class="top-config" aria-label="Configuración">
+          <div class="cfg-seg" role="group" aria-label="Tema">
+            <button type="button" class="cfg-btn cfg-btn--icon" data-theme-btn="light" aria-pressed="true" aria-label="Tema claro" title="Tema claro">
+              <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M4.2 4.2l1.8 1.8M18 18l1.8 1.8M2 12h2.5M19.5 12H22M4.2 19.8 6 18M18 6l1.8-1.8"/></svg></span>
+            </button>
+            <button type="button" class="cfg-btn cfg-btn--icon" data-theme-btn="dark" aria-pressed="false" aria-label="Tema oscuro" title="Tema oscuro">
+              <span class="ico ico--fill" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M19 13.5A7.5 7.5 0 1 1 10.5 5 6 6 0 0 0 19 13.5z"/></svg></span>
+            </button>
+          </div>
+        </div>
+        <div class="top-right">
+          <a class="btn btn-soft" href="index.html">Salir</a>
+        </div>
+      </header>
+
+      <main class="nh-main">
+        <div class="nh-tabs" role="tablist">
+          <button type="button" class="nh-tab is-active" data-nh-tab="import" role="tab" aria-selected="true">IMPORTACIÓN</button>
+          <button type="button" class="nh-tab" data-nh-tab="export" role="tab" aria-selected="false">EXPORTACIÓN</button>
+        </div>
+
+        <div class="nh-panel" data-nh-panel="import">
+          <section class="nh-block">
+            <header class="nh-block-head">
+              <span class="nh-n">1</span>
+              <div>
+                <h2>Importadores No Habituales</h2>
+                <h3>Declaración de Mercancías de Importación Simplificada (DIMS)</h3>
+              </div>
+            </header>
+            <p class="nh-desc">
+              Despachos de importación a consumo de mercancías de menor cuantía (valor menor a USD 2.000)
+              y equipajes acompañados/no acompañados (régimen viajero) menores a USD 2.000.
+              <a href="#">Ver más</a>
+            </p>
+            <form class="nh-form" onsubmit="return false">
+              <label>Tipo documento
+                <select><option>— Seleccione —</option><option>CI</option><option>NIT</option><option>Pasaporte</option></select>
+              </label>
+              <label>Documento de Identificación
+                <input type="text" placeholder="Documento" />
+              </label>
+              <label>Tipo de Aduana de Despacho
+                <select><option>— Seleccione —</option><option>Frontera</option><option>Interior</option><option>Aeropuerto</option></select>
+              </label>
+              <label>Aduana de Despacho
+                <select><option>— Seleccione —</option><option>La Paz</option><option>Santa Cruz</option><option>Cochabamba</option></select>
+              </label>
+              <div class="nh-actions">
+                <button type="button" class="btn btn-solid nh-go">Ingresar</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="nh-block">
+            <header class="nh-block-head">
+              <span class="nh-n">2</span>
+              <div>
+                <h2>Empresas de transporte extranjeras con permiso ocasional</h2>
+                <h3>Manifiestos de carga y documentos de embarque</h3>
+              </div>
+            </header>
+            <p class="nh-desc">
+              Registro de documentos de embarque o manifiestos de carga para empresas de transporte
+              con permiso ocasional.
+            </p>
+            <form class="nh-form" onsubmit="return false">
+              <label>Documento de Identificación
+                <input type="text" placeholder="Documento" />
+                <small>(Ej.: 90000XXXXX)</small>
+              </label>
+              <label>Tipo Documento
+                <select><option>— Seleccione —</option><option>NIT</option><option>Otro</option></select>
+              </label>
+              <div class="nh-actions">
+                <button type="button" class="btn btn-solid nh-go">Ingresar</button>
+              </div>
+            </form>
+          </section>
+
+          <section class="nh-block">
+            <header class="nh-block-head">
+              <span class="nh-n">3</span>
+              <div>
+                <h2>Imprimir documento</h2>
+              </div>
+            </header>
+            <form class="nh-form" onsubmit="return false">
+              <label>Tipo de documento
+                <select><option>— Seleccione —</option><option>DEX</option><option>CRT</option><option>MIC</option></select>
+              </label>
+              <label>Número de documento
+                <input type="text" placeholder="Numero DEX, CRT, MIC" />
+              </label>
+              <label>Número de identificación
+                <input type="text" placeholder="Número identificación" />
+              </label>
+              <div class="nh-actions">
+                <button type="button" class="btn btn-solid nh-go">Ingresar</button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <div class="nh-panel hidden" data-nh-panel="export">
+          <section class="nh-block">
+            <header class="nh-block-head">
+              <span class="nh-n">1</span>
+              <div>
+                <h2>Exportadores No Habituales</h2>
+                <h3>Declaración de exportación simplificada</h3>
+              </div>
+            </header>
+            <p class="nh-desc">
+              Operaciones de exportación de menor cuantía y casos habilitados para no habituales
+              (prototipo alineado a indexOce / profile).
+            </p>
+            <form class="nh-form" onsubmit="return false">
+              <label>Tipo documento
+                <select><option>— Seleccione —</option><option>CI</option><option>NIT</option></select>
+              </label>
+              <label>Documento de Identificación
+                <input type="text" placeholder="Documento" />
+              </label>
+              <label>Aduana de salida
+                <select><option>— Seleccione —</option><option>La Paz</option><option>Santa Cruz</option></select>
+              </label>
+              <div class="nh-actions">
+                <button type="button" class="btn btn-solid nh-go">Ingresar</button>
+              </div>
+            </form>
+          </section>
+        </div>
+      </main>
+    </div>
+    <script>
+      document.querySelectorAll("[data-nh-tab]").forEach((tab) => {
+        tab.addEventListener("click", () => {
+          const id = tab.getAttribute("data-nh-tab");
+          document.querySelectorAll("[data-nh-tab]").forEach((t) => {
+            const on = t === tab;
+            t.classList.toggle("is-active", on);
+            t.setAttribute("aria-selected", on ? "true" : "false");
+          });
+          document.querySelectorAll("[data-nh-panel]").forEach((p) => {
+            p.classList.toggle("hidden", p.getAttribute("data-nh-panel") !== id);
+          });
+        });
+      });
+      document.querySelectorAll(".nh-go").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          alert("Prototipo: en producción abriría el trámite DIMS / manifiesto correspondiente.");
+        });
+      });
+    </script>
+  </body>
+</html>
