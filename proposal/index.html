@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SUMA · Acceso — Propuesta UX</title>
+    <link rel="stylesheet" href="assets/css/portal.css" />
+  </head>
+  <body>
+    <a class="skip" href="#acceso">Saltar al acceso</a>
+    <div
+      class="landing"
+      data-particles
+      data-density="1.1"
+      data-speed="1"
+      data-color="#c9a227"
+      data-link="#d4af37"
+    >
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">AN</div>
+          <div class="brand-text">
+            <strong>SUMA</strong>
+            <span>Aduana Nacional de Bolivia</span>
+          </div>
+        </div>
+        <div class="top-actions">
+          <nav class="flow flow--light" aria-label="Recorrido">
+            <span class="flow-step is-current"><span class="n">1</span> Acceso</span>
+            <span class="flow-sep" aria-hidden="true"></span>
+            <a class="flow-step" href="login.html"><span class="n">2</span> Login</a>
+            <span class="flow-sep" aria-hidden="true"></span>
+            <a class="flow-step" href="portal.html"><span class="n">3</span> Portal</a>
+          </nav>
+          <a class="btn btn-ghost" href="login.html">Ingresar</a>
+        </div>
+      </header>
+
+      <div data-suma-banner></div>
+
+      <section class="hero hero--under-banner">
+        <p>
+          Acceso operativo SUMA: identifique su tipo de operador OCE,
+          ingrese con SSO y trabaje desde el portal (menú parametrizado + lanzador).
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#acceso">Elegir tipo de operador</a>
+          <a class="btn btn-ghost" href="login.html">Ya estoy habilitado en SUMA</a>
+        </div>
+      </section>
+
+      <section class="access" id="acceso">
+        <div class="access-head">
+          <div>
+            <h2>¿Qué necesita hacer ante la Aduana?</h2>
+            <p>Caminos según normativa OCE / indexOce — un clic por intención.</p>
+          </div>
+          <label class="search">
+            <span aria-hidden="true">⌕</span>
+            <input
+              type="search"
+              placeholder="Buscar: courier, DAM, menaje…"
+              data-profile-filter
+            />
+          </label>
+        </div>
+
+        <div class="profile-grid">
+          <a class="profile" data-profile href="login.html">
+            <span class="tag"><span class="ord">1</span> Habitual</span>
+            <h3>Importador / Exportador habitual</h3>
+            <p>Empresas y RAU con operaciones regulares. Acceso al portal SUMA.</p>
+            <span class="go">Continuar →</span>
+          </a>
+          <a class="profile" data-profile href="login.html">
+            <span class="tag"><span class="ord">2</span> No habitual</span>
+            <h3>Importación / Exportación simplificada</h3>
+            <p>Menor cuantía, equipaje, menaje, courier y DIMS / exportación simplificada.</p>
+            <span class="go">Continuar →</span>
+          </a>
+          <a class="profile" data-profile href="login.html">
+            <span class="tag"><span class="ord">3</span> OCE</span>
+            <h3>Otros operadores de comercio</h3>
+            <p>Despachantes, transportadores, zonas francas, courier y depósitos.</p>
+            <span class="go">Continuar →</span>
+          </a>
+          <a class="profile" data-profile href="login.html">
+            <span class="tag"><span class="ord">4</span> Registro</span>
+            <h3>Ferial, charter y especiales</h3>
+            <p>Organizador ferial, empresas charter, valija diplomática y envíos de socorro.</p>
+            <span class="go">Continuar →</span>
+          </a>
+          <a class="profile" data-profile href="login.html">
+            <span class="tag"><span class="ord">5</span> Consulta</span>
+            <h3>Consultas sin sesión completa</h3>
+            <p>Estado de operador, trámite de registro, DAM e impresión de documentos.</p>
+            <span class="go">Continuar →</span>
+          </a>
+          <a class="profile" data-profile href="portal.html">
+            <span class="tag"><span class="ord">6</span> Portal</span>
+            <h3>Entrar al portal SUMA (vista operativa)</h3>
+            <p>Shell con menú parametrizado, favoritos, recientes y módulos de comercio exterior.</p>
+            <span class="go">Ir al portal →</span>
+          </a>
+        </div>
+      </section>
+
+      <footer class="landing-footer">
+        <div class="landing-footer-row">
+          <span>Prototipo UX · Mesa de ayuda 800-10-5001 · soportesuma@aduana.gob.bo</span>
+          <div class="suma-socials suma-socials--footer" data-footer-socials></div>
+        </div>
+      </footer>
+    </div>
+    <script src="assets/vendor/tsparticles.bundle.min.js"></script>
+    <script src="assets/js/particles-bg.js"></script>
+    <script src="assets/js/suma-banner.js"></script>
+    <script src="assets/js/menu-data.js"></script>
+    <script src="assets/js/portal.js"></script>
+    <script>
+      (function () {
+        const foot = document.querySelector("[data-footer-socials]");
+        const source = document.querySelector(".suma-socials");
+        if (foot && source) foot.innerHTML = source.innerHTML;
+      })();
+    </script>
+  </body>
+</html>
