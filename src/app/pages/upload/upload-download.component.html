@@ -1,0 +1,14 @@
+<an-page>
+    <an-page-header title="Upload file"></an-page-header>
+
+    <an-page-content title="Upload single file">
+        <an-upload-single (addFile)="uploadSingle($event)"></an-upload-single>
+    </an-page-content>
+
+    <an-page-content title="Upload multiple file">
+        <an-upload-multiple (saveFiles)="uploadFile($event)" (addFile)="updateAddFile($event)" [showUpload]="true"></an-upload-multiple>
+    </an-page-content>
+
+    <an-button (onClick)="ejecuta()" texto="angular mode"></an-button>
+    <an-button (onClick)="otroCliente()" texto="fetch mode"></an-button>
+</an-page>

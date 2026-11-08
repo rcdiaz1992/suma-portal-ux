@@ -1,0 +1,8 @@
+{
+  "/b-sso": {
+    "target": "https://suma-dev.aduana.gob.bo",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info"
+  }
+}

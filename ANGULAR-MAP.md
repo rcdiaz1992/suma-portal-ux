@@ -1,6 +1,8 @@
 # De la maqueta HTML → Angular (`sen-ng-demo` / `@aduana/an-core`)
 
-Stack objetivo del monorepo: **Angular 16** + **an-core** + menú vía `MenuService.downloadMenu`.
+**Alcance unificado (SSO + OCE + shell):** ver [`docs/PORTAL-UNIFICADO.md`](docs/PORTAL-UNIFICADO.md) y la regla Cursor `.cursor/rules/portal-unificado.mdc`.
+
+Stack objetivo del monorepo: **Angular 16** + **an-core** + menú vía `MenuService.downloadMenu` (fuente real: API SSO; mock local mientras tanto).
 
 ## Shell del portal (equivalente a `portal.html`)
 
@@ -52,7 +54,9 @@ La maqueta `proposal/index.html` define la IA de información; el estilo se port
 
 ## Próximo paso de implementación
 
-1. Generar app con `@aduana/cli` o clonar `sen-ng-demo` como `suma-portal-shell`.  
-2. Copiar tokens de `proposal/assets/css/portal.css` a `styles.scss` / overrides.  
-3. Implementar `PortalHomeComponent` y cablear `MenuService`.  
-4. Mantener Keycloak para login (la maqueta `login.html` es solo referencia visual).
+1. ✅ App Angular en la raíz de este repo (clon de `sen-ng-demo`).
+2. ✅ Login `/login` con slice **Externo / Interno** + enlace MFA `/login/no-habituales`.
+3. Copiar tokens de `proposal/assets/css/portal.css` a `styles.scss` / overrides.
+4. Implementar shell `an-app` + `PortalHomeComponent` y cablear `MenuService`.
+5. Auth híbrido (ver `docs/AUTH-HIBRIDO.md`): **Keycloak** (como SIAN/SIGRAT) **+** seguir generando el **token SUMA** de `b-sso` para lo que aún depende de él.
+6. Conectar `SsoAuthService` / puente post-Keycloak a `autenticar-captcha/portal` o endpoint de canje (`useMockAuth: false`).

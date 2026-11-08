@@ -1,0 +1,112 @@
+image: registry.aduana.gob.bo/node-compiler:1.0
+
+stages:
+  - dependencies
+  - testing
+  - desarrollo
+  - calidad
+  - preproduccion
+  - produccion
+
+Install:
+  stage: dependencies
+  script:
+    - npm install --force
+  artifacts:
+    expire_in: 2hr
+  only:
+    - master
+
+Sonarqube:
+  stage: testing
+  needs: [Install]
+  image:
+    name: registry.aduana.gob.bo/sonar-scanner:1.0
+    entrypoint: [""]
+  variables:
+    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"
+    GIT_DEPTH: "0"
+  script:
+    - sonar-scanner
+      -D"sonar.projectKey=${CI_PROJECT_NAME}"
+      -D"sonar.projectName=${CI_PROJECT_NAME}"
+      -D"sonar.projectVersion=${CI_COMMIT_SHORT_SHA}"
+      -D"sonar.qualitygate.wait=true"
+      -Dsonar.host.url=http://sonarqube.aduana.gob.bo/
+      -Dsonar.token=sqa_3fd77646a9525fa81cb579516dd79e76540967a5
+      -D"sonar.sources=src/"
+      -D"sonar.language=ts"
+  only:
+    - master
+
+Unitarios:
+  stage: testing
+  needs: [Sonarqube]
+  script:
+    - echo "aquí se corren los test unitarios"
+  only:
+    - master
+
+Build-Image:
+  stage: desarrollo
+  image:
+    name: registry.aduana.gob.bo/kaniko:1.0
+    entrypoint: [""]
+  script:
+    - mkdir -p /kaniko/.docker
+    - |-
+      KANIKOCFG="{\"auths\":{\"registry.aduana.gob.bo\":{\"auth\":\"YWRtaW46QWR1YW5hMjAyMw==\"}}}"
+      KANIKOCFG="${KANIKOCFG} }"
+      echo "${KANIKOCFG}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context . --dockerfile ./Dockerfile --insecure --skip-tls-verify --destination registry.aduana.gob.bo/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
+  only:
+    - desa
+
+Deploy-desa:
+  variables:
+    IMAGE_TAG: registry.aduana.gob.bo/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
+    PROJECT_NAME: $CI_PROJECT_NAME
+    AMBIENTE: desa
+  stage: desarrollo
+  needs: [Build-Image]
+  trigger:
+    project: despliegue/conf-frontend
+    branch: $AMBIENTE
+  only:
+    - desa
+
+Deploy-cali:
+  variables:
+    IMAGE_TAG: registry.aduana.gob.bo/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
+    PROJECT_NAME: $CI_PROJECT_NAME
+    AMBIENTE: cali
+  stage: calidad
+  trigger:
+    project: despliegue/conf-frontend
+    branch: $AMBIENTE
+  only:
+    - cali
+
+Deploy-Pre:
+  variables:
+    IMAGE_TAG: registry.aduana.gob.bo/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
+    PROJECT_NAME: $CI_PROJECT_NAME
+    AMBIENTE: pre
+  stage: preproduccion
+  trigger:
+    project: despliegue/conf-frontend
+    branch: $AMBIENTE
+  only:
+    - pre
+
+Deploy-Prod:
+  variables:
+    IMAGE_TAG: registry.aduana.gob.bo/$CI_PROJECT_NAME:$CI_COMMIT_SHORT_SHA
+    PROJECT_NAME: $CI_PROJECT_NAME
+    AMBIENTE: prod
+  stage: produccion
+  trigger:
+    project: despliegue/conf-frontend
+    branch: $AMBIENTE
+  only:
+    - prod

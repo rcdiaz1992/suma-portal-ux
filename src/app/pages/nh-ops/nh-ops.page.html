@@ -1,0 +1,158 @@
+<div class="nh-page">
+  <header class="shell-top">
+    <div class="top-left">
+      <div>
+        <div class="crumb">SUMA · No habituales · Operaciones</div>
+        <strong class="top-perfil">Perfil: operaciones simplificadas</strong>
+      </div>
+    </div>
+    <div class="top-right">
+      <button type="button" class="btn-soft" (click)="back()">← Hub</button>
+      <button type="button" class="btn-soft" (click)="logout()">Salir</button>
+    </div>
+  </header>
+
+  <main class="nh-main">
+    <div class="nh-tabs" role="tablist">
+      <button
+        type="button"
+        class="nh-tab"
+        [class.is-active]="tab === 'import'"
+        (click)="setTab('import')"
+      >
+        IMPORTACIÓN
+      </button>
+      <button
+        type="button"
+        class="nh-tab"
+        [class.is-active]="tab === 'export'"
+        (click)="setTab('export')"
+      >
+        EXPORTACIÓN
+      </button>
+    </div>
+
+    <div *ngIf="tab === 'import'">
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">1</span>
+          <div>
+            <h2>Importadores No Habituales</h2>
+            <h3>Declaración de Mercancías de Importación Simplificada (DIMS)</h3>
+          </div>
+        </header>
+        <p class="nh-desc">
+          Despachos de importación a consumo de menor cuantía (valor menor a USD 2.000)
+          y equipajes acompañados/no acompañados menores a USD 2.000.
+        </p>
+        <form class="nh-form" (submit)="$event.preventDefault()">
+          <label>Tipo documento
+            <select><option>— Seleccione —</option><option>CI</option><option>NIT</option><option>Pasaporte</option></select>
+          </label>
+          <label>Documento de Identificación
+            <input type="text" placeholder="Documento" />
+          </label>
+          <label>Tipo de Aduana de Despacho
+            <select><option>— Seleccione —</option><option>Frontera</option><option>Interior</option><option>Aeropuerto</option></select>
+          </label>
+          <label>Aduana de Despacho
+            <select><option>— Seleccione —</option><option>La Paz</option><option>Santa Cruz</option><option>Cochabamba</option></select>
+          </label>
+          <div class="nh-actions">
+            <button type="button" class="btn btn-solid" (click)="go('DIMS importación')">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">2</span>
+          <div>
+            <h2>Empresas de transporte extranjeras con permiso ocasional</h2>
+            <h3>Manifiestos de carga y documentos de embarque</h3>
+          </div>
+        </header>
+        <p class="nh-desc">
+          Registro de documentos de embarque o manifiestos para empresas con permiso ocasional.
+        </p>
+        <form class="nh-form" (submit)="$event.preventDefault()">
+          <label>Documento de Identificación
+            <input type="text" placeholder="Ej.: 90000XXXXX" />
+          </label>
+          <label>Tipo Documento
+            <select><option>— Seleccione —</option><option>NIT</option><option>Otro</option></select>
+          </label>
+          <div class="nh-actions">
+            <button type="button" class="btn btn-solid" (click)="go('Manifiesto ocasional')">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">3</span>
+          <div><h2>Imprimir documento</h2></div>
+        </header>
+        <form class="nh-form" (submit)="$event.preventDefault()">
+          <label>Tipo de documento
+            <select><option>— Seleccione —</option><option>DEX</option><option>CRT</option><option>MIC</option></select>
+          </label>
+          <label>Número de documento
+            <input type="text" placeholder="Numero DEX, CRT, MIC" />
+          </label>
+          <label>Número de identificación
+            <input type="text" placeholder="Número identificación" />
+          </label>
+          <div class="nh-actions">
+            <button type="button" class="btn btn-solid" (click)="go('Imprimir documento')">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">4</span>
+          <div>
+            <h2>Registro de Personas Naturales para Notificación Electrónica</h2>
+          </div>
+        </header>
+        <p class="nh-desc">Registre una persona natural para recibir notificaciones electrónicas.</p>
+        <div class="nh-actions">
+          <button type="button" class="btn btn-solid" (click)="go('Notificación electrónica')">Ingresar</button>
+        </div>
+      </section>
+    </div>
+
+    <div *ngIf="tab === 'export'">
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">1</span>
+          <div>
+            <h2>Exportadores No Habituales</h2>
+            <h3>Declaración de Mercancías de Exportación Simplificada</h3>
+          </div>
+        </header>
+        <p class="nh-desc">
+          Exportación de menor cuantía (FOB ≤ USD 1.000), menaje, vehículos sin fines comerciales
+          y equipaje de viajeros (alineado a profile SSO).
+        </p>
+        <form class="nh-form" (submit)="$event.preventDefault()">
+          <label>Tipo documento
+            <select><option>— Seleccione —</option><option>CI</option><option>NIT</option></select>
+          </label>
+          <label>Documento de Identificación
+            <input type="text" placeholder="Documento" />
+          </label>
+          <label>Aduana de salida
+            <select><option>— Seleccione —</option><option>La Paz</option><option>Santa Cruz</option></select>
+          </label>
+          <div class="nh-actions">
+            <button type="button" class="btn btn-solid" (click)="go('Exportación simplificada')">Ingresar</button>
+          </div>
+        </form>
+      </section>
+    </div>
+
+    <p class="section-note" *ngIf="toast" role="status">{{ toast }}</p>
+  </main>
+</div>

@@ -1,0 +1,71 @@
+<section class="auth-card">
+  <nav class="flow flow--dark" aria-label="Paso actual">
+    <span class="flow-step is-done"><span class="n">1</span> Acceso</span>
+    <span class="flow-sep" aria-hidden="true"></span>
+    <span class="flow-step is-current"><span class="n">2</span> Credenciales</span>
+    <span class="flow-sep" aria-hidden="true"></span>
+    <span class="flow-step"><span class="n">3</span> Destino</span>
+  </nav>
+
+  <div class="kc-head">
+    <span class="kc-logo" aria-hidden="true">KC</span>
+    <div>
+      <h2>Iniciar sesión</h2>
+      <p class="sub">Portal SUMA · un solo acceso</p>
+    </div>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="on">
+    <div class="field">
+      <label for="user">Usuario</label>
+      <input
+        id="user"
+        formControlName="nombreUsuario"
+        autocomplete="username"
+        placeholder="Usuario"
+      />
+    </div>
+
+    <div class="field">
+      <label for="pass">Contraseña</label>
+      <input
+        id="pass"
+        formControlName="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="••••••••"
+      />
+    </div>
+
+    <div class="field" *ngIf="!useMock">
+      <label for="captcha">Código de verificación</label>
+      <div class="captcha-row">
+        <img class="captcha-box" [src]="captchaSrc" alt="Captcha" width="140" height="48" />
+        <button type="button" class="captcha-refresh" (click)="refreshCaptcha()" title="Otro captcha" aria-label="Generar otro captcha">↻</button>
+        <input id="captcha" formControlName="captcha" autocomplete="off" placeholder="Código" />
+      </div>
+    </div>
+
+    <p class="otp-error" *ngIf="error" role="alert">{{ error }}</p>
+
+    <div class="auth-meta">
+      <label><input type="checkbox" formControlName="remember" /> Recordar usuario</label>
+      <a href="#">¿Olvidaste tu clave?</a>
+    </div>
+
+    <div class="demo-hint" *ngIf="useMock">
+      Demo: <code>Tecnopor</code> o <code>jyampassi</code> / <code>password</code>
+    </div>
+
+    <button class="btn btn-solid" type="submit" [disabled]="loading">
+      {{ loading ? 'Ingresando…' : 'Continuar' }}
+    </button>
+  </form>
+
+  <p class="auth-alt">
+    <a routerLink="/login/no-habituales">Operadores no habituales (doble factor) →</a>
+  </p>
+  <p class="auth-alt">
+    <a routerLink="/login">← Volver</a>
+  </p>
+</section>

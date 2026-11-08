@@ -1,0 +1,19 @@
+<an-page>
+    <an-page-header title="Demo Formularios"></an-page-header>
+
+    <an-page-content title="Formulario Reactivos Basicos">
+        <an-input-text [formGroup]="formGroupObj" error="Este dato es requerido" label="Nombre" #nombre [(model)]="basicPerson.nombres" [required]="true"></an-input-text>
+        <an-input-number [formGroup]="formGroupObj" error="Este dato es requerido" label="Telefono" #phone [(model)]="basicPerson.telefono" [required]="true"></an-input-number>
+        <an-input-date [disabled]="true" [formGroup]="formGroupObj" error="Este dato es requerido" label="Nacimiento" #fecha [(model)]="basicPerson.fechaNacimiento" [required]="true"></an-input-date> 
+        <an-input-text-area [formGroup]="formGroupObj" error="Este dato es requerido" label="Test Area" #descrption [(model)]="basicPerson.descripcion" ></an-input-text-area>
+
+        {{ basicPerson | json}}
+
+        <an-button (onClick)="clickForm ($event)"></an-button>
+    </an-page-content>
+    
+
+    <an-page-content title="Registro de usuario">
+    </an-page-content>
+    <br>
+</an-page>

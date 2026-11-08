@@ -1,0 +1,74 @@
+<div class="nh-page">
+  <header class="shell-top">
+    <div class="top-left">
+      <div>
+        <div class="crumb">SUMA · No habituales · Registro</div>
+        <strong class="top-perfil">Registrar nuevo importador no habitual</strong>
+      </div>
+    </div>
+    <div class="top-right">
+      <button type="button" class="btn-soft" (click)="back()">← Hub</button>
+      <button type="button" class="btn-soft" (click)="logout()">Salir</button>
+    </div>
+  </header>
+
+  <main class="nh-main">
+    <section class="nh-block" *ngIf="!sent">
+      <header class="nh-block-head">
+        <span class="nh-n">1</span>
+        <div>
+          <h2>Alta de importador no habitual</h2>
+          <h3>Persona natural / NIT régimen simplificado</h3>
+        </div>
+      </header>
+      <p class="nh-desc">
+        Prototipo del flujo «Registro Nuevos Operadores» para el perfil no habitual
+        (referencia: portal SSO profile).
+      </p>
+      <form class="nh-form" [formGroup]="form" (ngSubmit)="submit()">
+        <label>Tipo documento
+          <select formControlName="tipoDoc">
+            <option value="CI">CI</option>
+            <option value="NIT">NIT</option>
+            <option value="PAS">Pasaporte</option>
+          </select>
+        </label>
+        <label>Documento
+          <input type="text" formControlName="documento" placeholder="Número de documento" />
+        </label>
+        <label>Nombres
+          <input type="text" formControlName="nombres" />
+        </label>
+        <label>Apellidos
+          <input type="text" formControlName="apellidos" />
+        </label>
+        <label>Correo
+          <input type="email" formControlName="email" />
+        </label>
+        <label>Celular
+          <input type="tel" formControlName="celular" />
+        </label>
+        <div class="nh-actions">
+          <button class="btn btn-solid" type="submit">Enviar registro</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="nh-block" *ngIf="sent">
+      <header class="nh-block-head">
+        <span class="nh-n">✓</span>
+        <div>
+          <h2>Solicitud registrada (prototipo)</h2>
+          <h3>En producción iniciaría el trámite SUMA correspondiente</h3>
+        </div>
+      </header>
+      <p class="nh-desc">
+        Documento {{ form.value.tipoDoc }} {{ form.value.documento }} —
+        {{ form.value.nombres }} {{ form.value.apellidos }}.
+      </p>
+      <div class="nh-actions">
+        <button type="button" class="btn btn-solid" (click)="back()">Volver al hub</button>
+      </div>
+    </section>
+  </main>
+</div>

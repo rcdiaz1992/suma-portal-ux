@@ -1,0 +1,22 @@
+<an-page>
+    <an-content-loader></an-content-loader>
+
+    <an-page-header title="Ejemplo de tabla"></an-page-header>
+    <an-page-content title="Tabla simple">
+        <an-tabla [headers]="headers" [items]="paginatedList" [options]="true" [actionsTemplate]="actionTmpl">
+
+        </an-tabla>
+        <ng-template #actionTmpl let-record="item">
+            <button>asdas</button>
+            <button>hola</button>
+        </ng-template>
+        <an-paginador (updatePage)="setPaginator($event)" [total]="list.length"></an-paginador>
+    </an-page-content>
+
+    <an-page-content title="Tabla paginada de WebService">
+      <an-tabla [headers]="headersWS" [items]="listPage" [options]="true"></an-tabla>
+      <an-paginador (updatePage)="setPageWS($event)" [total]="totalWS" itemsPerPage></an-paginador>
+    </an-page-content>
+    {{totalWS}}
+
+</an-page>

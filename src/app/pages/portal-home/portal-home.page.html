@@ -1,0 +1,196 @@
+<div class="shell" [class.nav-open]="navOpen">
+  <div
+    class="suma-banner-slot"
+    data-particles
+    data-density="1.05"
+    data-speed="1"
+    data-color="#c9a227"
+    data-link="#d4af37"
+  >
+    <div data-suma-banner="compact"></div>
+  </div>
+
+  <aside
+    class="shell-side"
+    data-side-panel
+    data-particles
+    data-density="0.95"
+    data-speed="0.9"
+    data-color="#c9a227"
+    data-link="#d4af37"
+  >
+    <div class="side-brand">
+      <div class="brand-mark" aria-hidden="true">AN</div>
+      <div class="side-brand-text">
+        <strong>SUMA</strong>
+        <small>Menú de la sesión</small>
+      </div>
+    </div>
+
+    <label class="nav-search">
+      <input type="search" placeholder="Buscar en el menú…" [(ngModel)]="menuFilter" />
+    </label>
+
+    <nav class="side-nav" aria-label="Menú SUMA">
+      <p class="section-note" *ngIf="loading">Cargando menú del SSO…</p>
+      <p class="section-note" *ngIf="error" role="alert">{{ error }}</p>
+      <ng-container *ngFor="let item of filteredMenu()">
+        <ng-container *ngTemplateOutlet="menuNode; context: { $implicit: item }"></ng-container>
+      </ng-container>
+    </nav>
+
+    <ng-template #menuNode let-item>
+      <details *ngIf="item.opciones.length" class="nav-group" open>
+        <summary>
+          <span class="icon-dot">{{ initialsOf(item.titulo) }}</span>
+          <span class="nav-label">{{ item.titulo }}</span>
+        </summary>
+        <div class="nav-children">
+          <ng-container *ngFor="let child of item.opciones">
+            <ng-container *ngTemplateOutlet="menuNode; context: { $implicit: child }"></ng-container>
+          </ng-container>
+        </div>
+      </details>
+      <button
+        *ngIf="!item.opciones.length"
+        type="button"
+        class="nav-link"
+        [class.active]="isActive(item)"
+        (click)="openNode(item)"
+      >
+        <span class="icon-dot">{{ initialsOf(item.titulo) }}</span>
+        <span class="nav-label">{{ item.titulo }}</span>
+      </button>
+    </ng-template>
+
+    <div class="side-foot">
+      <small>Línea 800-10-5001</small>
+      <small>Tel. (591) 2-2128008</small>
+      <small><a href="mailto:infocc@aduana.gob.bo">infocc@aduana.gob.bo</a></small>
+    </div>
+  </aside>
+
+  <header class="shell-top">
+    <div class="top-left">
+      <button class="menu-toggle" type="button" (click)="toggleNav()" aria-label="Abrir menú">☰</button>
+      <div>
+        <div class="crumb">
+          <button type="button" class="crumb-link" (click)="goHome()">Portal SUMA</button>
+          <span *ngIf="activeTitle"> · {{ activeTitle }}</span>
+          <span *ngIf="!activeTitle"> · Inicio</span>
+        </div>
+        <strong class="top-perfil">{{ perfil }}</strong>
+      </div>
+    </div>
+
+    <div class="top-config" aria-label="Configuración">
+      <div class="cfg-seg" role="group" aria-label="Tipo de menú">
+        <button
+          type="button"
+          class="cfg-btn"
+          [class.is-active]="menuMode === 'side'"
+          (click)="setMenuMode('side')"
+        >
+          Lateral
+        </button>
+        <button
+          type="button"
+          class="cfg-btn"
+          [class.is-active]="menuMode === 'launcher'"
+          (click)="setMenuMode('launcher')"
+        >
+          Lanzador
+        </button>
+      </div>
+    </div>
+
+    <div class="top-right">
+      <span class="chip">{{ tipo }}</span>
+      <div class="user-pill">
+        <span class="avatar">{{ initials }}</span>
+        <span>{{ nombre || usuario }}</span>
+      </div>
+      <button type="button" class="btn-soft" (click)="logout()">Salir</button>
+    </div>
+  </header>
+
+  <main class="shell-main" [class.shell-main--module]="!!moduleUrl">
+    <ng-container *ngIf="!moduleUrl">
+      <div class="page-head" data-side-home>
+        <div>
+          <h1>Inicio</h1>
+          <p>Menú armado por el SSO según los roles de esta sesión.</p>
+        </div>
+      </div>
+
+      <section class="side-welcome" data-side-home aria-label="Bienvenida">
+        <div class="side-welcome-card">
+          <h2>Menú de la sesión</h2>
+          <p>
+            Las opciones salen de <strong>credentialPortal</strong>, igual que en el portal SUMA.
+            Cada clic abre el módulo aquí, con el menú y el banner.
+            Cambie a <strong>Lanzador</strong> para verlas en cubos.
+          </p>
+        </div>
+      </section>
+
+      <div class="page-head" data-launcher-home>
+        <div>
+          <h1>Inicio operativo</h1>
+          <p>Las mismas opciones del menú SSO, en cubos.</p>
+        </div>
+        <label class="search search--portal">
+          <span aria-hidden="true">⌕</span>
+          <input type="search" placeholder="Buscar módulo…" [(ngModel)]="moduleFilter" />
+        </label>
+      </div>
+
+      <div class="filters-bar" data-launcher-home role="toolbar" aria-label="Filtrar">
+        <span class="filter-count">{{ launcherMenus().length }} grupos</span>
+      </div>
+
+      <div data-launcher-home>
+        <p class="section-note" *ngIf="loading">Cargando menú del SSO…</p>
+        <p class="section-note" *ngIf="error" role="alert">{{ error }}</p>
+        <section class="module-section" *ngFor="let item of launcherMenus()">
+          <div class="module-section-head">
+            <h2>{{ item.titulo }}</h2>
+            <span>{{ item.descripcion }}</span>
+          </div>
+          <div class="module-grid">
+            <button
+              type="button"
+              class="module"
+              *ngFor="let m of leaves(item)"
+              (click)="openNode(m)"
+            >
+              <span class="module-icon">{{ initialsOf(m.titulo) }}</span>
+              <h3>{{ m.titulo }}</h3>
+              <p>{{ m.descripcion }}</p>
+            </button>
+          </div>
+        </section>
+      </div>
+    </ng-container>
+
+    <div class="module-frame-wrap" *ngIf="moduleUrl">
+      <div class="module-frame-bar">
+        <strong>{{ activeTitle }}</strong>
+        <span class="module-frame-url" [title]="moduleHref">{{ moduleHref }}</span>
+        <button type="button" class="btn-soft" (click)="openExternal()">Abrir aparte</button>
+        <button type="button" class="btn-soft" (click)="goHome()">Cerrar</button>
+      </div>
+      <p class="section-note" *ngIf="moduleWarning" role="status">{{ moduleWarning }}</p>
+      <!-- Sin allow-top-navigation: bloquea window.top → suma-dev/indexOce.
+           allow-top-navigation-by-user-activation: solo si el usuario hace clic. -->
+      <iframe
+        class="module-frame"
+        [src]="moduleUrl"
+        [title]="activeTitle"
+        referrerpolicy="no-referrer-when-downgrade"
+        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-top-navigation-by-user-activation"
+        (load)="onModuleFrameLoad($event)"
+      ></iframe>
+    </div>
+  </main>
+</div>

@@ -1,0 +1,48 @@
+---
+description: Alcance del portal SUMA unificado en Angular (SSO + OCE + shell)
+alwaysApply: true
+---
+
+# Portal SUMA unificado (Angular)
+
+Este repo (`suma-portal-ux`) es el front Angular. Trabajar aquí, en la raíz del workspace.
+
+## Alcance a unificar
+
+1. **Login** usuarios **INTERNO** y **EXTERNO** (slice en un solo login; captcha interno).
+2. **Registro** de nuevos operadores **habituales** y **no habituales** (hub MFA + cubos).
+3. **Barra / árbol de menú** SUMA post-login (lateral + lanzador; distinto por perfil).
+
+## Repos fuente (obligatorios)
+
+| Path | Rol |
+|---|---|
+| `/home/roberto/git/suma_gitnuevo/sso/` | Auth, `typeUser`, landing `indexOce`, API de **menú**, token SUMA (`b-sso`) |
+| `/home/roberto/git/suma_gitnuevo/oce/` | Registro / gestión de operadores OCE (listener + token) |
+| Este repo (`suma-portal-ux`) | Shell Angular nuevo (UX + rutas) |
+
+Opcional: `regpad/` si el padrón/registro “duro” no está solo en OCE. Keycloak/`an-core` cuando el login sea híbrido.
+
+## Qué NO es cada cosa
+
+- **OCE** ≠ portal completo: es el módulo de operadores.
+- **SSO** ≠ portal operativo: es la puerta (login + menú + token).
+- El menú global **no vive en OCE**; sale del **SSO / servicio de menú** por rol.
+- Módulos `ingreso`, `salida`, `aforo`, etc. se abren **después** vía menú/listener; no hace falta reescribirlos para el shell.
+
+## Estrategia Angular
+
+1. Shell + login en este repo (ya iniciado) → cablear backend **SSO**.
+2. Menú real desde API SSO (dejar mock de `portal-menu.ts` cuando haya endpoint).
+3. Registro habitual / no habitual → pantallas del shell que llamen a **OCE** (y regpad si aplica).
+4. Clics del menú → módulos legacy por URL/listener/token SUMA.
+5. Auth híbrido: Keycloak (identidad) **+** token SUMA (`b-sso`) para legacy — ver `docs/AUTH-HIBRIDO.md`.
+
+## Rutas de referencia en este repo
+
+- `/login` — Externo / Interno
+- `/login/no-habituales` — MFA
+- `/hub/no-habituales` — 2 cubos (registro + operaciones)
+- `/portal` — shell post-login + menú por `suma.tipoUser`
+
+Docs: `docs/PORTAL-UNIFICADO.md`, `ANGULAR-MAP.md`, `docs/AUTH-HIBRIDO.md`.

@@ -1,0 +1,30 @@
+<an-page>
+    <an-page-header title="Demo Listas" ></an-page-header>
+    <an-page-content title="Selector simple"> 
+        <an-selector [opciones]="lista" [(seleccionado)]="seleccionado" mensaje="Seleccione una opción"></an-selector>
+        <div class="row p-3">
+                Valor seleccionado: {{seleccionado}}
+        </div>
+    </an-page-content>
+
+    <an-page-content title="Selector de objeto (key, value)">
+        <an-selector-objeto [opciones]="listaObj" [(seleccionado)]="objSelected" ></an-selector-objeto>
+        <div class="row p-3">
+          Valor seleccionado: {{objSelected | json}}
+        </div>
+    </an-page-content>
+
+    <an-page-content title="Con buscador">
+        <an-selector-buscador label="Title" [opciones]="listaObj" [(seleccionado)]="keyValueSelected" [esValido]="false" error="se requiere este campo"></an-selector-buscador>
+        <div class="row p-3">
+          Valor seleccionado: {{keyValueSelected | json}}
+        </div>
+    </an-page-content>
+    
+    <an-page-content title="Multiple">
+      <an-selector-multiple label="Mi Nombre" [opciones]="listaObj" [(seleccionado)]="multipleSelected" [esValido]="false" error="se requiere este campo"></an-selector-multiple>
+      <div class="row p-3">
+        Valor seleccionado: {{multipleSelected | json}}
+      </div>
+    </an-page-content>
+</an-page>

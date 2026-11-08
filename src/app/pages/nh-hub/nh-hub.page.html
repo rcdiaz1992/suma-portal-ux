@@ -1,0 +1,60 @@
+<div class="hub-page">
+  <div
+    class="suma-banner-slot"
+    data-particles
+    data-density="1.05"
+    data-speed="1"
+    data-color="#c9a227"
+    data-link="#d4af37"
+  >
+    <div data-suma-banner="compact"></div>
+  </div>
+
+  <header class="shell-top">
+    <div class="top-left">
+      <div>
+        <div class="crumb">SUMA · No habituales</div>
+        <strong class="top-perfil">Elija una opción para continuar</strong>
+      </div>
+    </div>
+    <div class="top-right">
+      <span class="chip">MFA · verificado</span>
+      <button type="button" class="btn-soft" (click)="logout()">Salir</button>
+    </div>
+  </header>
+
+  <main class="hub-main">
+    <div class="page-head">
+      <div>
+        <h1>Operadores no habituales</h1>
+        <p>
+          Dos cubos alineados al portal SSO
+          (<code>indexOce.html#/profile</code>): registro de nuevo importador y
+          operaciones habilitadas.
+        </p>
+      </div>
+    </div>
+
+    <div class="hub-grid">
+      <a class="hub-card" routerLink="/hub/no-habituales/registro">
+        <span class="tag"><span class="ord">1</span> Registro</span>
+        <h2>Registrar nuevo importador no habitual</h2>
+        <p>
+          Alta de persona natural / NIT bajo régimen simplificado para operaciones
+          de menor cuantía (equivalente a Registro Nuevos Operadores · no habitual).
+        </p>
+        <span class="go">Ir al registro →</span>
+      </a>
+
+      <a class="hub-card" routerLink="/hub/no-habituales/ops">
+        <span class="tag"><span class="ord">2</span> Operaciones</span>
+        <h2>Operaciones No Habituales</h2>
+        <p>
+          Opciones del perfil SSO: DIMS, manifiestos con permiso ocasional, impresión
+          de documentos, exportación simplificada y demás trámites habilitados.
+        </p>
+        <span class="go">Ver opciones →</span>
+      </a>
+    </div>
+  </main>
+</div>

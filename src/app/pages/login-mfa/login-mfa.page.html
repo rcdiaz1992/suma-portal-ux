@@ -1,0 +1,60 @@
+<section class="auth-card">
+  <nav class="flow flow--dark" aria-label="Paso actual">
+    <span class="flow-step is-done"><span class="n">1</span> Acceso</span>
+    <span class="flow-sep" aria-hidden="true"></span>
+    <span class="flow-step is-current"><span class="n">2</span> Código</span>
+    <span class="flow-sep" aria-hidden="true"></span>
+    <span class="flow-step"><span class="n">3</span> Opciones</span>
+  </nav>
+
+  <div class="kc-head">
+    <span class="kc-logo mfa-ico-ga" aria-hidden="true">GA</span>
+    <div>
+      <h2>No habituales · código</h2>
+      <p class="sub">Ingrese el código de verificación para abrir importación / exportación.</p>
+    </div>
+  </div>
+
+  <div class="mfa-banner">
+    <strong>Sin usuario ni contraseña</strong>
+    <span>Use el código de <strong>Google Authenticator</strong>, correo o WhatsApp (OTP demo <strong>123456</strong>).</span>
+  </div>
+
+  <div class="mfa-methods" role="list">
+    <button type="button" class="mfa-method" [class.is-picked]="method === 'qr'" (click)="pick('qr')" role="listitem">
+      <strong>Google Authenticator</strong>
+      <small>Código TOTP de 6 dígitos en la app</small>
+    </button>
+    <button type="button" class="mfa-method" [class.is-picked]="method === 'email'" (click)="pick('email')" role="listitem">
+      <strong>Correo electrónico</strong>
+      <small>Código enviado al correo registrado</small>
+    </button>
+    <button type="button" class="mfa-method" [class.is-picked]="method === 'whatsapp'" (click)="pick('whatsapp')" role="listitem">
+      <strong>WhatsApp</strong>
+      <small>Código de 6 dígitos al celular</small>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()">
+    <div class="field">
+      <label for="access-code">Código de verificación</label>
+      <input
+        id="access-code"
+        formControlName="code"
+        inputmode="numeric"
+        maxlength="6"
+        placeholder="000000"
+        autocomplete="one-time-code"
+      />
+    </div>
+    <p class="otp-error" *ngIf="error" role="alert">{{ error }}</p>
+    <div class="demo-hint">Demo: cualquier canal · código <code>123456</code></div>
+    <button class="btn btn-solid" type="submit" [disabled]="loading">
+      {{ loading ? 'Validando…' : 'Ingresar a opciones' }}
+    </button>
+  </form>
+
+  <p class="auth-alt">
+    <a routerLink="/login">← Volver al login portal</a>
+  </p>
+</section>

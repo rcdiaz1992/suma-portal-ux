@@ -1,0 +1,12 @@
+<an-page>
+    <an-page-header title="Demo Notificaciones" ></an-page-header>
+    <an-page-content title="Notificaciones">
+        <div acciones><an-icon-button icono="ti ti-category" (btnClick)="accion()"></an-icon-button></div>
+     
+        <an-button icono="ti ti-send fs-4 me-2" texto="success" tipo="success" (onClick)="showAlertSuccess()"></an-button>
+        <an-button icono="ti ti-send fs-4 me-2" texto="info" tipo="info" (onClick)="showAlertInfo()"></an-button>
+        <an-button icono="ti ti-send fs-4 me-2" texto="warning" tipo="warning" (onClick)="showAlertWarning()"></an-button>
+        <an-button icono="ti ti-send fs-4 me-2" texto="danger" tipo="danger" (onClick)="showAlertError()"></an-button>
+
+    </an-page-content>
+</an-page>

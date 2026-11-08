@@ -1,0 +1,193 @@
+/* Efectos banner / partículas (portados de proposal/portal.css) */
+:root {
+  --font-display: "Space Grotesk", "DM Sans", sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.tsparticles-bg {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 0 !important;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.tsparticles-bg canvas {
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.suma-banner-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  max-width: min(100%, 52rem);
+}
+
+.suma-banner-eyebrow {
+  display: block;
+  font-size: clamp(0.72rem, 1.35vw, 0.9rem);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0;
+  animation: rise 0.45s var(--ease) both;
+}
+
+.suma-banner-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(3.4rem, 9.5vw, 5.6rem);
+  line-height: 0.9;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #fff8e0 0%, #f0c14b 42%, #c9a227 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.45));
+  animation: rise 0.5s var(--ease) 0.04s both;
+}
+
+.suma-hps--compact .suma-banner-title {
+  font-size: clamp(2.1rem, 5.5vw, 3rem);
+}
+
+.suma-banner-sub {
+  margin: 0.15rem 0 0;
+  max-width: 48ch;
+  font-size: clamp(0.78rem, 1.55vw, 1.05rem);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.95);
+  animation: rise 0.5s var(--ease) 0.08s both;
+}
+
+.suma-hps--compact .suma-banner-eyebrow {
+  font-size: clamp(0.65rem, 1.1vw, 0.78rem);
+}
+
+.suma-hps--compact .suma-banner-sub {
+  font-size: clamp(0.65rem, 1.2vw, 0.82rem);
+}
+
+.suma-hps {
+  width: 100%;
+  min-height: 320px;
+  overflow: hidden !important;
+  position: relative;
+  isolation: isolate;
+  /* Transparente: el navy + tsparticles viven en .suma-banner-slot */
+  background: transparent;
+}
+
+.suma-hps--compact {
+  min-height: 168px;
+  max-height: 200px;
+  height: 188px;
+}
+
+.suma-hps .suma-banner-inner {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  width: min(100%, 1120px);
+  margin: 0 auto;
+  padding: clamp(1.35rem, 3.5vw, 2.4rem) clamp(1.2rem, 4vw, 2rem);
+  box-sizing: border-box;
+}
+
+.suma-hps crazygl-hero[data-crazygl="particle-slider"] {
+  position: absolute !important;
+  inset: -12% -8% -16% -6%;
+  width: auto !important;
+  height: auto !important;
+  transform: scale(1.25);
+  transform-origin: 78% 50%;
+  background: transparent !important;
+  pointer-events: auto;
+  filter: saturate(1.15) brightness(1.02) contrast(1.04);
+}
+
+.suma-hps--compact crazygl-hero[data-crazygl="particle-slider"] {
+  inset: -14% -10% -18% -8%;
+  transform: scale(1.32);
+  transform-origin: 82% 45%;
+}
+
+.suma-hps crazygl-hero[data-crazygl="particle-slider"],
+.suma-hps crazygl-hero[data-crazygl="particle-slider"] canvas.cps-canvas {
+  background: transparent !important;
+}
+
+/* Slot opaco; hps/hero transparentes para que se vea tsparticles debajo del slider */
+.suma-banner-slot {
+  background-color: #0a2748;
+}
+
+.suma-banner-slot [data-suma-banner],
+.suma-hps {
+  background: transparent !important;
+  background-color: transparent !important;
+}
+
+.suma-hps cps-textblock,
+.suma-hps cps-nav,
+.suma-hps .cps-dots,
+.suma-hps .cps-nav {
+  display: none !important;
+}
+
+.suma-banner-slot {
+  position: relative;
+  overflow: hidden !important;
+  isolation: isolate;
+  max-height: 200px;
+  background:
+    radial-gradient(700px 280px at 20% 40%, rgba(201, 162, 39, 0.18), transparent 60%),
+    linear-gradient(115deg, #04101f 0%, #0a2748 48%, #0d3a5c 100%);
+}
+
+/* Contener el scale del particle slider dentro del banner */
+.suma-banner-slot [data-suma-banner],
+.suma-banner-slot .suma-hps {
+  overflow: hidden !important;
+  max-height: 200px;
+}
+
+.suma-banner-slot > .tsparticles-bg,
+.auth-aside > .tsparticles-bg,
+.auth-visual > .tsparticles-bg,
+.shell-side > .tsparticles-bg {
+  position: absolute !important;
+  inset: 0 !important;
+  opacity: 0.95;
+  z-index: 0 !important;
+  pointer-events: none;
+}
+
+.suma-banner-slot > *:not(.tsparticles-bg) {
+  position: relative;
+  z-index: 1;
+}

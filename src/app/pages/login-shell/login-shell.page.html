@@ -1,0 +1,57 @@
+<div class="auth-shell">
+  <div
+    class="suma-banner-slot"
+    data-particles
+    data-density="1.05"
+    data-speed="1"
+    data-color="#c9a227"
+    data-link="#d4af37"
+  >
+    <div data-suma-banner="compact"></div>
+  </div>
+
+  <aside
+    class="auth-visual"
+    data-particles
+    data-density="1.1"
+    data-speed="1.05"
+    data-color="#c9a227"
+    data-link="#d4af37"
+  >
+    <div>
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">AN</div>
+        <div class="brand-text">
+          <strong>SUMA</strong>
+          <span>SSO · login portal</span>
+        </div>
+      </div>
+
+      <nav class="flow flow--light" aria-label="Recorrido" style="margin-top: 1.25rem">
+        <a class="flow-step is-done" routerLink="/login"><span class="n">1</span> Acceso</a>
+        <span class="flow-sep" aria-hidden="true"></span>
+        <span class="flow-step is-current"><span class="n">2</span> Login</span>
+        <span class="flow-sep" aria-hidden="true"></span>
+        <a class="flow-step" routerLink="/portal"><span class="n">3</span> Portal</a>
+      </nav>
+
+      <h1>Ingreso SSO</h1>
+      <p>
+        Un solo acceso. El sistema distingue operador y servidor público.
+        No habituales van por doble factor.
+      </p>
+      <ol class="mfa-legend">
+        <li>Usuario y contraseña</li>
+        <li>Código de verificación</li>
+        <li>Entrar al portal</li>
+      </ol>
+    </div>
+    <p>
+      <span class="kc-pill">Keycloak + token SUMA</span>
+    </p>
+  </aside>
+
+  <main class="auth-panel">
+    <router-outlet></router-outlet>
+  </main>
+</div>

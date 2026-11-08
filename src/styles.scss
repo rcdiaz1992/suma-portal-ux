@@ -1,0 +1,27 @@
+/* Estilos globales del login SUMA (maqueta proposal) */
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap");
+@import "assets/css/banner-fx.css";
+@import "assets/css/login-auth.css";
+@import "assets/css/portal-shell.css";
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  min-height: 100%;
+  background: #f3f7fb;
+  color: #12233a;
+  font-family: "DM Sans", system-ui, sans-serif;
+}
+
+app-root {
+  display: block;
+  min-height: 100%;
+}
+
+/* Solo el login fija viewport; el portal hace scroll */
+app-login-shell {
+  display: block;
+  height: 100vh;
+  overflow: hidden;
+}

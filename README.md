@@ -1,61 +1,32 @@
-# SUMA Portal UX — propuesta
+# SUMA Portal UX (Angular)
 
-Prototipo visual del acceso y home del Portal SUMA (Aduana Nacional), alineado a la nueva arquitectura Angular (`@aduana/an-core`, menú parametrizado).
+App Angular 16 basada en `sen-ng-demo`. Alcance unificado: **login + registro + menú**  
+→ ver [`docs/PORTAL-UNIFICADO.md`](docs/PORTAL-UNIFICADO.md) (repos SSO + OCE).
 
-## Ver la maqueta
+## Flujo
 
-**GitHub Pages (público):** https://rcdiaz1992.github.io/suma-portal-ux/
+| Ruta | Descripción |
+|------|-------------|
+| `/login` | Slice **Externo / Interno** + usuario/clave (+ captcha interno) |
+| `/login/no-habituales` | Doble factor (código) para operadores no habituales |
+| `/hub/no-habituales` | 2 cubos: registro + operaciones |
+| `/portal` | Shell post-login + menú (mock por perfil; API SSO después) |
 
-Abrir en local:
+Lógica alineada al SSO actual (`indexLogin` / `indexOce` + `typeUser`):
+
+- **EXTERNO**: usuario OCE corto
+- **INTERNO**: usuario corto; backend resuelve `@aduana.gob.bo`
+- Enlace inferior → MFA no habituales → hub
+
+Auth mock en `SsoAuthService` (`environment.useMockAuth`). API real: `POST {ssoApi}/autenticar-captcha/portal`.
+
+## Arranque
 
 ```bash
-# desde esta carpeta
-xdg-open proposal/index.html
-# o servir estático
-npx --yes serve proposal -p 5173
+npm install
+npm start
 ```
 
-La copia publicada en Pages está en `docs/` (espejo de `proposal/`).
+Abre http://localhost:4200/login
 
-Páginas:
-
-| Archivo | Qué muestra |
-|---|---|
-| `proposal/index.html` | Landing / indexOce simplificado por perfil |
-| `proposal/login.html` | Login tipo Keycloak + MFA (correo / WhatsApp / QR) → portal |
-| `proposal/portal.html` | Shell: menú parametrizado + catálogo de módulos |
-
-### Login MFA (demo)
-
-1. Usuario + contraseña → Continuar  
-2. Elegir **Correo**, **WhatsApp** o **QR**  
-3. OTP demo: **`123456`** (o “Simular escaneo” en QR)
-
-### Efecto Digital Network (tsParticles)
-
-Usa [tsparticles](https://github.com/tsparticles/tsparticles) (bundle local en `assets/vendor/`).
-
-```html
-<script src="assets/vendor/tsparticles.bundle.min.js"></script>
-<script src="assets/js/particles-bg.js"></script>
-<div data-particles data-density="1.1" data-color="#c9a227"></div>
-```
-
-En Angular: `npm i tsparticles @tsparticles/angular` (o engine + slim).
-
-## Orden y fluidez
-
-- Recorrido fijo **1 Acceso → 2 Login → 3 Portal**.
-- **Estándar app shell:** lateral = menú parametrizado; home = búsqueda + favoritos + recientes + lanzador.
-- Ciclo operativo SUMA: **Operaciones → Padrón OCE → Pagos/servicios → Consultas**.
-- Datos en `proposal/assets/js/menu-data.js` (mock alineado a operación AN; sustituir por `MenuService` real).
-
-## Relación con Angular (esta carpeta `frontend/`)
-
-- Plantilla oficial: `../sen-ng-demo` (`<an-app>`, `MenuService.downloadMenu`).
-- El JSON de `proposal/assets/js/menu-data.js` imita `IFindMenuDto`.
-- Implementación sugerida: página `HomeModules` dentro de un shell SSO/portal que ya use `an-core`, sin reemplazar el menú lateral parametrizado.
-
-## Siguiente paso
-
-Scaffold Angular 16 (mismo stack que `sen-ng-demo`) con rutas `acceso`, `login`, `home` y consumo real del menú.
+Este directorio es el workspace Angular (`angular.json`). `ng serve` se corre aquí.
