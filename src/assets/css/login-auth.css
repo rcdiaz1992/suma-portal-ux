@@ -33,20 +33,82 @@ body {
   max-height: 100vh;
   display: grid !important;
   grid-template-columns: minmax(280px, 1.1fr) minmax(300px, 0.9fr);
-  grid-template-rows: auto minmax(0, 1fr);
-  grid-template-areas:
-    "banner banner"
-    "visual panel";
+  grid-template-rows: minmax(0, 1fr);
+  grid-template-areas: "visual panel";
   background: var(--an-surface) !important;
   color: var(--an-ink);
   overflow: hidden;
+  position: relative;
 }
 
-.auth-shell > .suma-banner-slot {
-  grid-area: banner;
-  max-height: 200px;
-  overflow: hidden !important;
-  z-index: 2;
+.theme-fab {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 20;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid rgba(19, 87, 166, 0.22);
+  background: #fff;
+  color: #1357a6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.15rem;
+  line-height: 1;
+  box-shadow: 0 8px 20px rgba(11, 39, 72, 0.14);
+}
+
+html[data-portal-theme="oscuro"] .theme-fab {
+  border-color: rgba(201, 162, 39, 0.35);
+  background: linear-gradient(165deg, #123a5c 0%, #0b2748 100%);
+  color: #d4af37;
+  box-shadow: 0 0 0 1px rgba(212, 175, 55, 0.25), 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+html[data-portal-theme="claro"] .auth-shell {
+  background: linear-gradient(180deg, #f5f9fc 0%, #eaf2f9 100%) !important;
+}
+
+html[data-portal-theme="claro"] .auth-panel {
+  background: linear-gradient(180deg, #f7fbfe 0%, #eef5fb 100%);
+}
+
+html[data-portal-theme="claro"] .auth-card {
+  background: #ffffff;
+  border: 1px solid rgba(19, 87, 166, 0.12);
+  box-shadow: 0 16px 36px rgba(11, 39, 72, 0.1);
+}
+
+html[data-portal-theme="oscuro"] .auth-panel {
+  background: linear-gradient(180deg, #0b2748 0%, #061526 100%);
+  color: #eef5ff;
+}
+
+html[data-portal-theme="oscuro"] .auth-card {
+  background: linear-gradient(165deg, #123a5c 0%, #0b2748 100%);
+  color: #eef5ff;
+  border: 1px solid rgba(201, 162, 39, 0.22);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+}
+
+html[data-portal-theme="oscuro"] .auth-card h2,
+html[data-portal-theme="oscuro"] .auth-card .sub,
+html[data-portal-theme="oscuro"] .auth-card label,
+html[data-portal-theme="oscuro"] .flow--dark {
+  color: #eef5ff;
+}
+
+html[data-portal-theme="oscuro"] .auth-card input {
+  background: rgba(6, 21, 38, 0.55);
+  border-color: rgba(201, 162, 39, 0.28);
+  color: #eef5ff;
+}
+
+html[data-portal-theme="oscuro"] .auth-card .sub {
+  opacity: 0.78;
 }
 
 .auth-shell > .auth-visual,
@@ -72,8 +134,38 @@ body {
   min-height: 0;
 }
 
+/* Capa galaxia cambiante: más grande y que desborde el panel */
+.auth-galaxy {
+  position: absolute;
+  inset: -18% -35% -22% -12%;
+  z-index: 0;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.auth-galaxy .suma-hps,
+.auth-galaxy .suma-hps--compact {
+  width: 100%;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+
+.auth-galaxy .suma-banner-inner {
+  display: none !important;
+}
+
+.auth-galaxy crazygl-hero[data-crazygl="particle-slider"] {
+  inset: -40% -30% -45% -20% !important;
+  transform: scale(2.15) !important;
+  transform-origin: 70% 45% !important;
+  filter: saturate(1.3) brightness(1.08) contrast(1.1);
+  opacity: 0.92;
+}
+
 .auth-visual > .tsparticles-bg {
-  opacity: 0.8;
+  opacity: 0.92;
 }
 
 .auth-visual::after {
@@ -99,49 +191,48 @@ body {
   }
 }
 
-.auth-visual > *:not(.tsparticles-bg) {
+.auth-visual > *:not(.tsparticles-bg):not(.auth-galaxy) {
   position: relative;
   z-index: 1;
 }
 
-.auth-visual .brand {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+.auth-visual > .auth-galaxy {
+  z-index: 0;
 }
 
-.auth-visual .brand-mark {
-  width: 42px;
-  height: 42px;
-  border-radius: 12px;
+/* Marca SUMA integrada al fondo en movimiento (no banner aparte) */
+.auth-brand {
   display: grid;
-  place-items: center;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(145deg, var(--an-sky), var(--an-teal));
+  gap: 0.35rem;
+  margin-bottom: 1.65rem;
+  max-width: 34rem;
 }
 
-.auth-visual .brand-text {
-  display: grid;
-  gap: 0.1rem;
+.auth-brand-eyebrow {
+  margin: 0 !important;
+  max-width: none !important;
+  color: rgba(255, 255, 255, 0.95) !important;
 }
 
-.auth-visual .brand-text strong {
+.auth-brand-title {
+  font-size: clamp(4rem, 8.5vw, 5.8rem) !important;
+  letter-spacing: 0.07em !important;
+}
+
+.auth-brand-sub {
+  margin: 0.3rem 0 0 !important;
+  max-width: 40ch !important;
+  color: rgba(255, 255, 255, 0.96) !important;
+}
+
+.auth-visual-heading {
   font-family: var(--font-display);
-  font-size: 1.15rem;
-}
-
-.auth-visual .brand-text span {
-  font-size: 0.82rem;
-  opacity: 0.78;
-}
-
-.auth-visual h1 {
-  font-family: var(--font-display);
-  font-size: clamp(2rem, 3.5vw, 2.8rem);
-  line-height: 1.1;
-  margin: 1.25rem 0 0.75rem;
+  font-size: clamp(1.65rem, 2.8vw, 2.2rem);
+  line-height: 1.15;
+  margin: 1.1rem 0 0.65rem;
   max-width: 14ch;
+  color: #eef5ff;
+  font-weight: 700;
 }
 
 .auth-visual p {
@@ -536,7 +627,6 @@ img.captcha-box {
     overflow: auto;
     grid-template-columns: 1fr;
     grid-template-areas:
-      "banner"
       "visual"
       "panel";
   }

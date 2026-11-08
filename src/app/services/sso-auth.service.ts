@@ -16,7 +16,7 @@ export interface LoginRequest {
   captchaToken?: string;
   /** Solo mock local. */
   captchaExpected?: number;
-  /** EXTERNO habitual del portal = OPE2 (captcha siempre). */
+  /** EXTERNO: `ip` = portal gestión (importador/exportador); OPE2/OPE3/OPE8 = captcha siempre. */
   operador?: string;
 }
 
@@ -45,6 +45,10 @@ export interface SsoPortalSession {
   tipo: string;
   roles: string[];
   menus: SsoMenuNode[];
+  /** NIT / CI / documento según venga el SSO. */
+  documento: string;
+  correo: string;
+  dependencia: string;
 }
 
 /**
@@ -122,9 +126,10 @@ export class SsoAuthService {
 
   /**
    * Un solo login: el usuario no elige tipo ni portal.
-   * 1. EXTERNO perfil ip (Portal de Gestión Aduanera).
-   * 2. Si el SSO pide el Registro de Operadores, reintenta EXTERNO OPE2.
-   * 3. Si la clave no es de operador, reintenta INTERNO (GNS).
+   * 1. EXTERNO perfil ip (Portal de Gestión Aduanera / importador-exportador).
+   * 2. Si el SSO pide el Registro de Operadores, reintenta EXTERNO OPE2 (captcha siempre).
+   * 3. Si la clave no es de operador, reintenta INTERNO (técnico GNS).
+   * Captcha: el SSO no lo exige siempre en ip; sí en OPE2/OPE3/OPE8 e INTERNO según política.
    * El captcha no se invalida al validar, así que el mismo código sirve para los intentos.
    */
   loginAuto(
@@ -145,11 +150,17 @@ export class SsoAuthService {
 
     return attempt('EXTERNO', 'ip').pipe(
       catchError((err) => {
-        const msg = String(err?.message || '');
-        if (/verificación|captcha/i.test(msg)) {
+        const msg = String(err?.message || err?.error?.result || '');
+        if (/verificaci[oó]n|captcha/i.test(msg)) {
           return throwError(() => err);
         }
         if (/registro de operadores/i.test(msg)) {
+          // OPE2 siempre exige captcha (criterio indexLogin / captchaRequired).
+          if (!captchaToken) {
+            return throwError(
+              () => new Error('Se requiere código de verificación')
+            );
+          }
           return attempt('EXTERNO', 'OPE2');
         }
         return attempt('INTERNO', '');
@@ -169,10 +180,22 @@ export class SsoAuthService {
           if (!data?.success || !data?.result?.usuario) {
             const msg =
               typeof data?.result === 'string' ? data.result : 'No se pudo cargar el menú';
+            // El watch de sesión trata estos textos como sesión muerta (expiró / otro equipo).
             throw new Error(msg);
           }
           const u = data.result.usuario;
           const nombre = [u.nombre, u.paterno, u.materno].filter(Boolean).join(' ').trim();
+          const doc =
+            u.nit || u.documento || u.ci || u.nroDocumento || u.numeroDocumento || u.cur || '';
+          const correo = u.correo || u.email || u.mail || u.correoElectronico || '';
+          const dependencia =
+            u.dependencia ||
+            u.gerencia ||
+            u.unidad ||
+            u.administracion ||
+            u.nombreDependencia ||
+            (Array.isArray(u.roles) && u.roles[0]?.nombreRole) ||
+            '';
           return {
             token: String(data.result.token || token),
             usuario: String(u.nombreUsuario || ''),
@@ -182,6 +205,9 @@ export class SsoAuthService {
               .map((r: { nombreRole?: string }) => r?.nombreRole)
               .filter((r: string | undefined): r is string => !!r),
             menus: (Array.isArray(u.menus) ? u.menus : []).map((m: unknown) => this.normalizeMenu(m)),
+            documento: String(doc || ''),
+            correo: String(correo || ''),
+            dependencia: String(dependencia || ''),
           };
         })
       );

@@ -1,4 +1,4 @@
-<div class="shell" [class.nav-open]="navOpen">
+<div class="shell" [class.nav-open]="navOpen" [attr.data-view]="portalView">
   <div
     class="suma-banner-slot"
     data-particles
@@ -18,31 +18,39 @@
     data-speed="0.9"
     data-color="#c9a227"
     data-link="#d4af37"
+    *ngIf="portalView !== 'home'"
   >
     <div class="side-brand">
-      <div class="brand-mark" aria-hidden="true">AN</div>
+      <div class="brand-mark brand-mark--icon" aria-hidden="true">
+        <i [class]="activeSection ? iconOf(activeSection) : 'ti ti-layout-grid-filled'"></i>
+      </div>
       <div class="side-brand-text">
-        <strong>SUMA</strong>
-        <small>Menú de la sesión</small>
+        <strong>{{ activeSection?.titulo || 'SUMA' }}</strong>
+        <small>Mini menú de la sección</small>
       </div>
     </div>
 
+    <button type="button" class="side-back" (click)="goHome()">← Volver al inicio</button>
+
     <label class="nav-search">
-      <input type="search" placeholder="Buscar en el menú…" [(ngModel)]="menuFilter" />
+      <input type="search" placeholder="Buscar en la sección…" [(ngModel)]="menuFilter" />
     </label>
 
-    <nav class="side-nav" aria-label="Menú SUMA">
+    <nav class="side-nav" aria-label="Mini menú de sección">
       <p class="section-note" *ngIf="loading">Cargando menú del SSO…</p>
       <p class="section-note" *ngIf="error" role="alert">{{ error }}</p>
-      <ng-container *ngFor="let item of filteredMenu()">
+      <ng-container *ngFor="let item of sideMenu()">
         <ng-container *ngTemplateOutlet="menuNode; context: { $implicit: item }"></ng-container>
       </ng-container>
+      <p class="section-note" *ngIf="!loading && !error && !sideMenu().length">
+        Esta sección no tiene opciones hijas.
+      </p>
     </nav>
 
     <ng-template #menuNode let-item>
       <details *ngIf="item.opciones.length" class="nav-group" open>
         <summary>
-          <span class="icon-dot">{{ initialsOf(item.titulo) }}</span>
+          <span class="icon-dot icon-dot--ti"><i [class]="iconOf(item)"></i></span>
           <span class="nav-label">{{ item.titulo }}</span>
         </summary>
         <div class="nav-children">
@@ -51,16 +59,26 @@
           </ng-container>
         </div>
       </details>
-      <button
-        *ngIf="!item.opciones.length"
-        type="button"
-        class="nav-link"
-        [class.active]="isActive(item)"
-        (click)="openNode(item)"
-      >
-        <span class="icon-dot">{{ initialsOf(item.titulo) }}</span>
-        <span class="nav-label">{{ item.titulo }}</span>
-      </button>
+      <div *ngIf="!item.opciones.length" class="nav-row">
+        <button
+          type="button"
+          class="nav-link"
+          [class.active]="isActive(item)"
+          (click)="openNode(item)"
+        >
+          <span class="icon-dot icon-dot--ti"><i [class]="iconOf(item)"></i></span>
+          <span class="nav-label">{{ item.titulo }}</span>
+        </button>
+        <button
+          type="button"
+          class="fav-btn"
+          [class.is-on]="isFavorite(item)"
+          [attr.aria-label]="isFavorite(item) ? 'Quitar favorito' : 'Agregar favorito'"
+          (click)="toggleFavorite(item, $event)"
+        >
+          ★
+        </button>
+      </div>
     </ng-template>
 
     <div class="side-foot">
@@ -72,117 +90,333 @@
 
   <header class="shell-top">
     <div class="top-left">
-      <button class="menu-toggle" type="button" (click)="toggleNav()" aria-label="Abrir menú">☰</button>
+      <button
+        class="menu-toggle"
+        type="button"
+        *ngIf="portalView !== 'home'"
+        (click)="toggleNav()"
+        aria-label="Abrir menú"
+      >
+        ☰
+      </button>
       <div>
-        <div class="crumb">
-          <button type="button" class="crumb-link" (click)="goHome()">Portal SUMA</button>
-          <span *ngIf="activeTitle"> · {{ activeTitle }}</span>
-          <span *ngIf="!activeTitle"> · Inicio</span>
+        <div class="crumb" *ngIf="activeSection || activeTitle">
+          <span *ngIf="activeSection">{{ activeSection.titulo }}</span>
+          <span *ngIf="activeSection && activeTitle"> · </span>
+          <span *ngIf="activeTitle">{{ activeTitle }}</span>
         </div>
-        <strong class="top-perfil">{{ perfil }}</strong>
-      </div>
-    </div>
-
-    <div class="top-config" aria-label="Configuración">
-      <div class="cfg-seg" role="group" aria-label="Tipo de menú">
-        <button
-          type="button"
-          class="cfg-btn"
-          [class.is-active]="menuMode === 'side'"
-          (click)="setMenuMode('side')"
-        >
-          Lateral
-        </button>
-        <button
-          type="button"
-          class="cfg-btn"
-          [class.is-active]="menuMode === 'launcher'"
-          (click)="setMenuMode('launcher')"
-        >
-          Lanzador
-        </button>
+        <strong class="top-perfil">Perfil: {{ perfil }}</strong>
       </div>
     </div>
 
     <div class="top-right">
-      <span class="chip">{{ tipo }}</span>
-      <div class="user-pill">
-        <span class="avatar">{{ initials }}</span>
-        <span>{{ nombre || usuario }}</span>
+      <button
+        type="button"
+        class="icon-btn"
+        (click)="goHome()"
+        aria-label="Portal SUMA · Inicio"
+        title="Portal SUMA · Inicio"
+      >
+        <svg
+          class="icon-btn-svg"
+          viewBox="0 0 24 24"
+          width="18"
+          height="18"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            fill="currentColor"
+            d="M12 3 2 12h3v8h6v-5h2v5h6v-8h3L12 3z"
+          />
+        </svg>
+      </button>
+      <button
+        type="button"
+        class="icon-btn"
+        (click)="toggleTheme($event)"
+        [attr.aria-label]="theme === 'oscuro' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+        [title]="theme === 'oscuro' ? 'Tema claro' : 'Tema oscuro'"
+      >
+        {{ theme === 'oscuro' ? '☀' : '☾' }}
+      </button>
+
+      <div class="user-menu" (click)="keepUserPanel($event)">
+        <button
+          type="button"
+          class="user-avatar-btn"
+          (click)="toggleUserPanel($event)"
+          [attr.aria-expanded]="userPanelOpen"
+          aria-haspopup="dialog"
+          aria-label="Datos de usuario"
+        >
+          <span class="avatar avatar--lg">{{ initials }}</span>
+        </button>
+
+        <div class="user-panel" *ngIf="userPanelOpen" role="dialog" aria-label="Datos de Usuario">
+          <h2 class="user-panel-title">Datos de Usuario</h2>
+          <div class="user-panel-hero">
+            <div class="user-panel-photo" aria-hidden="true">{{ initials }}</div>
+            <strong class="user-panel-name">{{ nombre || usuario }}</strong>
+            <button type="button" class="user-panel-profile" (click)="goHomeFromPanel()">
+              Perfil de Usuario
+            </button>
+          </div>
+
+          <ul class="user-panel-list">
+            <li>
+              <span class="user-panel-ico" aria-hidden="true">🪪</span>
+              <span>{{ documento || usuario || '—' }}</span>
+            </li>
+            <li>
+              <span class="user-panel-ico" aria-hidden="true">✉</span>
+              <span>{{ correo || 'Sin correo en sesión' }}</span>
+            </li>
+            <li>
+              <span class="user-panel-ico" aria-hidden="true">🏛</span>
+              <span>{{ dependencia || perfil || tipo || '—' }}</span>
+            </li>
+          </ul>
+
+          <button type="button" class="user-panel-logout" (click)="logout()">Cerrar Sesión</button>
+        </div>
       </div>
-      <button type="button" class="btn-soft" (click)="logout()">Salir</button>
     </div>
   </header>
 
   <main class="shell-main" [class.shell-main--module]="!!moduleUrl">
-    <ng-container *ngIf="!moduleUrl">
-      <div class="page-head" data-side-home>
-        <div>
-          <h1>Inicio</h1>
-          <p>Menú armado por el SSO según los roles de esta sesión.</p>
-        </div>
-      </div>
-
-      <section class="side-welcome" data-side-home aria-label="Bienvenida">
-        <div class="side-welcome-card">
-          <h2>Menú de la sesión</h2>
-          <p>
-            Las opciones salen de <strong>credentialPortal</strong>, igual que en el portal SUMA.
-            Cada clic abre el módulo aquí, con el menú y el banner.
-            Cambie a <strong>Lanzador</strong> para verlas en cubos.
-          </p>
-        </div>
-      </section>
-
-      <div class="page-head" data-launcher-home>
-        <div>
-          <h1>Inicio operativo</h1>
-          <p>Las mismas opciones del menú SSO, en cubos.</p>
-        </div>
-        <label class="search search--portal">
-          <span aria-hidden="true">⌕</span>
-          <input type="search" placeholder="Buscar módulo…" [(ngModel)]="moduleFilter" />
-        </label>
-      </div>
-
-      <div class="filters-bar" data-launcher-home role="toolbar" aria-label="Filtrar">
-        <span class="filter-count">{{ launcherMenus().length }} grupos</span>
-      </div>
-
-      <div data-launcher-home>
-        <p class="section-note" *ngIf="loading">Cargando menú del SSO…</p>
-        <p class="section-note" *ngIf="error" role="alert">{{ error }}</p>
-        <section class="module-section" *ngFor="let item of launcherMenus()">
-          <div class="module-section-head">
-            <h2>{{ item.titulo }}</h2>
-            <span>{{ item.descripcion }}</span>
+    <!-- HOME: favoritos + buscador + cubos (forma Impuestos) -->
+    <ng-container *ngIf="portalView === 'home'">
+      <div
+        class="home-board"
+        data-particles
+        data-density="1.15"
+        data-speed="1.05"
+        data-color="#c9a227"
+        data-link="#d4af37"
+      >
+        <section class="fav-strip" aria-label="Acceso rápido">
+          <div class="fav-strip-head">
+            <h2>Acceso rápido</h2>
+            <span class="fav-hint">Hasta {{ favSlots }} favoritos</span>
           </div>
-          <div class="module-grid">
+          <div class="fav-grid">
             <button
               type="button"
-              class="module"
-              *ngFor="let m of leaves(item)"
-              (click)="openNode(m)"
+              class="fav-slot is-filled"
+              *ngFor="let fav of favoriteNodes()"
+              (click)="openFromHome(fav)"
             >
-              <span class="module-icon">{{ initialsOf(m.titulo) }}</span>
-              <h3>{{ m.titulo }}</h3>
-              <p>{{ m.descripcion }}</p>
+              <span class="fav-slot-icon"><i [class]="iconOf(fav)"></i></span>
+              <span class="fav-slot-label">{{ fav.titulo }}</span>
+              <span
+                class="fav-btn is-on"
+                role="button"
+                tabindex="0"
+                (click)="toggleFavorite(fav, $event)"
+                (keydown.enter)="toggleFavorite(fav, $event)"
+                >★</span
+              >
+            </button>
+            <div class="fav-slot is-empty" *ngFor="let _ of emptyFavSlots()">
+              <span class="fav-slot-star">★</span>
+              <span>Agregar favorito</span>
+            </div>
+          </div>
+        </section>
+
+        <label class="search search--home">
+          <input type="search" placeholder="Buscar" [(ngModel)]="homeFilter" />
+          <span class="search-ico" aria-hidden="true">⌕</span>
+        </label>
+
+        <p class="home-note" *ngIf="loading">Cargando menú del SSO…</p>
+        <p class="home-note is-error" *ngIf="error" role="alert">{{ error }}</p>
+
+        <section
+          class="search-hits"
+          *ngIf="homeFilter.trim() && searchLeaves().length"
+          aria-label="Resultados"
+        >
+          <h2>Resultados</h2>
+          <div class="cube-list">
+            <button
+              type="button"
+              class="cube-row"
+              *ngFor="let leaf of searchLeaves()"
+              (click)="openFromHome(leaf)"
+            >
+              <span class="cube-icon"><i [class]="iconOf(leaf)"></i></span>
+              <span class="cube-body">
+                <strong>{{ leaf.titulo }}</strong>
+                <small>{{ leaf.descripcion }}</small>
+              </span>
+              <span
+                class="fav-btn"
+                [class.is-on]="isFavorite(leaf)"
+                (click)="toggleFavorite(leaf, $event)"
+                >★</span
+              >
             </button>
           </div>
+        </section>
+
+        <section class="cube-board" aria-label="Menú principal">
+          <article
+            class="cube"
+            *ngFor="let item of rootCubes()"
+            [class.is-open]="expandedCubeId === item.id"
+            [class.has-options]="hasChildren(item)"
+          >
+            <div class="cube-main">
+              <button type="button" class="cube-hit" (click)="onCubeClick(item)">
+                <span class="cube-icon" aria-hidden="true"><i [class]="iconOf(item)"></i></span>
+                <span class="cube-body">
+                  <strong>{{ item.titulo }}</strong>
+                  <small>{{
+                    item.descripcion ||
+                      (hasChildren(item) ? childCount(item) + ' opciones' : 'Abrir módulo')
+                  }}</small>
+                </span>
+              </button>
+              <button
+                *ngIf="hasChildren(item)"
+                type="button"
+                class="cube-chevron"
+                [class.is-open]="expandedCubeId === item.id"
+                [attr.aria-expanded]="expandedCubeId === item.id"
+                [attr.aria-label]="
+                  expandedCubeId === item.id ? 'Ocultar opciones' : 'Mostrar opciones'
+                "
+                (click)="toggleCubeOptions(item, $event)"
+              >
+                <i class="ti ti-chevron-down" aria-hidden="true"></i>
+              </button>
+            </div>
+
+            <div class="cube-mini" *ngIf="expandedCubeId === item.id && hasChildren(item)">
+              <button
+                type="button"
+                class="cube-mini-item"
+                *ngFor="let child of item.opciones"
+                (click)="onOptionClick(child, item)"
+              >
+                <span class="cube-icon cube-icon--sm" aria-hidden="true"
+                  ><i [class]="iconOf(child)"></i
+                ></span>
+                <span class="cube-body">
+                  <strong>{{ child.titulo }}</strong>
+                  <small *ngIf="child.descripcion">{{ child.descripcion }}</small>
+                </span>
+                <i
+                  *ngIf="hasChildren(child)"
+                  class="ti ti-chevron-right cube-mini-go"
+                  aria-hidden="true"
+                ></i>
+                <span
+                  class="fav-btn"
+                  *ngIf="!hasChildren(child)"
+                  [class.is-on]="isFavorite(child)"
+                  (click)="toggleFavorite(child, $event)"
+                  >★</span
+                >
+              </button>
+            </div>
+          </article>
         </section>
       </div>
     </ng-container>
 
-    <div class="module-frame-wrap" *ngIf="moduleUrl">
-      <div class="module-frame-bar">
-        <strong>{{ activeTitle }}</strong>
-        <span class="module-frame-url" [title]="moduleHref">{{ moduleHref }}</span>
-        <button type="button" class="btn-soft" (click)="openExternal()">Abrir aparte</button>
-        <button type="button" class="btn-soft" (click)="goHome()">Cerrar</button>
+    <!-- SECCIÓN: cubos del 2.º nivel + mini menú ya en el lateral -->
+    <ng-container *ngIf="portalView === 'section'">
+      <div
+        class="home-board home-board--section"
+        data-particles
+        data-density="1.05"
+        data-speed="1"
+        data-color="#c9a227"
+        data-link="#d4af37"
+      >
+        <div class="page-head home-head">
+          <div>
+            <h1>{{ activeSection?.titulo }}</h1>
+            <p>{{ activeSection?.descripcion || 'Opciones de esta sección' }}</p>
+          </div>
+          <button type="button" class="btn-soft btn-soft--on-dark" (click)="goHome()">← Inicio</button>
+        </div>
+
+        <div class="cube-board cube-board--section">
+          <article
+            class="cube"
+            *ngFor="let item of sectionChildren()"
+            [class.is-open]="expandedCubeId === item.id"
+            [class.has-options]="hasChildren(item)"
+          >
+            <div class="cube-main">
+              <button type="button" class="cube-hit" (click)="onCubeClick(item)">
+                <span class="cube-icon" aria-hidden="true"><i [class]="iconOf(item)"></i></span>
+                <span class="cube-body">
+                  <strong>{{ item.titulo }}</strong>
+                  <small>{{
+                    item.descripcion ||
+                      (hasChildren(item) ? childCount(item) + ' opciones' : 'Abrir módulo')
+                  }}</small>
+                </span>
+              </button>
+              <button
+                *ngIf="hasChildren(item)"
+                type="button"
+                class="cube-chevron"
+                [class.is-open]="expandedCubeId === item.id"
+                [attr.aria-expanded]="expandedCubeId === item.id"
+                (click)="toggleCubeOptions(item, $event)"
+              >
+                <i class="ti ti-chevron-down" aria-hidden="true"></i>
+              </button>
+              <span
+                class="fav-btn"
+                *ngIf="!hasChildren(item)"
+                [class.is-on]="isFavorite(item)"
+                (click)="toggleFavorite(item, $event)"
+                >★</span
+              >
+            </div>
+            <div class="cube-mini" *ngIf="expandedCubeId === item.id && hasChildren(item)">
+              <button
+                type="button"
+                class="cube-mini-item"
+                *ngFor="let child of item.opciones"
+                (click)="onOptionClick(child, item)"
+              >
+                <span class="cube-icon cube-icon--sm" aria-hidden="true"
+                  ><i [class]="iconOf(child)"></i
+                ></span>
+                <span class="cube-body">
+                  <strong>{{ child.titulo }}</strong>
+                  <small *ngIf="child.descripcion">{{ child.descripcion }}</small>
+                </span>
+                <i
+                  *ngIf="hasChildren(child)"
+                  class="ti ti-chevron-right cube-mini-go"
+                  aria-hidden="true"
+                ></i>
+                <span
+                  class="fav-btn"
+                  *ngIf="!hasChildren(child)"
+                  [class.is-on]="isFavorite(child)"
+                  (click)="toggleFavorite(child, $event)"
+                  >★</span
+                >
+              </button>
+            </div>
+          </article>
+        </div>
       </div>
-      <p class="section-note" *ngIf="moduleWarning" role="status">{{ moduleWarning }}</p>
-      <!-- Sin allow-top-navigation: bloquea window.top → suma-dev/indexOce.
-           allow-top-navigation-by-user-activation: solo si el usuario hace clic. -->
+    </ng-container>
+
+    <!-- MÓDULO en iframe (sin barra de URL / Abrir aparte) -->
+    <div class="module-frame-wrap" *ngIf="moduleUrl">
+      <p class="section-note module-warn" *ngIf="moduleWarning" role="status">{{ moduleWarning }}</p>
       <iframe
         class="module-frame"
         [src]="moduleUrl"

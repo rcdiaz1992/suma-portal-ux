@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { SumaSessionService } from '../../services/suma-session.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-nh-ops',
@@ -10,10 +12,22 @@ export class NhOpsPage implements OnInit {
   tab: 'import' | 'export' = 'import';
   toast = '';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private session: SumaSessionService,
+    private themeSvc: ThemeService
+  ) {}
+
+  get theme() {
+    return this.themeSvc.theme;
+  }
+
+  toggleTheme(): void {
+    this.themeSvc.toggle();
+  }
 
   ngOnInit(): void {
-    if (sessionStorage.getItem('suma.tipoUser') !== 'NO_HABITUAL') {
+    if (this.session.tipo !== 'NO_HABITUAL') {
       this.router.navigateByUrl('/login/no-habituales');
     }
   }
@@ -32,7 +46,6 @@ export class NhOpsPage implements OnInit {
   }
 
   logout(): void {
-    sessionStorage.clear();
-    this.router.navigateByUrl('/login');
+    this.session.logout('logout');
   }
 }

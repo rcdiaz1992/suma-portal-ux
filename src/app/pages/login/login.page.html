@@ -23,6 +23,7 @@
         formControlName="nombreUsuario"
         autocomplete="username"
         placeholder="Usuario"
+        (blur)="onUserBlur()"
       />
     </div>
 
@@ -37,7 +38,7 @@
       />
     </div>
 
-    <div class="field" *ngIf="!useMock">
+    <div class="field" *ngIf="showCaptcha">
       <label for="captcha">Código de verificación</label>
       <div class="captcha-row">
         <img class="captcha-box" [src]="captchaSrc" alt="Captcha" width="140" height="48" />
@@ -46,6 +47,7 @@
       </div>
     </div>
 
+    <p class="otp-error" *ngIf="sessionNotice && !error" role="status">{{ sessionNotice }}</p>
     <p class="otp-error" *ngIf="error" role="alert">{{ error }}</p>
 
     <div class="auth-meta">

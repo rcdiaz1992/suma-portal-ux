@@ -1,9 +1,13 @@
 import { AfterViewInit, Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { menuIconClass } from '../../data/menu-icons';
 import { SsoAuthService, SsoMenuNode } from '../../services/sso-auth.service';
+import { SumaSessionService } from '../../services/suma-session.service';
+import { ThemeService } from '../../services/theme.service';
 
-type MenuMode = 'side' | 'launcher';
+const FAV_KEY = 'suma.menu.favorites';
+const FAV_SLOTS = 6;
 
 @Component({
   selector: 'app-portal-home',
@@ -16,25 +20,40 @@ export class PortalHomePage implements OnInit, AfterViewInit, OnDestroy {
   tipo = '';
   perfil = '';
   initials = 'SU';
-  menuMode: MenuMode = 'side';
+  documento = '';
+  correo = '';
+  dependencia = '';
   menuFilter = '';
-  moduleFilter = '';
+  homeFilter = '';
   menus: SsoMenuNode[] = [];
   loading = false;
   error = '';
   navOpen = false;
+  userPanelOpen = false;
+  /** Sección (cubo de 1.er nivel) activa → mini-menú lateral. */
+  activeSection: SsoMenuNode | null = null;
+  /** Cubo expandido en el home (submenú inline, estilo Impuestos). */
+  expandedCubeId: number | null = null;
+  favoriteIds = new Set<number>();
   /** Opción abierta dentro del shell (iframe), como el portal SUMA. */
   activeId: number | null = null;
   activeTitle = '';
   moduleHref = '';
   moduleUrl: SafeResourceUrl | null = null;
   moduleWarning = '';
+  readonly favSlots = FAV_SLOTS;
 
   constructor(
     private router: Router,
     private sso: SsoAuthService,
+    private session: SumaSessionService,
+    private themeSvc: ThemeService,
     private sanitizer: DomSanitizer
   ) {}
+
+  get theme() {
+    return this.themeSvc.theme;
+  }
 
   /** El legacy avisa que iba a sacar el shell al login SSO; nos quedamos en el portal. */
   @HostListener('window:message', ['$event'])
@@ -45,20 +64,27 @@ export class PortalHomePage implements OnInit, AfterViewInit, OnDestroy {
       'El módulo intentó ir al login SSO. Se mantuvo la sesión del portal; reabrí la opción o usá «Abrir aparte».';
   }
 
+  @HostListener('document:click')
+  onDocClick(): void {
+    if (this.userPanelOpen) this.userPanelOpen = false;
+  }
+
   ngOnInit(): void {
-    const token = sessionStorage.getItem('suma.token');
-    this.usuario = sessionStorage.getItem('suma.usuario') || '';
-    const raw = sessionStorage.getItem('suma.tipoUser') || '';
+    const token = this.session.token;
+    this.usuario = this.session.usuario;
+    const raw = this.session.tipo;
     if (raw === 'NO_HABITUAL') {
       this.router.navigateByUrl('/hub/no-habituales');
       return;
     }
     if (!token) {
-      this.router.navigateByUrl('/login');
+      this.session.logout('missing');
       return;
     }
     this.tipo = raw;
-    this.initials = (this.usuario || 'SU').slice(0, 2).toUpperCase();
+    this.initials = this.makeInitials(this.usuario || 'SU');
+    this.loadFavorites();
+    this.session.startWatch();
     this.loading = true;
     this.sso.credentialPortal(token).subscribe({
       next: (session) => {
@@ -67,22 +93,31 @@ export class PortalHomePage implements OnInit, AfterViewInit, OnDestroy {
         this.nombre = session.nombre;
         this.tipo = session.tipo || this.tipo;
         this.perfil = session.roles[0] || this.tipo || 'SUMA';
+        this.documento = session.documento;
+        this.correo = session.correo;
+        this.dependencia = session.dependencia || this.perfil;
         this.menus = session.menus;
-        this.initials = (this.usuario || 'SU').slice(0, 2).toUpperCase();
+        this.initials = this.makeInitials(this.nombre || this.usuario || 'SU');
         if (session.tipo) sessionStorage.setItem('suma.tipoUser', session.tipo);
         if (session.usuario) sessionStorage.setItem('suma.usuario', session.usuario);
-        document.documentElement.setAttribute('data-menu-mode', this.menuMode);
+        this.session.seedCookies();
+        this.syncPortalView();
       },
       error: (err) => {
         this.loading = false;
-        const msg = String(err?.message || '');
-        if (/expir|no autorizada|sesión/i.test(msg)) {
-          sessionStorage.clear();
-          this.router.navigateByUrl('/login');
+        const msg = String(err?.message || err?.error?.result || '');
+        if (this.session.isSessionDeadMessage(msg)) {
+          this.session.logout(
+            /otro (equipo|dispositivo)|concurrente/i.test(msg) ? 'remote' : 'expired',
+            this.session.messageFor(
+              /otro (equipo|dispositivo)|concurrente/i.test(msg) ? 'remote' : 'expired',
+              msg
+            )
+          );
           return;
         }
         this.error = msg || 'No se pudo cargar el menú del SSO';
-        document.documentElement.setAttribute('data-menu-mode', this.menuMode);
+        this.syncPortalView();
       },
     });
   }
@@ -92,7 +127,45 @@ export class PortalHomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    document.documentElement.removeAttribute('data-menu-mode');
+    this.session.stopWatch();
+    document.documentElement.removeAttribute('data-portal-view');
+  }
+
+  private makeInitials(value: string): string {
+    const parts = (value || '').trim().split(/\s+/).filter(Boolean);
+    if (!parts.length) return 'SU';
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0][0] + parts[1][0]).toUpperCase();
+  }
+
+  toggleTheme(ev?: Event): void {
+    ev?.stopPropagation();
+    this.themeSvc.toggle();
+  }
+
+  toggleUserPanel(ev: Event): void {
+    ev.stopPropagation();
+    this.userPanelOpen = !this.userPanelOpen;
+  }
+
+  keepUserPanel(ev: Event): void {
+    ev.stopPropagation();
+  }
+
+  goHomeFromPanel(): void {
+    this.userPanelOpen = false;
+    this.goHome();
+  }
+
+  get portalView(): 'home' | 'section' | 'module' {
+    if (this.moduleUrl) return 'module';
+    if (this.activeSection) return 'section';
+    return 'home';
+  }
+
+  private syncPortalView(): void {
+    document.documentElement.setAttribute('data-portal-view', this.portalView);
+    queueMicrotask(() => void this.mountHomeParticles());
   }
 
   private async mountEffects(): Promise<void> {
@@ -108,27 +181,53 @@ export class PortalHomePage implements OnInit, AfterViewInit, OnDestroy {
     } catch {
       /* ignore */
     }
+    await this.mountHomeParticles();
   }
 
-  setMenuMode(mode: MenuMode): void {
-    this.menuMode = mode;
-    document.documentElement.setAttribute('data-menu-mode', mode);
+  /** Fondo en movimiento del login sobre el tablero de cubos. */
+  private async mountHomeParticles(): Promise<void> {
+    try {
+      const boards = document.querySelectorAll<HTMLElement>('.home-board[data-particles]');
+      for (const el of Array.from(boards)) {
+        if ((el as HTMLElement & { __particles?: unknown }).__particles) continue;
+        await window.ParticlesBg?.mount?.(el);
+      }
+    } catch {
+      /* ignore */
+    }
   }
 
-  filteredMenu(): SsoMenuNode[] {
+  /** Cubos del primer nivel (raíz del menú SSO). */
+  rootCubes(): SsoMenuNode[] {
+    const q = this.homeFilter.trim().toLowerCase();
+    if (!q) return this.menus;
+    return this.menus.filter(
+      (item) =>
+        this.nodeMatches(item, q) || this.leaves(item).some((leaf) => this.nodeMatches(leaf, q))
+    );
+  }
+
+  /** Resultados planos del buscador (hojas). */
+  searchLeaves(): SsoMenuNode[] {
+    const q = this.homeFilter.trim().toLowerCase();
+    if (!q) return [];
+    return this.menus
+      .reduce((acc, item) => acc.concat(this.leaves(item)), [] as SsoMenuNode[])
+      .filter((leaf) => this.nodeMatches(leaf, q));
+  }
+
+  sideMenu(): SsoMenuNode[] {
+    if (!this.activeSection) return [];
     const q = this.menuFilter.trim().toLowerCase();
-    if (!q) return this.menus;
-    return this.menus
+    const kids = this.activeSection.opciones;
+    if (!q) return kids;
+    return kids
       .map((item) => this.filterNode(item, q))
       .filter((item): item is SsoMenuNode => !!item);
   }
 
-  launcherMenus(): SsoMenuNode[] {
-    const q = this.moduleFilter.trim().toLowerCase();
-    if (!q) return this.menus;
-    return this.menus
-      .map((item) => this.filterNode(item, q))
-      .filter((item): item is SsoMenuNode => !!item);
+  sectionChildren(): SsoMenuNode[] {
+    return this.activeSection?.opciones || [];
   }
 
   leaves(item: SsoMenuNode): SsoMenuNode[] {
@@ -143,43 +242,86 @@ export class PortalHomePage implements OnInit, AfterViewInit, OnDestroy {
     return (parts[0][0] + parts[1][0]).toUpperCase();
   }
 
+  iconOf(item: SsoMenuNode): string {
+    return menuIconClass(item.titulo, item.descripcion);
+  }
+
+  childCount(item: SsoMenuNode): number {
+    return this.leaves(item).length;
+  }
+
+  hasChildren(item: SsoMenuNode): boolean {
+    return !!item.opciones?.length;
+  }
+
+  /** Cubo sin opciones → abre el módulo. Con opciones → no navega (solo la flecha despliega). */
+  onCubeClick(item: SsoMenuNode): void {
+    if (this.hasChildren(item)) return;
+    this.openNode(item);
+  }
+
+  /** Flecha: solo despliega / pliega las opciones del cubo. */
+  toggleCubeOptions(item: SsoMenuNode, ev: Event): void {
+    ev.stopPropagation();
+    if (!this.hasChildren(item)) return;
+    this.expandedCubeId = this.expandedCubeId === item.id ? null : item.id;
+  }
+
+  /** Opción hija: si tiene hijos → mini menú lateral; si es hoja → módulo. */
+  onOptionClick(child: SsoMenuNode, parent: SsoMenuNode): void {
+    if (this.hasChildren(child)) {
+      this.enterSection(child);
+      return;
+    }
+    this.openFromHome(child, parent);
+  }
+
+  enterSection(item: SsoMenuNode): void {
+    this.activeSection = item;
+    this.expandedCubeId = null;
+    this.homeFilter = '';
+    this.menuFilter = '';
+    this.moduleUrl = null;
+    this.moduleHref = '';
+    this.activeId = null;
+    this.activeTitle = '';
+    this.moduleWarning = '';
+    this.navOpen = false;
+    this.syncPortalView();
+  }
+
+  openFromHome(leaf: SsoMenuNode, section?: SsoMenuNode): void {
+    if (section) this.activeSection = section;
+    else this.activeSection = this.findRootFor(leaf);
+    this.openNode(leaf);
+  }
+
   openNode(node: SsoMenuNode): void {
     let href = this.sso.resolveMenuUrl(node.url);
-    if (!href) return;
-    // Nunca cargar el módulo en origen suma-dev (rompe cookies y hace top→indexOce).
+    if (!href) {
+      if (node.opciones.length) {
+        this.enterSection(node);
+      }
+      return;
+    }
     href = href.replace(/^https?:\/\/suma-dev\.aduana\.gob\.bo/i, '');
     if (!href.startsWith('/')) href = '/' + href;
     this.moduleWarning = '';
-    // Igual que portal SUMA (ListenerController): token en cookie path=/ y /sso
-    // para que SSO admin / OCE lean la sesión tras el reload del listener.
     this.seedLegacySessionCookies();
-    // Cache-bust ANTES del hash: si va después, Angular/AngularJS rompe el listener.
     const framed = this.withCacheBust(href);
     this.activeId = node.id;
     this.activeTitle = node.titulo || node.descripcion || 'Módulo';
     this.moduleHref = framed;
     this.moduleUrl = this.sanitizer.bypassSecurityTrustResourceUrl(framed);
-    this.menuMode = 'side';
-    document.documentElement.setAttribute('data-menu-mode', 'side');
+    if (!this.activeSection) {
+      this.activeSection = this.findRootFor(node);
+    }
     this.navOpen = false;
+    this.syncPortalView();
   }
 
-  /**
-   * Replica el seteo de cookies del portal legacy (path /, /sso, /oce).
-   * Sin esto, Gestión de Usuarios (sso/admin) pierde Auth-Token tras el listener.
-   */
   private seedLegacySessionCookies(): void {
-    const token = sessionStorage.getItem('suma.token') || '';
-    const user = sessionStorage.getItem('suma.usuario') || '';
-    if (!token) return;
-    const expires = new Date(Date.now() + 60 * 60 * 1000).toUTCString();
-    const paths = ['/', '/sso', '/sso/', '/oce', '/oce/', '/portal', '/portal/'];
-    for (const path of paths) {
-      document.cookie = `token=${encodeURIComponent(token)}; path=${path}; expires=${expires}; SameSite=Lax`;
-      if (user) {
-        document.cookie = `username=${encodeURIComponent(user)}; path=${path}; expires=${expires}; SameSite=Lax`;
-      }
-    }
+    this.session.seedCookies();
   }
 
   openExternal(): void {
@@ -188,10 +330,6 @@ export class PortalHomePage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  /**
-   * Si el iframe cayó en login SSO legacy, no botamos el portal: re-sembramos cookies
-   * y pedimos reabrir (antes onModuleFrameLoad hacía logout y “se salía”).
-   */
   onModuleFrameLoad(ev: Event): void {
     const iframe = ev.target as HTMLIFrameElement;
     try {
@@ -207,7 +345,6 @@ export class PortalHomePage implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  /** Igual que el portal SUMA (setProject), pero sin ensuciar #/listener/... */
   private withCacheBust(href: string): string {
     const hashAt = href.indexOf('#');
     const path = hashAt >= 0 ? href.slice(0, hashAt) : href;
@@ -217,19 +354,97 @@ export class PortalHomePage implements OnInit, AfterViewInit, OnDestroy {
   }
 
   goHome(): void {
+    this.activeSection = null;
+    this.expandedCubeId = null;
     this.activeId = null;
     this.activeTitle = '';
     this.moduleHref = '';
     this.moduleUrl = null;
+    this.moduleWarning = '';
+    this.menuFilter = '';
+    this.homeFilter = '';
+    this.navOpen = false;
+    this.syncPortalView();
+  }
+
+  closeModule(): void {
+    this.activeId = null;
+    this.activeTitle = '';
+    this.moduleHref = '';
+    this.moduleUrl = null;
+    this.moduleWarning = '';
+    this.syncPortalView();
   }
 
   isActive(node: SsoMenuNode): boolean {
     return this.activeId != null && node.id === this.activeId;
   }
 
+  isFavorite(node: SsoMenuNode): boolean {
+    return this.favoriteIds.has(node.id);
+  }
+
+  toggleFavorite(node: SsoMenuNode, ev?: Event): void {
+    ev?.stopPropagation();
+    if (this.favoriteIds.has(node.id)) this.favoriteIds.delete(node.id);
+    else {
+      if (this.favoriteIds.size >= FAV_SLOTS) {
+        const first = this.favoriteIds.values().next().value as number;
+        this.favoriteIds.delete(first);
+      }
+      this.favoriteIds.add(node.id);
+    }
+    this.persistFavorites();
+  }
+
+  favoriteNodes(): SsoMenuNode[] {
+    const all = this.menus.reduce(
+      (acc, item) => acc.concat(this.leaves(item)),
+      [] as SsoMenuNode[]
+    );
+    return all.filter((n) => this.favoriteIds.has(n.id));
+  }
+
+  emptyFavSlots(): number[] {
+    const used = this.favoriteNodes().length;
+    return Array.from({ length: Math.max(0, FAV_SLOTS - used) }, (_, i) => i);
+  }
+
+  private loadFavorites(): void {
+    try {
+      const raw = localStorage.getItem(FAV_KEY);
+      const ids = raw ? (JSON.parse(raw) as number[]) : [];
+      this.favoriteIds = new Set(Array.isArray(ids) ? ids.slice(0, FAV_SLOTS) : []);
+    } catch {
+      this.favoriteIds = new Set();
+    }
+  }
+
+  private persistFavorites(): void {
+    localStorage.setItem(FAV_KEY, JSON.stringify([...this.favoriteIds]));
+  }
+
+  private findRootFor(node: SsoMenuNode): SsoMenuNode | null {
+    for (const root of this.menus) {
+      if (root.id === node.id) return root;
+      if (this.containsNode(root, node.id)) return root;
+    }
+    return null;
+  }
+
+  private containsNode(root: SsoMenuNode, id: number): boolean {
+    return root.opciones.some((c) => c.id === id || this.containsNode(c, id));
+  }
+
+  private nodeMatches(item: SsoMenuNode, q: string): boolean {
+    return (
+      (item.titulo || '').toLowerCase().includes(q) ||
+      (item.descripcion || '').toLowerCase().includes(q)
+    );
+  }
+
   logout(): void {
-    sessionStorage.clear();
-    this.router.navigateByUrl('/login');
+    this.session.logout('logout');
   }
 
   toggleNav(): void {
@@ -240,8 +455,7 @@ export class PortalHomePage implements OnInit, AfterViewInit, OnDestroy {
     const kids = item.opciones
       .map((child) => this.filterNode(child, q))
       .filter((child): child is SsoMenuNode => !!child);
-    const self =
-      item.titulo.toLowerCase().includes(q) || item.descripcion.toLowerCase().includes(q);
+    const self = this.nodeMatches(item, q);
     if (!self && !kids.length) return null;
     return { ...item, opciones: kids.length ? kids : item.opciones };
   }

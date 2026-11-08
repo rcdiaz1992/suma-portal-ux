@@ -1,15 +1,4 @@
 <div class="hub-page">
-  <div
-    class="suma-banner-slot"
-    data-particles
-    data-density="1.05"
-    data-speed="1"
-    data-color="#c9a227"
-    data-link="#d4af37"
-  >
-    <div data-suma-banner="compact"></div>
-  </div>
-
   <header class="shell-top">
     <div class="top-left">
       <div>
@@ -18,6 +7,15 @@
       </div>
     </div>
     <div class="top-right">
+      <button
+        type="button"
+        class="icon-btn"
+        (click)="toggleTheme()"
+        [attr.aria-label]="theme === 'oscuro' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+        [title]="theme === 'oscuro' ? 'Tema claro' : 'Tema oscuro'"
+      >
+        {{ theme === 'oscuro' ? '☀' : '☾' }}
+      </button>
       <span class="chip">MFA · verificado</span>
       <button type="button" class="btn-soft" (click)="logout()">Salir</button>
     </div>

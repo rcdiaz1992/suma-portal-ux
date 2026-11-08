@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -11,6 +11,7 @@ import { NhHubPage } from './pages/nh-hub/nh-hub.page';
 import { NhOpsPage } from './pages/nh-ops/nh-ops.page';
 import { NhRegistroPage } from './pages/nh-registro/nh-registro.page';
 import { environment } from 'src/environments/environment';
+import { SumaAuthInterceptor } from './interceptors/suma-auth.interceptor';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,10 @@ import { environment } from 'src/environments/environment';
     HttpClientModule,
     AppRoutingModule,
   ],
-  providers: [{ provide: 'ENV', useValue: environment }],
+  providers: [
+    { provide: 'ENV', useValue: environment },
+    { provide: HTTP_INTERCEPTORS, useClass: SumaAuthInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

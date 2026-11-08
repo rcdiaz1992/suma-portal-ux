@@ -1,4 +1,5 @@
 import { AfterViewInit, Component } from '@angular/core';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-login-shell',
@@ -6,8 +7,17 @@ import { AfterViewInit, Component } from '@angular/core';
   styleUrls: ['./login-shell.page.scss'],
 })
 export class LoginShellPage implements AfterViewInit {
+  constructor(private themeSvc: ThemeService) {}
+
+  get theme() {
+    return this.themeSvc.theme;
+  }
+
+  toggleTheme(): void {
+    this.themeSvc.toggle();
+  }
+
   ngAfterViewInit(): void {
-    // Scripts de angular.json ya cargaron; montar tras pintar el DOM del login
     queueMicrotask(() => this.mountEffects());
   }
 
@@ -15,7 +25,7 @@ export class LoginShellPage implements AfterViewInit {
     try {
       window.SumaBannerHero?.mountAll?.();
     } catch (e) {
-      console.warn('[login-shell] banner hero', e);
+      console.warn('[login-shell] banner galaxy', e);
     }
     try {
       if (window.ParticlesBg?.autoMount) {

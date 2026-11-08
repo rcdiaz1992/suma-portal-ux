@@ -1,33 +1,33 @@
 <div class="auth-shell">
-  <div
-    class="suma-banner-slot"
-    data-particles
-    data-density="1.05"
-    data-speed="1"
-    data-color="#c9a227"
-    data-link="#d4af37"
+  <button
+    type="button"
+    class="theme-fab"
+    (click)="toggleTheme()"
+    [attr.aria-label]="theme === 'oscuro' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'"
+    [title]="theme === 'oscuro' ? 'Tema claro' : 'Tema oscuro'"
   >
-    <div data-suma-banner="compact"></div>
-  </div>
+    {{ theme === 'oscuro' ? '☀' : '☾' }}
+  </button>
 
   <aside
     class="auth-visual"
     data-particles
-    data-density="1.1"
-    data-speed="1.05"
+    data-density="1.35"
+    data-speed="1.08"
     data-color="#c9a227"
     data-link="#d4af37"
   >
-    <div>
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">AN</div>
-        <div class="brand-text">
-          <strong>SUMA</strong>
-          <span>SSO · login portal</span>
-        </div>
+    <!-- Galaxia cambiante (particle-slider), grande y desbordante -->
+    <div class="auth-galaxy" data-suma-banner="compact" aria-hidden="true"></div>
+
+    <div class="auth-visual-top">
+      <div class="auth-brand" aria-label="SUMA · Aduana Nacional">
+        <p class="auth-brand-eyebrow">Aduana Nacional de Bolivia</p>
+        <h1 class="auth-brand-title">SUMA</h1>
+        <p class="auth-brand-sub">Sistema Único de Modernización Aduanera</p>
       </div>
 
-      <nav class="flow flow--light" aria-label="Recorrido" style="margin-top: 1.25rem">
+      <nav class="flow flow--light" aria-label="Recorrido">
         <a class="flow-step is-done" routerLink="/login"><span class="n">1</span> Acceso</a>
         <span class="flow-sep" aria-hidden="true"></span>
         <span class="flow-step is-current"><span class="n">2</span> Login</span>
@@ -35,10 +35,10 @@
         <a class="flow-step" routerLink="/portal"><span class="n">3</span> Portal</a>
       </nav>
 
-      <h1>Ingreso SSO</h1>
+      <h2 class="auth-visual-heading">Ingreso SSO</h2>
       <p>
-        Un solo acceso. El sistema distingue operador y servidor público.
-        No habituales van por doble factor.
+        Un solo acceso. El sistema distingue operador y servidor público. No
+        habituales van por doble factor.
       </p>
       <ol class="mfa-legend">
         <li>Usuario y contraseña</li>

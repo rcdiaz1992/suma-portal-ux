@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { SumaSessionService } from '../../services/suma-session.service';
+import { ThemeService } from '../../services/theme.service';
 
 @Component({
   selector: 'app-nh-registro',
@@ -18,10 +20,23 @@ export class NhRegistroPage implements OnInit {
     celular: ['', Validators.required],
   });
 
-  constructor(private fb: FormBuilder, private router: Router) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private session: SumaSessionService,
+    private themeSvc: ThemeService
+  ) {}
+
+  get theme() {
+    return this.themeSvc.theme;
+  }
+
+  toggleTheme(): void {
+    this.themeSvc.toggle();
+  }
 
   ngOnInit(): void {
-    if (sessionStorage.getItem('suma.tipoUser') !== 'NO_HABITUAL') {
+    if (this.session.tipo !== 'NO_HABITUAL') {
       this.router.navigateByUrl('/login/no-habituales');
     }
   }
@@ -39,7 +54,6 @@ export class NhRegistroPage implements OnInit {
   }
 
   logout(): void {
-    sessionStorage.clear();
-    this.router.navigateByUrl('/login');
+    this.session.logout('logout');
   }
 }

@@ -39,54 +39,69 @@
   max-width: min(100%, 52rem);
 }
 
-.suma-banner-eyebrow {
+.suma-banner-eyebrow,
+.auth-brand-eyebrow {
   display: block;
-  font-size: clamp(0.72rem, 1.35vw, 0.9rem);
-  font-weight: 500;
-  letter-spacing: 0.14em;
+  font-size: clamp(0.8rem, 1.45vw, 1rem);
+  font-weight: 600;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.92);
+  color: rgba(255, 255, 255, 0.95);
   margin: 0;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.35);
   animation: rise 0.45s var(--ease) both;
 }
 
-.suma-banner-title {
+.suma-banner-title,
+.auth-brand-title {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: clamp(3.4rem, 9.5vw, 5.6rem);
-  line-height: 0.9;
-  letter-spacing: 0.02em;
+  font-size: clamp(3.8rem, 10vw, 6.2rem);
+  line-height: 0.88;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  background: linear-gradient(180deg, #fff8e0 0%, #f0c14b 42%, #c9a227 100%);
+  background: linear-gradient(
+    175deg,
+    #fffcef 0%,
+    #ffe9a8 22%,
+    #f0c14b 48%,
+    #d4af37 72%,
+    #a67c1a 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  filter: drop-shadow(0 4px 18px rgba(0, 0, 0, 0.45));
+  filter: drop-shadow(0 2px 0 rgba(166, 124, 26, 0.35)) drop-shadow(0 8px 22px rgba(0, 0, 0, 0.5));
   animation: rise 0.5s var(--ease) 0.04s both;
 }
 
 .suma-hps--compact .suma-banner-title {
-  font-size: clamp(2.1rem, 5.5vw, 3rem);
+  font-size: clamp(2.65rem, 6.5vw, 3.6rem);
+  letter-spacing: 0.05em;
 }
 
-.suma-banner-sub {
-  margin: 0.15rem 0 0;
+.suma-banner-sub,
+.auth-brand-sub {
+  margin: 0.25rem 0 0;
   max-width: 48ch;
-  font-size: clamp(0.78rem, 1.55vw, 1.05rem);
-  font-weight: 500;
-  letter-spacing: 0.1em;
+  font-size: clamp(0.85rem, 1.65vw, 1.12rem);
+  font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.95);
+  color: rgba(255, 255, 255, 0.96);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.35);
   animation: rise 0.5s var(--ease) 0.08s both;
 }
 
 .suma-hps--compact .suma-banner-eyebrow {
-  font-size: clamp(0.65rem, 1.1vw, 0.78rem);
+  font-size: clamp(0.72rem, 1.2vw, 0.88rem);
+  letter-spacing: 0.16em;
 }
 
 .suma-hps--compact .suma-banner-sub {
-  font-size: clamp(0.65rem, 1.2vw, 0.82rem);
+  font-size: clamp(0.72rem, 1.35vw, 0.92rem);
+  letter-spacing: 0.11em;
 }
 
 .suma-hps {
@@ -97,12 +112,6 @@
   isolation: isolate;
   /* Transparente: el navy + tsparticles viven en .suma-banner-slot */
   background: transparent;
-}
-
-.suma-hps--compact {
-  min-height: 168px;
-  max-height: 200px;
-  height: 188px;
 }
 
 .suma-hps .suma-banner-inner {
@@ -123,17 +132,18 @@
   inset: -12% -8% -16% -6%;
   width: auto !important;
   height: auto !important;
-  transform: scale(1.25);
-  transform-origin: 78% 50%;
+  transform: scale(1.35);
+  transform-origin: 78% 48%;
   background: transparent !important;
   pointer-events: auto;
-  filter: saturate(1.15) brightness(1.02) contrast(1.04);
+  filter: saturate(1.2) brightness(1.04) contrast(1.06);
 }
 
-.suma-hps--compact crazygl-hero[data-crazygl="particle-slider"] {
-  inset: -14% -10% -18% -8%;
-  transform: scale(1.32);
-  transform-origin: 82% 45%;
+/* Banner portal: galaxia a la derecha, recortada dentro del banner */
+.suma-banner-slot .suma-hps--compact crazygl-hero[data-crazygl="particle-slider"] {
+  inset: -8% -4% -12% 28%;
+  transform: scale(1.28) translateX(8%);
+  transform-origin: 92% 45%;
 }
 
 .suma-hps crazygl-hero[data-crazygl="particle-slider"],
@@ -163,23 +173,32 @@
   position: relative;
   overflow: hidden !important;
   isolation: isolate;
-  max-height: 200px;
+  max-height: 230px;
+  z-index: 3;
   background:
     radial-gradient(700px 280px at 20% 40%, rgba(201, 162, 39, 0.18), transparent 60%),
     linear-gradient(115deg, #04101f 0%, #0a2748 48%, #0d3a5c 100%);
 }
 
-/* Contener el scale del particle slider dentro del banner */
 .suma-banner-slot [data-suma-banner],
 .suma-banner-slot .suma-hps {
   overflow: hidden !important;
-  max-height: 200px;
+  max-height: 230px;
+  min-height: 210px;
+  height: 210px;
+}
+
+.suma-hps--compact {
+  min-height: 210px;
+  max-height: 230px;
+  height: 210px;
 }
 
 .suma-banner-slot > .tsparticles-bg,
 .auth-aside > .tsparticles-bg,
 .auth-visual > .tsparticles-bg,
-.shell-side > .tsparticles-bg {
+.shell-side > .tsparticles-bg,
+.home-board > .tsparticles-bg {
   position: absolute !important;
   inset: 0 !important;
   opacity: 0.95;
