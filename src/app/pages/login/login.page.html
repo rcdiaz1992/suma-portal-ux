@@ -1,73 +1,112 @@
 <section class="auth-card">
-  <nav class="flow flow--dark" aria-label="Paso actual">
-    <span class="flow-step is-done"><span class="n">1</span> Acceso</span>
-    <span class="flow-sep" aria-hidden="true"></span>
-    <span class="flow-step is-current"><span class="n">2</span> Credenciales</span>
-    <span class="flow-sep" aria-hidden="true"></span>
-    <span class="flow-step"><span class="n">3</span> Destino</span>
-  </nav>
+  <div class="aduana-login-logo" aria-label="Aduana Nacional">
+    <img
+      class="aduana-login-logo__img aduana-login-logo__img--color"
+      src="/assets/img/logo-aduana-color.png"
+      alt="Aduana Nacional"
+      width="280"
+      height="94"
+    />
+    <img
+      class="aduana-login-logo__img aduana-login-logo__img--blanco"
+      src="/assets/img/logo-aduana-blanco.png"
+      alt="Aduana Nacional"
+      width="280"
+      height="113"
+    />
+  </div>
 
   <div class="kc-head">
     <span class="kc-logo" aria-hidden="true">KC</span>
     <div>
       <h2>Iniciar sesión</h2>
-      <p class="sub">Portal SUMA · un solo acceso</p>
+      <p class="sub">{{ subtitle }}</p>
+      <p class="sub sub--entry" *ngIf="!showRegistrar">Entrada al Portal SUMA</p>
     </div>
   </div>
 
-  <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="on">
-    <div class="field">
-      <label for="user">Usuario</label>
+  <form [formGroup]="form" (ngSubmit)="submit()" autocomplete="on" class="mat-auth-form">
+    <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+      <mat-label>Usuario</mat-label>
       <input
+        matInput
         id="user"
         formControlName="nombreUsuario"
         autocomplete="username"
-        placeholder="Usuario"
         (blur)="onUserBlur()"
       />
-    </div>
+      <mat-icon matPrefix>person</mat-icon>
+    </mat-form-field>
 
-    <div class="field">
-      <label for="pass">Contraseña</label>
+    <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+      <mat-label>Contraseña</mat-label>
       <input
+        matInput
         id="pass"
         formControlName="password"
-        type="password"
+        [type]="showPass ? 'text' : 'password'"
         autocomplete="current-password"
-        placeholder="••••••••"
       />
-    </div>
+      <mat-icon matPrefix>lock</mat-icon>
+      <button
+        mat-icon-button
+        matSuffix
+        type="button"
+        (click)="showPass = !showPass"
+        [attr.aria-label]="showPass ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+      >
+        <mat-icon>{{ showPass ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+    </mat-form-field>
 
-    <div class="field" *ngIf="showCaptcha">
-      <label for="captcha">Código de verificación</label>
-      <div class="captcha-row">
-        <img class="captcha-box" [src]="captchaSrc" alt="Captcha" width="140" height="48" />
-        <button type="button" class="captcha-refresh" (click)="refreshCaptcha()" title="Otro captcha" aria-label="Generar otro captcha">↻</button>
-        <input id="captcha" formControlName="captcha" autocomplete="off" placeholder="Código" />
-      </div>
+    <div class="captcha-row" *ngIf="showCaptcha">
+      <img class="captcha-box" [src]="captchaSrc" alt="Captcha" width="140" height="48" />
+      <button
+        mat-icon-button
+        type="button"
+        class="captcha-refresh"
+        (click)="refreshCaptcha()"
+        title="Otro captcha"
+        aria-label="Generar otro captcha"
+      >
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+        <mat-label>Código de verificación</mat-label>
+        <input matInput id="captcha" formControlName="captcha" autocomplete="off" />
+        <mat-icon matPrefix>pin</mat-icon>
+      </mat-form-field>
     </div>
 
     <p class="otp-error" *ngIf="sessionNotice && !error" role="status">{{ sessionNotice }}</p>
     <p class="otp-error" *ngIf="error" role="alert">{{ error }}</p>
 
-    <div class="auth-meta">
-      <label><input type="checkbox" formControlName="remember" /> Recordar usuario</label>
-      <a href="#">¿Olvidaste tu clave?</a>
-    </div>
-
     <div class="demo-hint" *ngIf="useMock">
       Demo: <code>Tecnopor</code> o <code>jyampassi</code> / <code>password</code>
     </div>
 
-    <button class="btn btn-solid" type="submit" [disabled]="loading">
-      {{ loading ? 'Ingresando…' : 'Continuar' }}
+    <button mat-flat-button color="primary" class="auth-submit" type="submit" [disabled]="loading">
+      <mat-icon>login</mat-icon>
+      {{ loading ? 'Ingresando…' : 'Iniciar sesión' }}
     </button>
   </form>
 
-  <p class="auth-alt">
-    <a routerLink="/login/no-habituales">Operadores no habituales (doble factor) →</a>
-  </p>
-  <p class="auth-alt">
-    <a routerLink="/login">← Volver</a>
-  </p>
+  <div class="auth-actions-mat" role="group" aria-label="Opciones de acceso">
+    <a mat-button color="primary" routerLink="/login/olvidar-clave">
+      <mat-icon>lock_reset</mat-icon>
+      ¿Olvidó su contraseña?
+    </a>
+    <a mat-stroked-button color="primary" *ngIf="showRegistrar" [routerLink]="registroLink">
+      <mat-icon>person_add</mat-icon>
+      Registrar nuevo usuario
+    </a>
+    <a mat-button *ngIf="showRegistrar" routerLink="/hub">
+      <mat-icon>apps</mat-icon>
+      Volver al acceso público
+    </a>
+    <a mat-stroked-button color="primary" *ngIf="!showRegistrar" routerLink="/hub">
+      <mat-icon>badge</mat-icon>
+      Acceso público SUMA
+    </a>
+  </div>
 </section>

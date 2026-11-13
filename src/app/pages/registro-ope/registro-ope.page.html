@@ -1,0 +1,112 @@
+<section class="auth-full auth-full--compact">
+  <div class="auth-full__inner">
+    <header class="auth-full__head auth-full__head--simple">
+      <div class="kc-head kc-head--compact">
+        <span class="kc-logo kc-logo--sm" aria-hidden="true">{{ copy.badge }}</span>
+        <div>
+          <h2>{{ copy.title }}</h2>
+          <p class="sub">{{ copy.sub }}</p>
+        </div>
+      </div>
+    </header>
+
+    <ng-container *ngIf="!success; else okTpl">
+      <form [formGroup]="form" (ngSubmit)="submit()" class="auth-full__form auth-full__form--grid mat-auth-form" autocomplete="on">
+        <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+          <mat-label><span class="req">*</span> Nombre(s)</mat-label>
+          <input matInput id="nombre" formControlName="nombre" autocomplete="given-name" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+          <mat-label><span class="req">*</span> Primer apellido</mat-label>
+          <input matInput id="paterno" formControlName="paterno" autocomplete="family-name" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+          <mat-label>Segundo apellido</mat-label>
+          <input matInput id="materno" formControlName="materno" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+          <mat-label><span class="req">*</span> Correo electrónico</mat-label>
+          <input matInput id="email" type="email" formControlName="email" autocomplete="email" />
+          <mat-icon matPrefix>email</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+          <mat-label><span class="req">*</span> Teléfono celular</mat-label>
+          <input matInput id="cel" type="tel" formControlName="telefonoCelular" />
+          <mat-icon matPrefix>phone_android</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+          <mat-label><span class="req">*</span> Nombre de usuario</mat-label>
+          <input matInput id="userReg" formControlName="nombreUsuario" autocomplete="username" />
+          <mat-icon matPrefix>person</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+          <mat-label><span class="req">*</span> Contraseña</mat-label>
+          <input matInput id="passReg" type="password" formControlName="password" autocomplete="new-password" />
+          <mat-icon matPrefix>lock</mat-icon>
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+          <mat-label><span class="req">*</span> Confirmar contraseña</mat-label>
+          <input matInput id="pass2" type="password" formControlName="password2" autocomplete="new-password" />
+          <mat-icon matPrefix>lock_outline</mat-icon>
+        </mat-form-field>
+
+        <div class="field field--span">
+          <div class="captcha-row captcha-row--compact">
+            <img class="captcha-box" [src]="captchaSrc" alt="Captcha" width="120" height="40" />
+            <button
+              mat-icon-button
+              type="button"
+              class="captcha-refresh"
+              (click)="refreshCaptcha()"
+              title="Otro captcha"
+              aria-label="Generar otro captcha"
+            >
+              <mat-icon>refresh</mat-icon>
+            </button>
+            <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+              <mat-label><span class="req">*</span> Código</mat-label>
+              <input matInput id="captchaReg" formControlName="captcha" autocomplete="off" maxlength="5" />
+              <mat-icon matPrefix>pin</mat-icon>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <p class="otp-error field--span" *ngIf="error" role="alert">{{ error }}</p>
+
+        <div class="auth-actions-mat auth-actions-mat--row field--span">
+          <a mat-button routerLink="/login" [queryParams]="loginBackQuery">
+            <mat-icon>arrow_back</mat-icon>
+            Volver
+          </a>
+          <button mat-button type="button" (click)="resetForm()">
+            <mat-icon>restart_alt</mat-icon>
+            Limpiar
+          </button>
+          <button mat-flat-button color="primary" type="submit" [disabled]="loading">
+            <mat-icon>person_add</mat-icon>
+            {{ loading ? 'Registrando…' : 'Registrar usuario' }}
+          </button>
+        </div>
+      </form>
+    </ng-container>
+
+    <ng-template #okTpl>
+      <div class="mfa-banner">
+        <strong>Usuario creado</strong>
+        <span>
+          Se enviará a su correo el enlace de activación. Tiene diez (10) días calendario para
+          registrar su formulario.
+        </span>
+      </div>
+      <div class="auth-actions-mat">
+        <a mat-flat-button color="primary" routerLink="/login" [queryParams]="loginBackQuery">
+          <mat-icon>login</mat-icon>
+          Ir a iniciar sesión
+        </a>
+      </div>
+    </ng-template>
+  </div>
+</section>

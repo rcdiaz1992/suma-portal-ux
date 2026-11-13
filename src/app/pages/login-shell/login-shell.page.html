@@ -1,4 +1,4 @@
-<div class="auth-shell">
+<div class="auth-shell" [class.auth-shell--full]="fullBleed">
   <button
     type="button"
     class="theme-fab"
@@ -11,47 +11,147 @@
 
   <aside
     class="auth-visual"
+    [class.auth-visual--banner]="fullBleed"
+    [class.suma-banner-slot]="fullBleed"
     data-particles
-    data-density="1.35"
-    data-speed="1.08"
+    [attr.data-density]="fullBleed ? '0.85' : '1.35'"
+    [attr.data-speed]="fullBleed ? '1' : '1.08'"
     data-color="#c9a227"
     data-link="#d4af37"
   >
-    <!-- Galaxia cambiante (particle-slider), grande y desbordante -->
-    <div class="auth-galaxy" data-suma-banner="compact" aria-hidden="true"></div>
+    <ng-container *ngIf="fullBleed; else loginVisual">
+      <div class="suma-banner-brand suma-banner-brand--shell" aria-label="SUMA · Aduana Nacional">
+        <span class="suma-banner-eyebrow">Aduana Nacional</span>
+        <h1 class="suma-banner-title">SUMA</h1>
+        <p class="suma-banner-sub">Sistema Único de Modernización Aduanera</p>
+      </div>
+      <div class="bolivia-map-frame bolivia-map-frame--portal" aria-hidden="true">
+        <object
+          class="bolivia-svg"
+          data="/assets/img/bolivia-departments-outline.svg?v=1"
+          type="image/svg+xml"
+          tabindex="-1"
+        ></object>
+      </div>
+      <div class="suma-banner-aduana-logo" aria-label="Aduana Nacional">
+        <img
+          class="suma-banner-aduana-logo__img suma-banner-aduana-logo__img--color"
+          src="/assets/img/logo-aduana-color.png"
+          alt="Aduana Nacional"
+          width="220"
+          height="74"
+        />
+        <img
+          class="suma-banner-aduana-logo__img suma-banner-aduana-logo__img--blanco"
+          src="/assets/img/logo-aduana-blanco.png"
+          alt="Aduana Nacional"
+          width="220"
+          height="89"
+        />
+      </div>
+    </ng-container>
 
-    <div class="auth-visual-top">
+    <ng-template #loginVisual>
       <div class="auth-brand" aria-label="SUMA · Aduana Nacional">
-        <p class="auth-brand-eyebrow">Aduana Nacional de Bolivia</p>
+        <p class="auth-brand-eyebrow">Aduana Nacional</p>
         <h1 class="auth-brand-title">SUMA</h1>
         <p class="auth-brand-sub">Sistema Único de Modernización Aduanera</p>
       </div>
 
-      <nav class="flow flow--light" aria-label="Recorrido">
-        <a class="flow-step is-done" routerLink="/login"><span class="n">1</span> Acceso</a>
-        <span class="flow-sep" aria-hidden="true"></span>
-        <span class="flow-step is-current"><span class="n">2</span> Login</span>
-        <span class="flow-sep" aria-hidden="true"></span>
-        <a class="flow-step" routerLink="/portal"><span class="n">3</span> Portal</a>
-      </nav>
+      <div class="banner-info-tabs banner-info-tabs--hero">
+        <div class="banner-info-tablist" role="tablist" aria-label="Información SUMA">
+          <button
+            type="button"
+            class="banner-info-tab"
+            role="tab"
+            [class.is-active]="bannerTab === 'firma'"
+            [attr.aria-selected]="bannerTab === 'firma'"
+            (click)="setBannerTab('firma')"
+          >
+            <span class="banner-info-tab-kicker">01</span>
+            <span class="banner-info-tab-title">Firma digital</span>
+            <span class="banner-info-tab-desc">Puntos habilitados para adquirir la firma digital</span>
+          </button>
+          <button
+            type="button"
+            class="banner-info-tab"
+            role="tab"
+            [class.is-active]="bannerTab === 'soporte'"
+            [attr.aria-selected]="bannerTab === 'soporte'"
+            (click)="setBannerTab('soporte')"
+          >
+            <span class="banner-info-tab-kicker">02</span>
+            <span class="banner-info-tab-title">Soporte</span>
+            <span class="banner-info-tab-desc">Consulta, ticket y respuesta en su correo</span>
+          </button>
+          <button
+            type="button"
+            class="banner-info-tab"
+            role="tab"
+            [class.is-active]="bannerTab === 'seguimiento'"
+            [attr.aria-selected]="bannerTab === 'seguimiento'"
+            (click)="setBannerTab('seguimiento')"
+          >
+            <span class="banner-info-tab-kicker">03</span>
+            <span class="banner-info-tab-title">Seguimiento</span>
+            <span class="banner-info-tab-desc">Consulte el estado de su ticket de soporte</span>
+          </button>
+        </div>
 
-      <h2 class="auth-visual-heading">Ingreso SSO</h2>
-      <p>
-        Un solo acceso. El sistema distingue operador y servidor público. No
-        habituales van por doble factor.
-      </p>
-      <ol class="mfa-legend">
-        <li>Usuario y contraseña</li>
-        <li>Código de verificación</li>
-        <li>Entrar al portal</li>
-      </ol>
-    </div>
-    <p>
-      <span class="kc-pill">Keycloak + token SUMA</span>
-    </p>
+        <div class="banner-info-panels">
+          <div
+            class="bolivia-map-frame"
+            role="tabpanel"
+            *ngIf="bannerTab === 'firma'"
+            aria-label="Puntos habilitados para firma digital"
+          >
+            <object
+              class="bolivia-svg"
+              data="/assets/img/bolivia-departments.svg?v=8"
+              type="image/svg+xml"
+              tabindex="-1"
+            ></object>
+          </div>
+          <div
+            class="soporte-autoformas-frame"
+            role="tabpanel"
+            *ngIf="bannerTab === 'soporte'"
+            aria-label="Soporte sistemas"
+          >
+            <object
+              class="soporte-svg"
+              data="/assets/img/soporte-autoformas.svg?v=2"
+              type="image/svg+xml"
+              tabindex="-1"
+            ></object>
+          </div>
+          <div
+            class="seguimiento-frame"
+            role="tabpanel"
+            *ngIf="bannerTab === 'seguimiento'"
+            aria-label="Seguimiento solicitud de soporte"
+          >
+            <object
+              class="seguimiento-svg"
+              data="/assets/img/seguimiento-engranajes.svg?v=2"
+              type="image/svg+xml"
+              tabindex="-1"
+            ></object>
+          </div>
+        </div>
+      </div>
+    </ng-template>
   </aside>
 
-  <main class="auth-panel">
+  <main
+    class="auth-panel"
+    [class.auth-panel--full]="fullBleed"
+    data-particles
+    [attr.data-density]="fullBleed ? '0.7' : '0.55'"
+    data-speed="1"
+    data-color="#c9a227"
+    data-link="#d4af37"
+  >
     <router-outlet></router-outlet>
   </main>
 </div>

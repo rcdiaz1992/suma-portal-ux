@@ -1,8 +1,12 @@
 /* Estilos globales del login SUMA (maqueta proposal) */
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap");
 @import "assets/css/banner-fx.css";
+@import "assets/css/bolivia-map.css";
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
 @import "assets/css/login-auth.css";
+@import "assets/css/material-fields.scss";
 @import "assets/css/portal-shell.css";
+@import "assets/css/btn-shine.css";
 
 html,
 body {
@@ -22,7 +26,8 @@ app-root {
   overflow: hidden;
 }
 
-app-portal-home {
+app-portal-home,
+app-public-hub {
   display: block;
   height: 100%;
   max-height: 100%;

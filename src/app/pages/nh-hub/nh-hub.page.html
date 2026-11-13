@@ -16,7 +16,7 @@
       >
         {{ theme === 'oscuro' ? '☀' : '☾' }}
       </button>
-      <span class="chip">MFA · verificado</span>
+      <span class="chip">Captcha · verificado</span>
       <button type="button" class="btn-soft" (click)="logout()">Salir</button>
     </div>
   </header>
@@ -24,35 +24,34 @@
   <main class="hub-main">
     <div class="page-head">
       <div>
-        <h1>Operadores no habituales</h1>
+        <h1>Importadores / Exportadores no habituales</h1>
         <p>
-          Dos cubos alineados al portal SSO
-          (<code>indexOce.html#/profile</code>): registro de nuevo importador y
-          operaciones habilitadas.
+          Dos accesos: registrar un nuevo operador (portal SUMA) u operaciones no habituales
+          (DIMS, manifiestos, impresión, notificación y más).
         </p>
       </div>
     </div>
 
     <div class="hub-grid">
-      <a class="hub-card" routerLink="/hub/no-habituales/registro">
+      <button type="button" class="hub-card" (click)="goRegistro()">
         <span class="tag"><span class="ord">1</span> Registro</span>
-        <h2>Registrar nuevo importador no habitual</h2>
+        <h2>Registrar nuevo operador</h2>
         <p>
-          Alta de persona natural / NIT bajo régimen simplificado para operaciones
-          de menor cuantía (equivalente a Registro Nuevos Operadores · no habitual).
+          Alta de importador / exportador en el portal SUMA (equivalente al registro de nuevos
+          operadores del SSO).
         </p>
-        <span class="go">Ir al registro →</span>
-      </a>
+        <span class="go">Ir al portal SUMA →</span>
+      </button>
 
-      <a class="hub-card" routerLink="/hub/no-habituales/ops">
+      <button type="button" class="hub-card" (click)="goOps()">
         <span class="tag"><span class="ord">2</span> Operaciones</span>
-        <h2>Operaciones No Habituales</h2>
+        <h2>Operaciones no habituales</h2>
         <p>
-          Opciones del perfil SSO: DIMS, manifiestos con permiso ocasional, impresión
-          de documentos, exportación simplificada y demás trámites habilitados.
+          Importación y exportación: DIMS, permiso ocasional, impresión, notificación, agencia
+          marítima, valija, socorro, DAV y más.
         </p>
         <span class="go">Ver opciones →</span>
-      </a>
+      </button>
     </div>
   </main>
 </div>

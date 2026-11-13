@@ -7,10 +7,12 @@ alwaysApply: true
 
 Este repo (`suma-portal-ux`) es el front Angular. Trabajar aquí, en la raíz del workspace.
 
+**Entrada del portal = `/login`** (reemplaza `indexOce` / `indexLogin` del SSO front). Backend sigue siendo `b-sso`.
+
 ## Alcance a unificar
 
-1. **Login** usuarios **INTERNO** y **EXTERNO** (slice en un solo login; captcha interno).
-2. **Registro** de nuevos operadores **habituales** y **no habituales** (hub MFA + cubos).
+1. **Login** INTERNO/EXTERNO en `/login` (usuario + clave).
+2. **Registro / accesos** separados en `/login/registro` (5 caminos, mismo diseño; no reutilizar indexOce).
 3. **Barra / árbol de menú** SUMA post-login (lateral + lanzador; distinto por perfil).
 
 ## Repos fuente (obligatorios)
@@ -40,9 +42,11 @@ Opcional: `regpad/` si el padrón/registro “duro” no está solo en OCE. Keyc
 
 ## Rutas de referencia en este repo
 
-- `/login` — Externo / Interno
+- `/login` — operadores y técnicos (usuario + clave)
+- `/login/registro` — hub 5 accesos (habituales, no habituales, otros, ORF, charter)
 - `/login/no-habituales` — MFA
+- `/login/charter` — Charter
 - `/hub/no-habituales` — 2 cubos (registro + operaciones)
-- `/portal` — shell post-login + menú por `suma.tipoUser`
+- `/portal` — shell post-login + menú por perfil SSO
 
 Docs: `docs/PORTAL-UNIFICADO.md`, `ANGULAR-MAP.md`, `docs/AUTH-HIBRIDO.md`.

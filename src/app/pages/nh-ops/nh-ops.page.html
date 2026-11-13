@@ -3,7 +3,7 @@
     <div class="top-left">
       <div>
         <div class="crumb">SUMA · No habituales · Operaciones</div>
-        <strong class="top-perfil">Perfil: operaciones simplificadas</strong>
+        <strong class="top-perfil">Importación / Exportación</strong>
       </div>
     </div>
     <div class="top-right">
@@ -41,6 +41,10 @@
       </button>
     </div>
 
+    <p class="section-note" *ngIf="error" role="alert">{{ error }}</p>
+    <p class="section-note" *ngIf="loading" role="status">Ingresando…</p>
+
+    <!-- ========== IMPORTACIÓN ========== -->
     <div *ngIf="tab === 'import'">
       <section class="nh-block">
         <header class="nh-block-head">
@@ -51,24 +55,36 @@
           </div>
         </header>
         <p class="nh-desc">
-          Despachos de importación a consumo de menor cuantía (valor menor a USD 2.000)
-          y equipajes acompañados/no acompañados menores a USD 2.000.
+          Despachos de Importación a Consumo por propios medios de Menor Cuantía cuyo valor FOB no
+          exceda los USD 2.000. Equipaje acompañado y no acompañado (régimen de viajeros), cuando el
+          valor FOB sea inferior o igual a USD 2.000.
         </p>
-        <form class="nh-form" (submit)="$event.preventDefault()">
-          <label>Tipo documento
-            <select><option>— Seleccione —</option><option>CI</option><option>NIT</option><option>Pasaporte</option></select>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterDims()">
+          <label>
+            Tipo documento
+            <select [(ngModel)]="imp.dims.tipoDoc" name="impDimsTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
           </label>
-          <label>Documento de Identificación
-            <input type="text" placeholder="Documento" />
+          <label>
+            Documento de Identificación
+            <input type="text" [(ngModel)]="imp.dims.documento" name="impDimsDoc" />
           </label>
-          <label>Tipo de Aduana de Despacho
-            <select><option>— Seleccione —</option><option>Frontera</option><option>Interior</option><option>Aeropuerto</option></select>
+          <label>
+            Tipo de Aduana de Despacho
+            <select [(ngModel)]="imp.dims.tipoAduana" name="impDimsTipoAdu">
+              <option value="">— Seleccione —</option>
+              <option>Frontera</option>
+              <option>Interior</option>
+              <option>Aeropuerto</option>
+            </select>
           </label>
-          <label>Aduana de Despacho
-            <select><option>— Seleccione —</option><option>La Paz</option><option>Santa Cruz</option><option>Cochabamba</option></select>
+          <label>
+            Aduana de Despacho
+            <input type="text" [(ngModel)]="imp.dims.aduana" name="impDimsAdu" placeholder="Aduana" />
           </label>
           <div class="nh-actions">
-            <button type="button" class="btn btn-solid" (click)="go('DIMS importación')">Ingresar</button>
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
           </div>
         </form>
       </section>
@@ -82,17 +98,27 @@
           </div>
         </header>
         <p class="nh-desc">
-          Registro de documentos de embarque o manifiestos para empresas con permiso ocasional.
+          Registre un Documento de embarque o un Manifiesto de Carga si su empresa de transporte se
+          encuentra habilitada con un permiso ocasional.
         </p>
-        <form class="nh-form" (submit)="$event.preventDefault()">
-          <label>Documento de Identificación
-            <input type="text" placeholder="Ej.: 90000XXXXX" />
+        <form class="nh-form" (submit)="$event.preventDefault(); enterOca('import')">
+          <label>
+            Documento de Identificación
+            <input
+              type="text"
+              [(ngModel)]="imp.oca.documento"
+              name="impOcaDoc"
+              placeholder="Ej.: 90000XXXXX"
+            />
           </label>
-          <label>Tipo Documento
-            <select><option>— Seleccione —</option><option>NIT</option><option>Otro</option></select>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="imp.oca.tipoDoc" name="impOcaTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
           </label>
           <div class="nh-actions">
-            <button type="button" class="btn btn-solid" (click)="go('Manifiesto ocasional')">Ingresar</button>
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
           </div>
         </form>
       </section>
@@ -102,18 +128,27 @@
           <span class="nh-n">3</span>
           <div><h2>Imprimir documento</h2></div>
         </header>
-        <form class="nh-form" (submit)="$event.preventDefault()">
-          <label>Tipo de documento
-            <select><option>— Seleccione —</option><option>DEX</option><option>CRT</option><option>MIC</option></select>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterPrint('import')">
+          <label>
+            Tipo de documento
+            <input type="text" [(ngModel)]="imp.print.tipoDoc" name="impPrintTipo" />
           </label>
-          <label>Número de documento
-            <input type="text" placeholder="Numero DEX, CRT, MIC" />
+          <label>
+            Número de documento
+            <input type="text" [(ngModel)]="imp.print.nroDoc" name="impPrintNro" />
           </label>
-          <label>Número de identificación
-            <input type="text" placeholder="Número identificación" />
+          <label>
+            Número de identificación
+            <input type="text" [(ngModel)]="imp.print.nroId" name="impPrintId" />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="imp.print.tipoId" name="impPrintTipoId">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
           </label>
           <div class="nh-actions">
-            <button type="button" class="btn btn-solid" (click)="go('Imprimir documento')">Ingresar</button>
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
           </div>
         </form>
       </section>
@@ -125,13 +160,159 @@
             <h2>Registro de Personas Naturales para Notificación Electrónica</h2>
           </div>
         </header>
-        <p class="nh-desc">Registre una persona natural para recibir notificaciones electrónicas.</p>
+        <p class="nh-desc">
+          Acceda si requiere registrar una Persona Natural para poder recibir notificaciones.
+        </p>
         <div class="nh-actions">
-          <button type="button" class="btn btn-solid" (click)="go('Notificación electrónica')">Ingresar</button>
+          <button type="button" class="btn btn-solid" (click)="goNotificacion()">Ingresar</button>
         </div>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">5</span>
+          <div><h2>Registro Agencia Marítima</h2></div>
+        </header>
+        <p class="nh-desc">Acceda si requiere registrar una Agencia Marítima.</p>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterMmc('import')">
+          <label>
+            Número de Documento
+            <input type="text" [(ngModel)]="imp.mmc.documento" name="impMmcDoc" />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="imp.mmc.tipoDoc" name="impMmcTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
+          </label>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">6</span>
+          <div>
+            <h2>Empresas de transporte extranjeras con permiso ocasional Aéreas</h2>
+            <h3>Manifiestos de carga y documentos de embarque aéreos</h3>
+          </div>
+        </header>
+        <p class="nh-desc">
+          Registre un Documento de embarque o un Manifiesto de Carga aéreo con permiso ocasional.
+        </p>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterCharterAir('import')">
+          <label>
+            Documento de Identificación
+            <input
+              type="text"
+              [(ngModel)]="imp.charter.documento"
+              name="impAirDoc"
+              placeholder="Ej.: 60000XXXXX"
+            />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="imp.charter.tipoDoc" name="impAirTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
+          </label>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">7</span>
+          <div><h2>Valija diplomática</h2></div>
+        </header>
+        <p class="nh-desc">
+          La carga debe estar manifestada como «Valija diplomática». Adjunte el Formulario Oficial
+          de Autorización de Recojo (UPI–Form. 04) del Ministerio de Relaciones Exteriores, el
+          Documento de Embarque original, e identificación conforme a la Convención de Viena y D.S.
+          Nº 22225.
+        </p>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterValija('import')">
+          <label>
+            Número de Documento
+            <input type="text" [(ngModel)]="imp.valija.documento" name="impValDoc" />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="imp.valija.tipoDoc" name="impValTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
+          </label>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">8</span>
+          <div><h2>Envíos de socorro</h2></div>
+        </header>
+        <p class="nh-desc">Registre un formulario para retiro de Envíos de Socorro.</p>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterSocorro('import')">
+          <div class="captcha-row">
+            <img class="captcha-box" [src]="imp.socorro.captchaSrc" alt="Captcha" width="140" height="48" />
+            <button
+              type="button"
+              class="btn-soft"
+              (click)="refreshSocorroCaptcha('import')"
+              title="Otro captcha"
+            >
+              ↻
+            </button>
+            <label>
+              Código de verificación
+              <input
+                type="text"
+                [(ngModel)]="imp.socorro.captcha"
+                name="impSocCaptcha"
+                maxlength="5"
+                autocomplete="off"
+              />
+            </label>
+          </div>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">9</span>
+          <div>
+            <h2>Declaración Andina del Valor (DAV) · No Habituales</h2>
+          </div>
+        </header>
+        <p class="nh-desc">Acceda si requiere registrar una Declaración Andina del Valor.</p>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterDav('import')">
+          <label>
+            Número de Documento
+            <input type="text" [(ngModel)]="imp.dav.documento" name="impDavDoc" />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="imp.dav.tipoDoc" name="impDavTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
+          </label>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
       </section>
     </div>
 
+    <!-- ========== EXPORTACIÓN ========== -->
     <div *ngIf="tab === 'export'">
       <section class="nh-block">
         <header class="nh-block-head">
@@ -142,26 +323,236 @@
           </div>
         </header>
         <p class="nh-desc">
-          Exportación de menor cuantía (FOB ≤ USD 1.000), menaje, vehículos sin fines comerciales
-          y equipaje de viajeros (alineado a profile SSO).
+          Exportación definitiva o Reexportación RITEX por propios medios de Menor Cuantía (FOB ≤
+          USD 1.000), menaje doméstico, vehículos del exportador sin fines comerciales y equipaje
+          de viajeros (salvo mercancía con autorización/certificación expresa).
         </p>
-        <form class="nh-form" (submit)="$event.preventDefault()">
-          <label>Tipo documento
-            <select><option>— Seleccione —</option><option>CI</option><option>NIT</option></select>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterExportNh()">
+          <label>
+            Documento de Identificación
+            <input type="text" [(ngModel)]="exp.nh.documento" name="expNhDoc" />
           </label>
-          <label>Documento de Identificación
-            <input type="text" placeholder="Documento" />
-          </label>
-          <label>Aduana de salida
-            <select><option>— Seleccione —</option><option>La Paz</option><option>Santa Cruz</option></select>
+          <label>
+            Tipo de Documento
+            <select [(ngModel)]="exp.nh.tipoDoc" name="expNhTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
           </label>
           <div class="nh-actions">
-            <button type="button" class="btn btn-solid" (click)="go('Exportación simplificada')">Ingresar</button>
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">2</span>
+          <div>
+            <h2>Empresas de transporte extranjeras con permiso ocasional</h2>
+            <h3>Manifiestos de carga y documentos de embarque</h3>
+          </div>
+        </header>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterOca('export')">
+          <label>
+            Documento de Identificación
+            <input
+              type="text"
+              [(ngModel)]="exp.oca.documento"
+              name="expOcaDoc"
+              placeholder="Ej.: 90000XXXXX"
+            />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="exp.oca.tipoDoc" name="expOcaTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
+          </label>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">3</span>
+          <div><h2>Imprimir documento</h2></div>
+        </header>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterPrint('export')">
+          <label>
+            Tipo de documento
+            <input type="text" [(ngModel)]="exp.print.tipoDoc" name="expPrintTipo" />
+          </label>
+          <label>
+            Número de documento
+            <input type="text" [(ngModel)]="exp.print.nroDoc" name="expPrintNro" />
+          </label>
+          <label>
+            Número de identificación
+            <input type="text" [(ngModel)]="exp.print.nroId" name="expPrintId" />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="exp.print.tipoId" name="expPrintTipoId">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
+          </label>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">4</span>
+          <div>
+            <h2>Registro de Personas Naturales para Notificación Electrónica</h2>
+          </div>
+        </header>
+        <p class="nh-desc">
+          Acceda si requiere registrar una Persona Natural para poder recibir notificaciones.
+        </p>
+        <div class="nh-actions">
+          <button type="button" class="btn btn-solid" (click)="goNotificacion()">Ingresar</button>
+        </div>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">5</span>
+          <div><h2>Registro Agencia Marítima</h2></div>
+        </header>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterMmc('export')">
+          <label>
+            Número de Documento
+            <input type="text" [(ngModel)]="exp.mmc.documento" name="expMmcDoc" />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="exp.mmc.tipoDoc" name="expMmcTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
+          </label>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">6</span>
+          <div>
+            <h2>Empresas de transporte extranjeras con permiso ocasional Aéreas</h2>
+            <h3>Manifiestos de carga y documentos de embarque aéreos</h3>
+          </div>
+        </header>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterCharterAir('export')">
+          <label>
+            Documento de Identificación
+            <input
+              type="text"
+              [(ngModel)]="exp.charter.documento"
+              name="expAirDoc"
+              placeholder="Ej.: 60000XXXXX"
+            />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="exp.charter.tipoDoc" name="expAirTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
+          </label>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">7</span>
+          <div><h2>Valija diplomática</h2></div>
+        </header>
+        <p class="nh-desc">
+          Misma documentación que en importación (Form. 04 UPI, Documento de Embarque original e
+          identificación como valija diplomática).
+        </p>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterValija('export')">
+          <label>
+            Número de Documento
+            <input type="text" [(ngModel)]="exp.valija.documento" name="expValDoc" />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="exp.valija.tipoDoc" name="expValTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
+          </label>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">8</span>
+          <div><h2>Envíos de socorro</h2></div>
+        </header>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterSocorro('export')">
+          <div class="captcha-row">
+            <img class="captcha-box" [src]="exp.socorro.captchaSrc" alt="Captcha" width="140" height="48" />
+            <button
+              type="button"
+              class="btn-soft"
+              (click)="refreshSocorroCaptcha('export')"
+              title="Otro captcha"
+            >
+              ↻
+            </button>
+            <label>
+              Código de verificación
+              <input
+                type="text"
+                [(ngModel)]="exp.socorro.captcha"
+                name="expSocCaptcha"
+                maxlength="5"
+                autocomplete="off"
+              />
+            </label>
+          </div>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="nh-block">
+        <header class="nh-block-head">
+          <span class="nh-n">9</span>
+          <div>
+            <h2>Declaración Andina del Valor (DAV) · No Habituales</h2>
+          </div>
+        </header>
+        <form class="nh-form" (submit)="$event.preventDefault(); enterDav('export')">
+          <label>
+            Número de Documento
+            <input type="text" [(ngModel)]="exp.dav.documento" name="expDavDoc" />
+          </label>
+          <label>
+            Tipo Documento
+            <select [(ngModel)]="exp.dav.tipoDoc" name="expDavTipo">
+              <option *ngFor="let t of docTipos" [value]="t">{{ t }}</option>
+            </select>
+          </label>
+          <div class="nh-actions">
+            <button type="submit" class="btn btn-solid" [disabled]="loading">Ingresar</button>
           </div>
         </form>
       </section>
     </div>
-
-    <p class="section-note" *ngIf="toast" role="status">{{ toast }}</p>
   </main>
 </div>

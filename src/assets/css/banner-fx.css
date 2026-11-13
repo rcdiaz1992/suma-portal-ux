@@ -139,11 +139,101 @@
   filter: saturate(1.2) brightness(1.04) contrast(1.06);
 }
 
-/* Banner portal: galaxia a la derecha, recortada dentro del banner */
-.suma-banner-slot .suma-hps--compact crazygl-hero[data-crazygl="particle-slider"] {
-  inset: -8% -4% -12% 28%;
-  transform: scale(1.28) translateX(8%);
-  transform-origin: 92% 45%;
+/* Marca SUMA del portal: grande y extendida a la izquierda */
+.suma-banner-slot > .suma-banner-brand--shell {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.25rem;
+  padding: 0.75rem clamp(1.1rem, 3.2vw, 2.4rem);
+  pointer-events: none;
+  max-width: min(68%, 48rem);
+}
+
+.suma-banner-slot > .suma-banner-brand--shell .suma-banner-eyebrow {
+  font-size: clamp(0.85rem, 1.45vw, 1.1rem);
+  letter-spacing: 0.2em;
+}
+
+.suma-banner-slot > .suma-banner-brand--shell .suma-banner-title {
+  font-size: clamp(4rem, 9.5vw, 7.2rem);
+  line-height: 0.84;
+  letter-spacing: 0.12em;
+  font-weight: 800;
+  text-shadow: 0 0 28px rgba(240, 193, 75, 0.28);
+}
+
+.suma-banner-slot > .suma-banner-brand--shell .suma-banner-sub {
+  margin-top: 0.3rem;
+  font-size: clamp(0.8rem, 1.5vw, 1.1rem);
+  letter-spacing: 0.16em;
+  max-width: 52ch;
+  text-transform: uppercase;
+}
+
+/* Logo Aduana a la derecha del banner portal */
+.suma-banner-slot > .suma-banner-aduana-logo {
+  position: absolute;
+  right: clamp(0.75rem, 2.2vw, 1.6rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 6;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.suma-banner-aduana-logo__img {
+  display: block;
+  width: clamp(240px, 30vw, 400px);
+  height: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.35));
+}
+
+.suma-banner-aduana-logo__img--blanco {
+  display: none;
+}
+
+/* Fuera del banner: logo según tema (fondos claros ↔ color) */
+html[data-portal-theme="oscuro"] .suma-banner-aduana-logo__img--color {
+  display: none;
+}
+
+html[data-portal-theme="oscuro"] .suma-banner-aduana-logo__img--blanco {
+  display: block;
+}
+
+html[data-portal-theme="claro"] .suma-banner-aduana-logo__img--color {
+  display: block;
+}
+
+html[data-portal-theme="claro"] .suma-banner-aduana-logo__img--blanco {
+  display: none;
+}
+
+/*
+ * El banner SUMA siempre es navy: el logo color (texto oscuro) desaparece en tema claro.
+ * En el slot del banner forzar siempre la versión blanca.
+ */
+.suma-banner-slot > .suma-banner-aduana-logo .suma-banner-aduana-logo__img--color {
+  display: none !important;
+}
+
+.suma-banner-slot > .suma-banner-aduana-logo .suma-banner-aduana-logo__img--blanco {
+  display: block !important;
+}
+
+/* Evitar logo duplicado del overlay React dentro del banner */
+.suma-banner-slot .suma-banner-inner {
+  display: none !important;
 }
 
 .suma-hps crazygl-hero[data-crazygl="particle-slider"],
@@ -173,7 +263,10 @@
   position: relative;
   overflow: hidden !important;
   isolation: isolate;
-  max-height: 230px;
+  /* Altura propia: logo/mapa/particles viven en absolute y si no, el slot colapsa a 0 */
+  min-height: 250px;
+  height: 250px;
+  max-height: 280px;
   z-index: 3;
   background:
     radial-gradient(700px 280px at 20% 40%, rgba(201, 162, 39, 0.18), transparent 60%),
@@ -183,21 +276,22 @@
 .suma-banner-slot [data-suma-banner],
 .suma-banner-slot .suma-hps {
   overflow: hidden !important;
-  max-height: 230px;
-  min-height: 210px;
-  height: 210px;
+  max-height: 280px;
+  min-height: 250px;
+  height: 250px;
 }
 
 .suma-hps--compact {
-  min-height: 210px;
-  max-height: 230px;
-  height: 210px;
+  min-height: 250px;
+  max-height: 280px;
+  height: 250px;
 }
 
 .suma-banner-slot > .tsparticles-bg,
 .auth-aside > .tsparticles-bg,
 .auth-visual > .tsparticles-bg,
 .shell-side > .tsparticles-bg,
+.shell-side-fx > .tsparticles-bg,
 .home-board > .tsparticles-bg {
   position: absolute !important;
   inset: 0 !important;
@@ -206,7 +300,35 @@
   pointer-events: none;
 }
 
-.suma-banner-slot > *:not(.tsparticles-bg) {
-  position: relative;
+/* Portal: redes detrás; mapa PNG + logo encima */
+.suma-banner-slot > .tsparticles-bg {
+  z-index: 0 !important;
+  opacity: 0.55;
+}
+
+.suma-banner-slot > [data-suma-banner] {
+  position: absolute !important;
+  inset: 0 !important;
   z-index: 1;
+  pointer-events: none;
+}
+
+@media (max-width: 960px) {
+  .suma-banner-slot > .suma-banner-brand--shell {
+    max-width: 58%;
+    padding: 0.55rem 0.85rem;
+  }
+
+  .suma-banner-slot > .suma-banner-brand--shell .suma-banner-title {
+    font-size: clamp(2.2rem, 10vw, 3.4rem);
+    letter-spacing: 0.08em;
+  }
+
+  .suma-banner-slot > .suma-banner-brand--shell .suma-banner-sub {
+    display: none;
+  }
+
+  .suma-banner-aduana-logo__img {
+    width: clamp(180px, 38vw, 260px);
+  }
 }

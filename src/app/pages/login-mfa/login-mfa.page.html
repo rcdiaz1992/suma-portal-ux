@@ -1,4 +1,21 @@
 <section class="auth-card">
+  <div class="aduana-login-logo" aria-label="Aduana Nacional">
+    <img
+      class="aduana-login-logo__img aduana-login-logo__img--color"
+      src="/assets/img/logo-aduana-color.png"
+      alt="Aduana Nacional"
+      width="280"
+      height="94"
+    />
+    <img
+      class="aduana-login-logo__img aduana-login-logo__img--blanco"
+      src="/assets/img/logo-aduana-blanco.png"
+      alt="Aduana Nacional"
+      width="280"
+      height="113"
+    />
+  </div>
+
   <nav class="flow flow--dark" aria-label="Paso actual">
     <span class="flow-step is-done"><span class="n">1</span> Acceso</span>
     <span class="flow-sep" aria-hidden="true"></span>
@@ -35,26 +52,35 @@
     </button>
   </div>
 
-  <form [formGroup]="form" (ngSubmit)="submit()">
-    <div class="field">
-      <label for="access-code">Código de verificación</label>
+  <form [formGroup]="form" (ngSubmit)="submit()" class="mat-auth-form">
+    <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+      <mat-label>Código de verificación</mat-label>
       <input
+        matInput
         id="access-code"
         formControlName="code"
         inputmode="numeric"
         maxlength="6"
-        placeholder="000000"
         autocomplete="one-time-code"
       />
-    </div>
+      <mat-icon matPrefix>pin</mat-icon>
+    </mat-form-field>
     <p class="otp-error" *ngIf="error" role="alert">{{ error }}</p>
     <div class="demo-hint">Demo: cualquier canal · código <code>123456</code></div>
-    <button class="btn btn-solid" type="submit" [disabled]="loading">
+    <button mat-flat-button color="primary" class="auth-submit" type="submit" [disabled]="loading">
+      <mat-icon>verified_user</mat-icon>
       {{ loading ? 'Validando…' : 'Ingresar a opciones' }}
     </button>
   </form>
 
-  <p class="auth-alt">
-    <a routerLink="/login">← Volver al login portal</a>
-  </p>
+  <div class="auth-actions-mat" role="group" aria-label="Opciones de acceso">
+    <a mat-button routerLink="/login/registro">
+      <mat-icon>apps</mat-icon>
+      Volver a los 5 accesos
+    </a>
+    <a mat-stroked-button color="primary" routerLink="/login">
+      <mat-icon>login</mat-icon>
+      Iniciar sesión (usuario y clave)
+    </a>
+  </div>
 </section>

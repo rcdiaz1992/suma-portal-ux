@@ -1,0 +1,78 @@
+<section class="auth-card">
+  <div class="aduana-login-logo" aria-label="Aduana Nacional">
+    <img
+      class="aduana-login-logo__img aduana-login-logo__img--color"
+      src="/assets/img/logo-aduana-color.png"
+      alt="Aduana Nacional"
+      width="280"
+      height="94"
+    />
+    <img
+      class="aduana-login-logo__img aduana-login-logo__img--blanco"
+      src="/assets/img/logo-aduana-blanco.png"
+      alt="Aduana Nacional"
+      width="280"
+      height="113"
+    />
+  </div>
+
+  <nav class="flow flow--dark" aria-label="Paso actual">
+    <span class="flow-step is-done"><span class="n">1</span> Acceso</span>
+    <span class="flow-sep" aria-hidden="true"></span>
+    <span class="flow-step is-current"><span class="n">2</span> Verificación</span>
+    <span class="flow-sep" aria-hidden="true"></span>
+    <span class="flow-step"><span class="n">3</span> Charter</span>
+  </nav>
+
+  <div class="kc-head">
+    <span class="kc-logo mfa-ico-ga" aria-hidden="true">05</span>
+    <div>
+      <h2>Empresas Charter</h2>
+      <p class="sub">Registro de autorización · sin usuario ni clave</p>
+    </div>
+  </div>
+
+  <div class="mfa-banner">
+    <strong>Acceso especial</strong>
+    <span>Ingreso a la administración aduanera de Aeropuerto para vuelos charter.</span>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" class="mat-auth-form">
+    <div class="captcha-row">
+      <img class="captcha-box" [src]="captchaSrc" alt="Captcha" width="140" height="48" />
+      <button
+        mat-icon-button
+        type="button"
+        class="captcha-refresh"
+        (click)="refreshCaptcha()"
+        title="Otro captcha"
+        aria-label="Generar otro captcha"
+      >
+        <mat-icon>refresh</mat-icon>
+      </button>
+      <mat-form-field appearance="outline" class="mat-auth-field" subscriptSizing="dynamic">
+        <mat-label>Código de verificación</mat-label>
+        <input matInput id="captchaCharter" formControlName="captcha" autocomplete="off" maxlength="5" />
+        <mat-icon matPrefix>pin</mat-icon>
+      </mat-form-field>
+    </div>
+
+    <p class="otp-error" *ngIf="error" role="alert">{{ error }}</p>
+
+    <button mat-flat-button color="primary" class="auth-submit" type="submit" [disabled]="loading">
+      <mat-icon>flight_takeoff</mat-icon>
+      {{ loading ? 'Ingresando…' : 'Continuar' }}
+    </button>
+  </form>
+
+  <div class="auth-actions-mat" role="group" aria-label="Opciones de acceso">
+    <a mat-button routerLink="/hub" [queryParams]="{ s: 'registro' }">
+      <mat-icon>apps</mat-icon>
+      Volver al acceso público
+    </a>
+    <a mat-stroked-button color="primary" routerLink="/login">
+      <mat-icon>login</mat-icon>
+      Iniciar sesión (usuario y clave)
+    </a>
+  </div>
+</section>

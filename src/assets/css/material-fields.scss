@@ -1,0 +1,243 @@
+/* Angular Material outline — layout + tema portal */
+
+.mat-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  width: 100%;
+}
+
+.mat-auth-field {
+  width: 100%;
+  display: block;
+}
+
+.auth-full__form--grid.mat-auth-form {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem 0.85rem;
+  align-items: start;
+}
+
+.auth-full__form--grid .mat-auth-field.field--span,
+.auth-full__form--grid .field--span {
+  grid-column: 1 / -1;
+}
+
+.captcha-row .mat-auth-field {
+  flex: 1 1 16.5rem;
+  width: 16.5rem;
+  max-width: 18rem;
+  min-width: 15.5rem;
+}
+
+/* Evitar que el label “Código de verificación” se recorte */
+.captcha-row .mat-auth-field .mdc-floating-label,
+.captcha-row .mat-auth-field .mat-mdc-floating-label {
+  max-width: none;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.captcha-row .mat-auth-field .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+/* Densidad / ancho completo */
+.mat-auth-field .mat-mdc-text-field-wrapper {
+  background: transparent !important;
+}
+
+.mat-auth-field .mat-mdc-form-field-focus-overlay {
+  background: transparent !important;
+}
+
+/* Tema oscuro: letras siempre claras (autofill Chrome a veces las pone negras) */
+html[data-portal-theme="oscuro"] .mat-auth-field {
+  --mdc-outlined-text-field-outline-color: rgba(255, 255, 255, 0.45);
+  --mdc-outlined-text-field-hover-outline-color: rgba(255, 255, 255, 0.7);
+  --mdc-outlined-text-field-focus-outline-color: #90caf9;
+  --mdc-outlined-text-field-label-text-color: rgba(243, 247, 255, 0.88);
+  --mdc-outlined-text-field-hover-label-text-color: #f3f7ff;
+  --mdc-outlined-text-field-focus-label-text-color: #90caf9;
+  --mdc-outlined-text-field-input-text-color: #ffffff;
+  --mdc-outlined-text-field-caret-color: #90caf9;
+  --mat-form-field-container-text-color: #ffffff;
+  --mat-form-field-outlined-label-text-color: rgba(243, 247, 255, 0.88);
+  --mat-form-field-outlined-focus-label-text-color: #90caf9;
+}
+
+html[data-portal-theme="oscuro"] .mat-auth-field .mat-mdc-form-field-infix,
+html[data-portal-theme="oscuro"] .mat-auth-field .mat-mdc-input-element,
+html[data-portal-theme="oscuro"] .mat-auth-field input.mat-mdc-input-element,
+html[data-portal-theme="oscuro"] .mat-auth-field input[matinput],
+html[data-portal-theme="oscuro"] .mat-auth-field textarea.mat-mdc-input-element,
+html[data-portal-theme="oscuro"] .auth-card input,
+html[data-portal-theme="oscuro"] .auth-full__inner input {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  caret-color: #90caf9 !important;
+}
+
+html[data-portal-theme="oscuro"] .mat-auth-field input.mat-mdc-input-element:-webkit-autofill,
+html[data-portal-theme="oscuro"] .mat-auth-field input.mat-mdc-input-element:-webkit-autofill:hover,
+html[data-portal-theme="oscuro"] .mat-auth-field input.mat-mdc-input-element:-webkit-autofill:focus,
+html[data-portal-theme="oscuro"] .mat-auth-field input.mat-mdc-input-element:-webkit-autofill:active,
+html[data-portal-theme="oscuro"] .auth-card input:-webkit-autofill,
+html[data-portal-theme="oscuro"] .auth-card input:-webkit-autofill:hover,
+html[data-portal-theme="oscuro"] .auth-card input:-webkit-autofill:focus,
+html[data-portal-theme="oscuro"] .auth-card input:-webkit-autofill:active,
+html[data-portal-theme="oscuro"] .auth-full__inner input:-webkit-autofill,
+html[data-portal-theme="oscuro"] .auth-full__inner input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #ffffff !important;
+  color: #ffffff !important;
+  caret-color: #90caf9 !important;
+  /* Fondo navy simulado: evita el amarillo/celeste + texto negro del browser */
+  box-shadow: 0 0 0 1000px #123a5c inset !important;
+  -webkit-box-shadow: 0 0 0 1000px #123a5c inset !important;
+  transition: background-color 99999s ease-out;
+  filter: none !important;
+}
+
+html[data-portal-theme="claro"] .mat-auth-field input.mat-mdc-input-element:-webkit-autofill,
+html[data-portal-theme="claro"] .mat-auth-field input.mat-mdc-input-element:-webkit-autofill:hover,
+html[data-portal-theme="claro"] .mat-auth-field input.mat-mdc-input-element:-webkit-autofill:focus,
+html[data-portal-theme="claro"] .mat-auth-field input.mat-mdc-input-element:-webkit-autofill:active {
+  -webkit-text-fill-color: #12233a !important;
+  color: #12233a !important;
+  caret-color: #1976d2 !important;
+  box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+}
+
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-floating-label,
+html[data-portal-theme="oscuro"] .mat-auth-field label.mat-mdc-floating-label,
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-floating-label--float-above {
+  color: rgba(243, 247, 255, 0.9) !important;
+}
+
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--focused .mdc-floating-label,
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--focused label.mat-mdc-floating-label {
+  color: #90caf9 !important;
+}
+
+html[data-portal-theme="oscuro"] .mat-auth-field .mat-mdc-form-field-infix {
+  color: #ffffff;
+}
+
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__leading,
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__notch,
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--outlined:not(.mdc-text-field--disabled) .mdc-notched-outline__trailing {
+  border-color: rgba(255, 255, 255, 0.38);
+}
+
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--outlined:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline__leading,
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--outlined:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline__notch,
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--outlined:not(.mdc-text-field--disabled):not(.mdc-text-field--focused):hover .mdc-notched-outline__trailing {
+  border-color: rgba(255, 255, 255, 0.6);
+}
+
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__leading,
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__notch,
+html[data-portal-theme="oscuro"] .mat-auth-field .mdc-text-field--outlined.mdc-text-field--focused .mdc-notched-outline__trailing {
+  border-color: #90caf9;
+}
+
+html[data-portal-theme="oscuro"] .mat-auth-field .mat-mdc-form-field-icon-suffix,
+html[data-portal-theme="oscuro"] .mat-auth-field .mat-mdc-icon-button {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+html[data-portal-theme="oscuro"] button.captcha-refresh.mat-mdc-icon-button {
+  background: rgba(255, 255, 255, 0.92);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #0b2748;
+}
+
+.auth-submit.mat-mdc-unelevated-button,
+.mat-auth-form > .auth-submit {
+  width: 100%;
+  height: 2.75rem;
+  margin-top: 0.35rem;
+}
+
+.auth-actions-mat .mat-icon,
+.auth-submit .mat-icon,
+.auth-actions-mat--row .mat-icon {
+  margin-right: 0.35rem;
+  font-size: 1.15rem;
+  width: 1.15rem;
+  height: 1.15rem;
+  line-height: 1.15rem;
+}
+
+.mat-auth-field .mat-mdc-form-field-icon-prefix {
+  padding: 0 0.25rem 0 0.5rem;
+  color: rgba(0, 0, 0, 0.54);
+}
+
+html[data-portal-theme="oscuro"] .mat-auth-field .mat-mdc-form-field-icon-prefix {
+  color: rgba(243, 247, 255, 0.75);
+}
+
+/* Acciones secundarias (Material buttons, no links sueltos) */
+.auth-actions-mat {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.55rem;
+  margin-top: 1.25rem;
+  width: 100%;
+}
+
+.auth-actions-mat--row {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.auth-actions-mat > a.mat-mdc-button-base,
+.auth-actions-mat > a.mat-mdc-button,
+.auth-actions-mat > a.mat-mdc-outlined-button,
+.auth-actions-mat > a.mat-mdc-unelevated-button,
+.auth-actions-mat > button.mat-mdc-button-base {
+  justify-content: center;
+}
+
+.auth-actions-mat:not(.auth-actions-mat--row) > a.mat-mdc-button-base,
+.auth-actions-mat:not(.auth-actions-mat--row) > a.mat-mdc-button,
+.auth-actions-mat:not(.auth-actions-mat--row) > a.mat-mdc-outlined-button,
+.auth-actions-mat:not(.auth-actions-mat--row) > a.mat-mdc-unelevated-button {
+  width: 100%;
+}
+
+.auth-actions-mat--row > a.mat-mdc-button-base,
+.auth-actions-mat--row > button.mat-mdc-button-base {
+  width: auto;
+  min-width: 6.5rem;
+}
+
+html[data-portal-theme="oscuro"] .auth-actions-mat .mat-mdc-button:not(:disabled),
+html[data-portal-theme="oscuro"] .auth-actions-mat .mdc-button__label {
+  --mdc-text-button-label-text-color: #90caf9;
+  color: #90caf9;
+}
+
+html[data-portal-theme="oscuro"] .auth-actions-mat .mat-mdc-outlined-button:not(:disabled) {
+  --mdc-outlined-button-label-text-color: #90caf9;
+  --mdc-outlined-button-outline-color: rgba(144, 202, 249, 0.55);
+  color: #90caf9;
+}
+
+html[data-portal-theme="oscuro"] .auth-actions-mat .mat-mdc-unelevated-button:not(:disabled) {
+  --mdc-filled-button-container-color: #1976d2;
+  --mdc-filled-button-label-text-color: #ffffff;
+}
+
+@media (max-width: 700px) {
+  .auth-full__form--grid.mat-auth-form {
+    grid-template-columns: 1fr;
+  }
+}

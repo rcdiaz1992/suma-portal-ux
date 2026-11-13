@@ -55,7 +55,7 @@ La maqueta `proposal/index.html` define la IA de información; el estilo se port
 ## Próximo paso de implementación
 
 1. ✅ App Angular en la raíz de este repo (clon de `sen-ng-demo`).
-2. ✅ Login `/login` con slice **Externo / Interno** + enlace MFA `/login/no-habituales`.
+2. ✅ Login `/login` + hub registro `/login/registro` (5 accesos, mismo diseño).
 3. Copiar tokens de `proposal/assets/css/portal.css` a `styles.scss` / overrides.
 4. Implementar shell `an-app` + `PortalHomeComponent` y cablear `MenuService`.
 5. Auth híbrido (ver `docs/AUTH-HIBRIDO.md`): **Keycloak** (como SIAN/SIGRAT) **+** seguir generando el **token SUMA** de `b-sso` para lo que aún depende de él.

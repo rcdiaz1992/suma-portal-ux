@@ -2,24 +2,60 @@
   <div
     class="suma-banner-slot"
     data-particles
-    data-density="1.05"
+    data-density="0.85"
     data-speed="1"
     data-color="#c9a227"
     data-link="#d4af37"
   >
-    <div data-suma-banner="compact"></div>
+    <div class="suma-banner-brand suma-banner-brand--shell" aria-label="SUMA · Aduana Nacional">
+      <span class="suma-banner-eyebrow">Aduana Nacional</span>
+      <h1 class="suma-banner-title">SUMA</h1>
+      <p class="suma-banner-sub">Sistema Único de Modernización Aduanera</p>
+    </div>
+    <div class="bolivia-map-frame bolivia-map-frame--portal" aria-hidden="true">
+      <object
+        class="bolivia-svg"
+        data="/assets/img/bolivia-departments-outline.svg?v=1"
+        type="image/svg+xml"
+        tabindex="-1"
+      ></object>
+    </div>
+    <div class="suma-banner-aduana-logo" aria-label="Aduana Nacional">
+      <img
+        class="suma-banner-aduana-logo__img suma-banner-aduana-logo__img--color"
+        src="/assets/img/logo-aduana-color.png"
+        alt="Aduana Nacional"
+        width="220"
+        height="74"
+      />
+      <img
+        class="suma-banner-aduana-logo__img suma-banner-aduana-logo__img--blanco"
+        src="/assets/img/logo-aduana-blanco.png"
+        alt="Aduana Nacional"
+        width="220"
+        height="89"
+      />
+    </div>
   </div>
 
-  <aside
-    class="shell-side"
-    data-side-panel
-    data-particles
-    data-density="0.95"
-    data-speed="0.9"
-    data-color="#c9a227"
-    data-link="#d4af37"
-    *ngIf="portalView !== 'home'"
-  >
+  <button
+    type="button"
+    class="nav-backdrop"
+    *ngIf="navOpen && portalView !== 'home' && !directEmbed"
+    (click)="toggleNav()"
+    aria-label="Cerrar menú"
+  ></button>
+
+  <aside class="shell-side" data-side-panel *ngIf="portalView !== 'home' && !directEmbed">
+    <div
+      class="shell-side-fx"
+      data-particles
+      data-density="1.35"
+      data-speed="1"
+      data-color="#c9a227"
+      data-link="#d4af37"
+      aria-hidden="true"
+    ></div>
     <div class="side-brand">
       <div class="brand-mark brand-mark--icon" aria-hidden="true">
         <i [class]="activeSection ? iconOf(activeSection) : 'ti ti-layout-grid-filled'"></i>
@@ -88,25 +124,31 @@
     </div>
   </aside>
 
-  <header class="shell-top">
+  <header
+    class="shell-top"
+    *ngIf="!directEmbed"
+    data-particles
+    data-density="0.85"
+    data-speed="0.85"
+    data-color="#c9a227"
+    data-link="#d4af37"
+  >
     <div class="top-left">
       <button
         class="menu-toggle"
         type="button"
-        *ngIf="portalView !== 'home'"
+        *ngIf="portalView !== 'home' && !directEmbed"
         (click)="toggleNav()"
         aria-label="Abrir menú"
       >
         ☰
       </button>
-      <div>
-        <div class="crumb" *ngIf="activeSection || activeTitle">
-          <span *ngIf="activeSection">{{ activeSection.titulo }}</span>
-          <span *ngIf="activeSection && activeTitle"> · </span>
-          <span *ngIf="activeTitle">{{ activeTitle }}</span>
-        </div>
-        <strong class="top-perfil">Perfil: {{ perfil }}</strong>
+      <div class="crumb" *ngIf="activeSection || activeTitle">
+        <span *ngIf="activeSection">{{ activeSection.titulo }}</span>
+        <span *ngIf="activeSection && activeTitle"> · </span>
+        <span *ngIf="activeTitle">{{ activeTitle }}</span>
       </div>
+      <div class="crumb crumb--home" *ngIf="!activeSection && !activeTitle">Portal SUMA</div>
     </div>
 
     <div class="top-right">
@@ -195,16 +237,29 @@
         data-color="#c9a227"
         data-link="#d4af37"
       >
-        <section class="fav-strip" aria-label="Acceso rápido">
+        <section
+          class="fav-strip"
+          aria-label="Acceso rápido"
+          [class.is-drop-target]="favDropActive"
+          (dragover)="onFavDragOver($event)"
+          (dragleave)="onFavDragLeave($event)"
+          (drop)="onFavDrop($event)"
+        >
           <div class="fav-strip-head">
             <h2>Acceso rápido</h2>
-            <span class="fav-hint">Hasta {{ favSlots }} favoritos</span>
+            <span class="fav-hint">Hasta {{ favSlots }} · ★ o mantené y soltá aquí</span>
           </div>
           <div class="fav-grid">
             <button
               type="button"
               class="fav-slot is-filled"
               *ngFor="let fav of favoriteNodes()"
+              draggable="true"
+              (dragstart)="onFavDragStart(fav, $event)"
+              (dragend)="onFavDragEnd()"
+              (touchstart)="onFavTouchStart(fav, $event)"
+              (dragover)="onFavDragOver($event)"
+              (drop)="onFavDrop($event, fav.id)"
               (click)="openFromHome(fav)"
             >
               <span class="fav-slot-icon"><i [class]="iconOf(fav)"></i></span>
@@ -218,9 +273,14 @@
                 >★</span
               >
             </button>
-            <div class="fav-slot is-empty" *ngFor="let _ of emptyFavSlots()">
+            <div
+              class="fav-slot is-empty"
+              *ngFor="let _ of emptyFavSlots()"
+              (dragover)="onFavDragOver($event)"
+              (drop)="onFavDrop($event)"
+            >
               <span class="fav-slot-star">★</span>
-              <span>Agregar favorito</span>
+              <span>Soltá aquí</span>
             </div>
           </div>
         </section>
@@ -244,6 +304,10 @@
               type="button"
               class="cube-row"
               *ngFor="let leaf of searchLeaves()"
+              [attr.draggable]="canDragToFav(leaf)"
+              (dragstart)="onFavDragStart(leaf, $event)"
+              (dragend)="onFavDragEnd()"
+              (touchstart)="onFavTouchStart(leaf, $event)"
               (click)="openFromHome(leaf)"
             >
               <span class="cube-icon"><i [class]="iconOf(leaf)"></i></span>
@@ -268,7 +332,13 @@
             [class.is-open]="expandedCubeId === item.id"
             [class.has-options]="hasChildren(item)"
           >
-            <div class="cube-main">
+            <div
+              class="cube-main"
+              [attr.draggable]="canDragToFav(item)"
+              (dragstart)="onFavDragStart(item, $event)"
+              (dragend)="onFavDragEnd()"
+              (touchstart)="onFavTouchStart(item, $event)"
+            >
               <button type="button" class="cube-hit" (click)="onCubeClick(item)">
                 <span class="cube-icon" aria-hidden="true"><i [class]="iconOf(item)"></i></span>
                 <span class="cube-body">
@@ -292,6 +362,13 @@
               >
                 <i class="ti ti-chevron-down" aria-hidden="true"></i>
               </button>
+              <span
+                class="fav-btn"
+                *ngIf="!hasChildren(item)"
+                [class.is-on]="isFavorite(item)"
+                (click)="toggleFavorite(item, $event)"
+                >★</span
+              >
             </div>
 
             <div class="cube-mini" *ngIf="expandedCubeId === item.id && hasChildren(item)">
@@ -299,6 +376,10 @@
                 type="button"
                 class="cube-mini-item"
                 *ngFor="let child of item.opciones"
+                [attr.draggable]="canDragToFav(child)"
+                (dragstart)="onFavDragStart(child, $event)"
+                (dragend)="onFavDragEnd()"
+                (touchstart)="onFavTouchStart(child, $event)"
                 (click)="onOptionClick(child, item)"
               >
                 <span class="cube-icon cube-icon--sm" aria-hidden="true"
@@ -352,7 +433,13 @@
             [class.is-open]="expandedCubeId === item.id"
             [class.has-options]="hasChildren(item)"
           >
-            <div class="cube-main">
+            <div
+              class="cube-main"
+              [attr.draggable]="canDragToFav(item)"
+              (dragstart)="onFavDragStart(item, $event)"
+              (dragend)="onFavDragEnd()"
+              (touchstart)="onFavTouchStart(item, $event)"
+            >
               <button type="button" class="cube-hit" (click)="onCubeClick(item)">
                 <span class="cube-icon" aria-hidden="true"><i [class]="iconOf(item)"></i></span>
                 <span class="cube-body">
@@ -386,6 +473,10 @@
                 type="button"
                 class="cube-mini-item"
                 *ngFor="let child of item.opciones"
+                [attr.draggable]="canDragToFav(child)"
+                (dragstart)="onFavDragStart(child, $event)"
+                (dragend)="onFavDragEnd()"
+                (touchstart)="onFavTouchStart(child, $event)"
                 (click)="onOptionClick(child, item)"
               >
                 <span class="cube-icon cube-icon--sm" aria-hidden="true"
@@ -417,12 +508,16 @@
     <!-- MÓDULO en iframe (sin barra de URL / Abrir aparte) -->
     <div class="module-frame-wrap" *ngIf="moduleUrl">
       <p class="section-note module-warn" *ngIf="moduleWarning" role="status">{{ moduleWarning }}</p>
+      <!--
+        Sin sandbox: Chrome no muestra PDFs (Mis Datos / certificado) dentro de iframe sandboxed.
+        El breakout lo cubren frame-guard + patchTopBreakout del proxy.
+      -->
       <iframe
         class="module-frame"
         [src]="moduleUrl"
         [title]="activeTitle"
         referrerpolicy="no-referrer-when-downgrade"
-        sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals allow-top-navigation-by-user-activation"
+        allow="clipboard-read; clipboard-write; fullscreen"
         (load)="onModuleFrameLoad($event)"
       ></iframe>
     </div>

@@ -19,9 +19,31 @@ const STORAGE = {
   usuario: 'suma.usuario',
   tipo: 'suma.tipoUser',
   jwt: 'suma.jwt',
+  nit: 'suma.nit',
+  tipoDoc: 'suma.tipoDocumentoIdentificacion',
 } as const;
 
-const COOKIE_PATHS = ['/', '/sso', '/sso/', '/oce', '/oce/', '/portal', '/portal/', '/b-sso', '/b-sso/'];
+const COOKIE_PATHS = [
+  '/',
+  '/sso',
+  '/sso/',
+  '/oce',
+  '/oce/',
+  '/oce/oceCharter',
+  '/oce/oceCharter/',
+  '/oce/reportes',
+  '/oce/reportes/',
+  '/oce/administracion',
+  '/oce/administracion/',
+  '/portal',
+  '/portal/',
+  '/frvmr',
+  '/frvmr/',
+  '/b-sso',
+  '/b-sso/',
+  '/b-oce',
+  '/b-oce/',
+];
 
 /** Intervalo de verificación del token (como el portal SSO). */
 const WATCH_MS = 45_000;
@@ -76,17 +98,79 @@ export class SumaSessionService implements OnDestroy {
     this.seedCookies();
   }
 
+  /** Guarda NIT / tipodoc para módulos OCE (Mis Datos, certificado). */
+  setOperadorCookies(nit?: string, tipoDocumento?: string): void {
+    if (nit) sessionStorage.setItem(STORAGE.nit, nit);
+    if (tipoDocumento) sessionStorage.setItem(STORAGE.tipoDoc, tipoDocumento);
+    this.seedCookies();
+  }
+
+  /**
+   * Claves que leen módulos Angular (FRVMR) en el mismo origen.
+   * Sin `jwt`, el interceptor de FRVMR navega a `/` y Solicitudes queda en blanco.
+   */
+  private seedLegacyModuleStorage(): void {
+    const token = this.token;
+    const user = this.usuario;
+    const jwt = sessionStorage.getItem(STORAGE.jwt) || '';
+    const nit = sessionStorage.getItem(STORAGE.nit) || '';
+    const tipoDoc = sessionStorage.getItem(STORAGE.tipoDoc) || '';
+    if (jwt) {
+      sessionStorage.setItem('jwt', jwt);
+      localStorage.setItem('jwt', jwt);
+    }
+    if (token) {
+      sessionStorage.setItem('Auth-Token', token);
+      localStorage.setItem('Auth-Token', token);
+    }
+    if (user) {
+      sessionStorage.setItem('username', user);
+      localStorage.setItem('username', user);
+    }
+    if (nit) {
+      sessionStorage.setItem('nit', nit);
+      sessionStorage.setItem('nroDocumento', nit);
+    }
+    if (tipoDoc) {
+      sessionStorage.setItem('tipoDocumentoIdentificacion', tipoDoc);
+    }
+  }
+
   seedCookies(): void {
     const token = this.token;
     const user = this.usuario;
     if (!token) return;
-    const expires = new Date(Date.now() + 60 * 60 * 1000).toUTCString();
+    this.seedLegacyModuleStorage();
+    const nit = sessionStorage.getItem(STORAGE.nit) || '';
+    const tipoDoc = sessionStorage.getItem(STORAGE.tipoDoc) || '';
+    // 8h: evita que las cookies del módulo caduquen a la 1h mientras el token SSO sigue vivo.
+    const expires = new Date(Date.now() + 8 * 60 * 60 * 1000).toUTCString();
     for (const path of COOKIE_PATHS) {
       document.cookie = `token=${encodeURIComponent(token)}; path=${path}; expires=${expires}; SameSite=Lax`;
       if (user) {
         document.cookie = `username=${encodeURIComponent(user)}; path=${path}; expires=${expires}; SameSite=Lax`;
       }
+      if (nit) {
+        document.cookie = `nit=${encodeURIComponent(nit)}; path=${path}; expires=${expires}; SameSite=Lax`;
+        // Alias que leen HelperFactory / Mis Datos / certificado OCE
+        document.cookie = `nroDocumento=${encodeURIComponent(nit)}; path=${path}; expires=${expires}; SameSite=Lax`;
+      }
+      if (tipoDoc) {
+        document.cookie = `tipoDocumentoIdentificacion=${encodeURIComponent(tipoDoc)}; path=${path}; expires=${expires}; SameSite=Lax`;
+      }
     }
+  }
+
+  /** Cookies que el SSO pone antes de abrir oceCharter (tipoIngreso=2). */
+  seedCharterEntryCookies(): void {
+    const expires = new Date(Date.now() + 8 * 60 * 60 * 1000).toUTCString();
+    const user = this.usuario || 'REG_CHARTER';
+    for (const path of ['/', '/oce', '/oce/', '/oce/oceCharter', '/oce/oceCharter/']) {
+      document.cookie = `tipoIngreso=2; path=${path}; expires=${expires}; SameSite=Lax`;
+      document.cookie = `usuarioperfil=${encodeURIComponent('REG_CHARTER')}; path=${path}; expires=${expires}; SameSite=Lax`;
+      document.cookie = `username=${encodeURIComponent(user)}; path=${path}; expires=${expires}; SameSite=Lax`;
+    }
+    this.seedCookies();
   }
 
   clearCookies(): void {
@@ -94,7 +178,13 @@ export class SumaSessionService implements OnDestroy {
     for (const path of COOKIE_PATHS) {
       document.cookie = `token=; path=${path}; expires=${past}; SameSite=Lax`;
       document.cookie = `username=; path=${path}; expires=${past}; SameSite=Lax`;
+      document.cookie = `nit=; path=${path}; expires=${past}; SameSite=Lax`;
+      document.cookie = `nroDocumento=; path=${path}; expires=${past}; SameSite=Lax`;
+      document.cookie = `tipoDocumentoIdentificacion=; path=${path}; expires=${past}; SameSite=Lax`;
+      document.cookie = `tipoIngreso=; path=${path}; expires=${past}; SameSite=Lax`;
     }
+    sessionStorage.removeItem(STORAGE.nit);
+    sessionStorage.removeItem(STORAGE.tipoDoc);
   }
 
   /**
@@ -105,7 +195,12 @@ export class SumaSessionService implements OnDestroy {
     const token = this.token;
     if (!token) return of(false);
 
-    if (environment.useMockAuth !== false && token.startsWith('demo-')) {
+    // Gate local No Habituales (captcha OK, sin token SSO de menú).
+    if (
+      token.startsWith('demo-') ||
+      token.startsWith('nh-gate-') ||
+      this.tipo === 'NO_HABITUAL'
+    ) {
       return of(true);
     }
 
@@ -155,6 +250,42 @@ export class SumaSessionService implements OnDestroy {
     this.endSession(reason, message || this.messageFor(reason));
   }
 
+  /** Portal legacy por ambiente (Charter temporal). */
+  legacyPortalHomeUrl(): string {
+    const configured = String(
+      (environment as { legacyPortalHome?: string }).legacyPortalHome || ''
+    ).trim();
+    if (configured) return configured;
+    const host = String(environment.hostIp || 'https://suma-dev.aduana.gob.bo').replace(
+      /\/$/,
+      ''
+    );
+    return `${host}/portal/index.html#/home`;
+  }
+
+  /**
+   * Cierra sesión y sale a URL absoluta (p.ej. portal SUMA legacy tras Charter).
+   * No navega a /login Angular.
+   */
+  logoutExternal(url: string, reason: SessionEndReason = 'logout'): void {
+    if (this.ending) return;
+    this.ending = true;
+    this.stopWatch();
+    const token = this.token;
+    const dest = String(url || '').trim() || this.legacyPortalHomeUrl();
+    const finish = () => {
+      this.clearLocal();
+      this.sessionEnded$.next({ reason, message: this.messageFor(reason) });
+      window.location.href = dest;
+      this.ending = false;
+    };
+    if (!token || environment.useMockAuth !== false) {
+      finish();
+      return;
+    }
+    this.invalidateRemote(token).pipe(finalize(finish)).subscribe();
+  }
+
   private endSession(reason: SessionEndReason, message: string): void {
     if (this.ending) return;
     this.ending = true;
@@ -184,11 +315,16 @@ export class SumaSessionService implements OnDestroy {
 
   /** Best-effort: el SSO invalida el token (logout / otro equipo). */
   private invalidateRemote(token: string): Observable<unknown> {
-    const url = `${environment.ssoApi}/logout/${encodeURIComponent(token)}`;
-    return this.http.post(url, {}).pipe(
+    const t = encodeURIComponent(token);
+    // Misma ruta que OCE Charter: GET autenticar/logout/{token}
+    return this.http.get(`${environment.ssoApi}/autenticar/logout/${t}`).pipe(
       catchError(() =>
-        this.http.get(`${environment.ssoApi}/cerrar-sesion/${encodeURIComponent(token)}`).pipe(
-          catchError(() => of(null))
+        this.http.post(`${environment.ssoApi}/logout/${t}`, {}).pipe(
+          catchError(() =>
+            this.http
+              .get(`${environment.ssoApi}/cerrar-sesion/${t}`)
+              .pipe(catchError(() => of(null)))
+          )
         )
       )
     );
@@ -200,6 +336,20 @@ export class SumaSessionService implements OnDestroy {
     sessionStorage.removeItem(STORAGE.usuario);
     sessionStorage.removeItem(STORAGE.tipo);
     sessionStorage.removeItem(STORAGE.jwt);
+    // Claves legacy compartidas con FRVMR / módulos Angular
+    for (const k of [
+      'jwt',
+      'Auth-Token',
+      'username',
+      'nit',
+      'nroDocumento',
+      'tipoDocumentoIdentificacion',
+      'role',
+      'usuarioNombres',
+    ]) {
+      sessionStorage.removeItem(k);
+      localStorage.removeItem(k);
+    }
   }
 
   isSessionDeadMessage(msg: string): boolean {

@@ -41,11 +41,121 @@ body {
   position: relative;
 }
 
-.theme-fab {
+/* Pantalla completa: mismo banner del portal (mapa Bolivia + logo Aduana) */
+.auth-shell--full {
+  grid-template-columns: 1fr;
+  grid-template-rows: 280px minmax(0, 1fr);
+  grid-template-areas:
+    "visual"
+    "panel";
+}
+
+.auth-shell--full .auth-visual--banner.suma-banner-slot {
+  display: block;
+  position: relative;
+  overflow: hidden !important;
+  grid-area: visual;
+  min-height: 280px;
+  height: 280px;
+  max-height: 280px;
+  padding: 0;
+  z-index: 2;
+}
+
+/* Layout banner: marca más grande/extendida + logo Aduana */
+.auth-shell--full .auth-visual--banner.suma-banner-slot > .suma-banner-brand--shell {
   position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 0.2rem;
+  padding: 0.7rem clamp(1.1rem, 3.2vw, 2.4rem);
+  max-width: min(66%, 46rem);
+  pointer-events: none;
+}
+
+.auth-shell--full .auth-visual--banner.suma-banner-slot > .suma-banner-brand--shell .suma-banner-eyebrow {
+  font-size: clamp(0.85rem, 1.4vw, 1.05rem);
+}
+
+.auth-shell--full .auth-visual--banner.suma-banner-slot > .suma-banner-brand--shell .suma-banner-title {
+  font-size: clamp(3.6rem, 8.5vw, 6.4rem);
+  line-height: 0.86;
+  letter-spacing: 0.11em;
+}
+
+.auth-shell--full .auth-visual--banner.suma-banner-slot > .suma-banner-brand--shell .suma-banner-sub {
+  font-size: clamp(0.78rem, 1.4vw, 1.05rem);
+  max-width: 50ch;
+}
+
+.auth-shell--full .auth-visual--banner.suma-banner-slot > .bolivia-map-frame--portal {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem clamp(13rem, 24vw, 20rem);
+}
+
+.auth-shell--full .auth-visual--banner.suma-banner-slot > .bolivia-map-frame--portal > .bolivia-svg,
+.auth-shell--full .auth-visual--banner.suma-banner-slot > .bolivia-map-frame--portal > object.bolivia-svg {
+  max-width: min(36%, 240px);
+  max-height: 90%;
+}
+
+.auth-shell--full .auth-visual--banner.suma-banner-slot > .suma-banner-aduana-logo {
+  position: absolute;
+  right: clamp(0.85rem, 2.2vw, 1.75rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 6;
+  pointer-events: none;
+  max-height: 78%;
+}
+
+.auth-shell--full .auth-visual--banner.suma-banner-slot > .suma-banner-aduana-logo .suma-banner-aduana-logo__img {
+  width: clamp(220px, 28vw, 380px);
+  max-height: 200px;
+}
+
+.auth-shell--full .auth-panel,
+.auth-panel--full {
+  place-items: start center;
+  align-content: start;
+  padding: 1rem 1rem 1.5rem;
+  overflow: auto;
+  position: relative;
+  isolation: isolate;
+}
+
+/* Partículas detrás del formulario */
+.auth-panel > .tsparticles-bg {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 0 !important;
+  pointer-events: none;
+  opacity: 0.65;
+}
+
+.auth-panel > router-outlet,
+.auth-panel > router-outlet + *,
+.auth-panel > *:not(.tsparticles-bg) {
+  position: relative;
+  z-index: 1;
+}
+
+.theme-fab {
+  position: fixed;
   top: 1rem;
   right: 1rem;
-  z-index: 20;
+  z-index: 100;
   width: 2.5rem;
   height: 2.5rem;
   border-radius: 50%;
@@ -76,6 +186,14 @@ html[data-portal-theme="claro"] .auth-panel {
   background: linear-gradient(180deg, #f7fbfe 0%, #eef5fb 100%);
 }
 
+html[data-portal-theme="claro"] .auth-panel > .tsparticles-bg {
+  opacity: 0.55;
+}
+
+html[data-portal-theme="oscuro"] .auth-panel > .tsparticles-bg {
+  opacity: 0.4;
+}
+
 html[data-portal-theme="claro"] .auth-card {
   background: #ffffff;
   border: 1px solid rgba(19, 87, 166, 0.12);
@@ -97,18 +215,63 @@ html[data-portal-theme="oscuro"] .auth-card {
 html[data-portal-theme="oscuro"] .auth-card h2,
 html[data-portal-theme="oscuro"] .auth-card .sub,
 html[data-portal-theme="oscuro"] .auth-card label,
+html[data-portal-theme="oscuro"] .auth-full__inner h2,
+html[data-portal-theme="oscuro"] .auth-full__inner .sub,
+html[data-portal-theme="oscuro"] .auth-full__inner label,
+html[data-portal-theme="oscuro"] .auth-panel .field label,
+html[data-portal-theme="oscuro"] .auth-panel .field > span,
 html[data-portal-theme="oscuro"] .flow--dark {
-  color: #eef5ff;
+  color: #f3f7ff;
 }
 
-html[data-portal-theme="oscuro"] .auth-card input {
-  background: rgba(6, 21, 38, 0.55);
-  border-color: rgba(201, 162, 39, 0.28);
-  color: #eef5ff;
+html[data-portal-theme="oscuro"] .auth-card .sub,
+html[data-portal-theme="oscuro"] .auth-full__inner .sub {
+  color: rgba(243, 247, 255, 0.82);
+  opacity: 1;
 }
 
-html[data-portal-theme="oscuro"] .auth-card .sub {
-  opacity: 0.78;
+html[data-portal-theme="oscuro"] .req {
+  color: #ff8f8f;
+}
+
+html[data-portal-theme="oscuro"] .btn-ghost {
+  color: #f3f7ff;
+  border-color: rgba(201, 162, 39, 0.35);
+}
+
+html[data-portal-theme="oscuro"] .pass-toggle {
+  color: rgba(243, 247, 255, 0.75);
+}
+
+html[data-portal-theme="oscuro"] .ope-bullets,
+html[data-portal-theme="oscuro"] .reg-note,
+html[data-portal-theme="oscuro"] .demo-hint,
+html[data-portal-theme="oscuro"] .mfa-banner {
+  color: rgba(243, 247, 255, 0.88);
+}
+
+html[data-portal-theme="oscuro"] .mfa-banner strong {
+  color: #f3f7ff;
+}
+
+html[data-portal-theme="oscuro"] .auth-meta,
+html[data-portal-theme="oscuro"] .auth-alt,
+html[data-portal-theme="oscuro"] .auth-card .auth-meta label {
+  color: rgba(243, 247, 255, 0.9);
+}
+
+html[data-portal-theme="oscuro"] .auth-meta a,
+html[data-portal-theme="oscuro"] .auth-alt a {
+  color: #f0c14b;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1.5px;
+}
+
+html[data-portal-theme="oscuro"] .auth-meta a:hover,
+html[data-portal-theme="oscuro"] .auth-alt a:hover {
+  color: #fff6c8;
 }
 
 .auth-shell > .auth-visual,
@@ -134,38 +297,15 @@ html[data-portal-theme="oscuro"] .auth-card .sub {
   min-height: 0;
 }
 
-/* Capa galaxia cambiante: más grande y que desborde el panel */
-.auth-galaxy {
-  position: absolute;
-  inset: -18% -35% -22% -12%;
-  z-index: 0;
-  pointer-events: none;
-  overflow: visible;
-}
-
-.auth-galaxy .suma-hps,
-.auth-galaxy .suma-hps--compact {
-  width: 100%;
-  height: 100% !important;
-  min-height: 100% !important;
-  max-height: none !important;
-  overflow: visible !important;
-}
-
-.auth-galaxy .suma-banner-inner {
-  display: none !important;
-}
-
-.auth-galaxy crazygl-hero[data-crazygl="particle-slider"] {
-  inset: -40% -30% -45% -20% !important;
-  transform: scale(2.15) !important;
-  transform-origin: 70% 45% !important;
-  filter: saturate(1.3) brightness(1.08) contrast(1.1);
-  opacity: 0.92;
-}
-
 .auth-visual > .tsparticles-bg {
-  opacity: 0.92;
+  /* Redes detrás del mapa Bolivia SVG */
+  z-index: 0 !important;
+  opacity: 0.72;
+}
+
+.auth-visual > .bolivia-map-frame,
+.auth-visual > .banner-info-tabs {
+  z-index: 2;
 }
 
 .auth-visual::after {
@@ -191,20 +331,56 @@ html[data-portal-theme="oscuro"] .auth-card .sub {
   }
 }
 
-.auth-visual > *:not(.tsparticles-bg):not(.auth-galaxy) {
+.auth-visual:not(.auth-visual--banner)
+  > *:not(.tsparticles-bg):not(.bolivia-map-frame):not(.banner-info-tabs) {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
-.auth-visual > .auth-galaxy {
-  z-index: 0;
+/* Banner portal en registro/olvidar: absolute real (no relative del stack) */
+.auth-visual.auth-visual--banner.suma-banner-slot > .suma-banner-brand.suma-banner-brand--shell {
+  position: absolute !important;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  height: auto !important;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.auth-visual.auth-visual--banner.suma-banner-slot > .suma-banner-aduana-logo {
+  position: absolute !important;
+  right: clamp(0.75rem, 2vw, 1.5rem);
+  top: 50% !important;
+  bottom: auto !important;
+  left: auto !important;
+  transform: translateY(-50%);
+  z-index: 6;
+}
+
+.auth-visual.auth-visual--banner.suma-banner-slot > .bolivia-map-frame--portal {
+  position: absolute !important;
+  inset: 0;
+  z-index: 2;
+}
+
+.auth-shell > .theme-fab {
+  position: fixed !important;
+  top: 1rem !important;
+  right: 1rem !important;
+  left: auto !important;
+  bottom: auto !important;
+  z-index: 100;
 }
 
 /* Marca SUMA integrada al fondo en movimiento (no banner aparte) */
 .auth-brand {
   display: grid;
   gap: 0.35rem;
-  margin-bottom: 1.65rem;
+  margin-bottom: 0.85rem;
   max-width: 34rem;
 }
 
@@ -327,7 +503,7 @@ html[data-portal-theme="oscuro"] .auth-card .sub {
   display: grid;
   place-items: center;
   align-content: center;
-  padding: 2rem 1.25rem;
+  padding: 2.25rem 1.5rem;
   min-height: 0;
   overflow: auto;
   background: var(--an-surface);
@@ -337,10 +513,217 @@ html[data-portal-theme="oscuro"] .auth-card .sub {
 /* router-outlet + page host no deben romper el centrado del card */
 .auth-panel > router-outlet + *,
 .auth-panel app-login-page,
-.auth-panel app-login-mfa-page {
+.auth-panel app-login-mfa-page,
+.auth-panel app-login-charter-page,
+.auth-panel app-registro-hub-page {
   display: block;
-  width: min(100%, 420px);
+  width: min(100%, 520px);
   max-width: 100%;
+}
+
+.auth-panel app-registro-ope-page,
+.auth-panel app-forgot-password-page,
+.auth-panel app-reset-password-page {
+  display: block;
+  width: min(100%, 780px);
+  max-width: 100%;
+}
+
+.auth-full {
+  width: 100%;
+}
+
+.auth-full__inner {
+  width: 100%;
+  background: var(--an-white);
+  border: 1px solid var(--an-line);
+  border-radius: 16px;
+  padding: 2rem 1.85rem 2.15rem;
+  box-shadow: var(--shadow);
+  box-sizing: border-box;
+}
+
+html[data-portal-theme="oscuro"] .auth-full__inner {
+  background: linear-gradient(165deg, #123a5c 0%, #0b2748 100%);
+  border-color: rgba(201, 162, 39, 0.22);
+}
+
+.auth-full--compact .auth-full__inner {
+  padding: 1.35rem 1.5rem 1.5rem;
+}
+
+.auth-full__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem 1.25rem;
+  margin-bottom: 0.65rem;
+}
+
+.auth-full__head--simple {
+  justify-content: flex-start;
+}
+
+.aduana-login-logo--sm {
+  margin: 0;
+}
+
+.aduana-login-logo--sm .aduana-login-logo__img {
+  width: min(100%, 160px);
+}
+
+.kc-head--compact {
+  margin-bottom: 0;
+  gap: 0.55rem;
+}
+
+.kc-head--compact h2 {
+  font-size: 1.15rem;
+  margin: 0 0 0.1rem;
+}
+
+.kc-logo--sm {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+}
+
+.auth-full__form {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.auth-full__form--grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 0.45rem 0.85rem;
+  align-items: start;
+}
+
+.auth-full__form--grid .field {
+  margin-bottom: 0;
+}
+
+.auth-full__form--grid .field--span {
+  grid-column: 1 / -1;
+}
+
+.captcha-row--compact {
+  gap: 0.35rem;
+  max-width: 36rem;
+}
+
+.captcha-row--compact img.captcha-box,
+.captcha-row--compact .captcha-box {
+  width: 110px;
+  height: 40px;
+}
+
+.captcha-row--compact .captcha-refresh {
+  width: 2.2rem;
+  height: 2.2rem;
+}
+
+.captcha-row--compact .mat-auth-field {
+  flex: 1 1 16rem;
+  width: 16rem;
+  max-width: 17.5rem;
+  min-width: 15rem;
+}
+
+.auth-full--compact .auth-full__actions {
+  margin-top: 0.35rem;
+}
+
+.auth-full--compact .btn-ghost,
+.auth-full--compact .btn-inline {
+  padding: 0.58rem 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .auth-full__form--grid {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-full__head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .auth-panel app-registro-ope-page,
+  .auth-panel app-forgot-password-page {
+    width: min(100%, 440px);
+  }
+}
+
+.auth-full__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--an-line);
+  background: transparent;
+  color: var(--an-ink);
+  border-radius: var(--radius-sm);
+  padding: 0.72rem 1rem;
+  font-weight: 650;
+  font: inherit;
+  text-decoration: none;
+  cursor: pointer;
+  width: auto;
+}
+
+html[data-portal-theme="oscuro"] .btn-ghost {
+  color: #eef5ff;
+  border-color: rgba(201, 162, 39, 0.28);
+}
+
+.btn-inline {
+  width: auto;
+  min-width: 9.5rem;
+  flex: 1 1 auto;
+}
+
+.req {
+  color: #c0392b;
+  font-weight: 800;
+  margin-right: 0.15rem;
+}
+
+.pass-wrap {
+  position: relative;
+  display: grid;
+}
+
+.pass-wrap input {
+  padding-right: 2.6rem;
+}
+
+.pass-toggle {
+  position: absolute;
+  right: 0.45rem;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.95rem;
+  line-height: 1;
+  padding: 0.35rem;
+  color: var(--an-muted);
+}
+
+.auth-alt--muted {
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
 }
 
 .auth-panel .auth-card {
@@ -349,14 +732,48 @@ html[data-portal-theme="oscuro"] .auth-card .sub {
 }
 
 .auth-card {
-  width: min(100%, 420px);
+  width: min(100%, 520px);
   background: var(--an-white);
   border: 1px solid var(--an-line);
   border-radius: 18px;
-  padding: 1.75rem;
+  padding: 2.15rem 2rem 2rem;
   box-shadow: var(--shadow);
   position: relative;
   overflow: hidden;
+}
+
+.aduana-login-logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 0 1.35rem;
+}
+
+.aduana-login-logo__img {
+  display: block;
+  width: min(100%, 250px);
+  height: auto;
+  object-fit: contain;
+}
+
+.aduana-login-logo__img--blanco {
+  display: none;
+}
+
+html[data-portal-theme="oscuro"] .aduana-login-logo__img--color {
+  display: none;
+}
+
+html[data-portal-theme="oscuro"] .aduana-login-logo__img--blanco {
+  display: block;
+}
+
+html[data-portal-theme="claro"] .aduana-login-logo__img--color {
+  display: block;
+}
+
+html[data-portal-theme="claro"] .aduana-login-logo__img--blanco {
+  display: none;
 }
 
 .kc-head {
@@ -393,6 +810,141 @@ html[data-portal-theme="oscuro"] .auth-card .sub {
   margin: 0;
   color: var(--an-muted);
   font-size: 0.9rem;
+}
+
+.auth-card .sub--entry {
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--an-blue);
+}
+
+html[data-portal-theme="oscuro"] .auth-card .sub--entry {
+  color: #f0c14b;
+}
+
+.reg-note {
+  margin: 0 0 0.95rem;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  border-left: 3px solid var(--an-sky);
+  background: rgba(31, 122, 212, 0.08);
+  color: var(--an-muted);
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
+.reg-note a {
+  color: var(--an-blue);
+  font-weight: 650;
+  text-decoration: none;
+}
+
+html[data-portal-theme="oscuro"] .reg-note {
+  background: rgba(31, 122, 212, 0.14);
+  color: rgba(238, 245, 255, 0.88);
+}
+
+html[data-portal-theme="oscuro"] .reg-note a {
+  color: #f0c14b;
+}
+
+.reg-paths {
+  display: grid;
+  gap: 0.55rem;
+  margin: 0.25rem 0 0.35rem;
+}
+
+.reg-path {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 0.75rem;
+  align-items: start;
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--an-line);
+  background: var(--an-mist);
+  border-radius: 12px;
+  padding: 0.8rem 0.9rem;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  text-decoration: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.reg-path:hover {
+  border-color: var(--an-sky);
+  background: rgba(31, 122, 212, 0.06);
+}
+
+.reg-path__ord {
+  width: 1.55rem;
+  height: 1.55rem;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  font-size: 0.78rem;
+  font-weight: 800;
+  color: #fff;
+  background: linear-gradient(145deg, var(--an-sky), var(--an-teal));
+  flex-shrink: 0;
+}
+
+.reg-path__body {
+  display: grid;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.reg-path__body strong {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--an-ink);
+  line-height: 1.25;
+}
+
+.reg-path__body span {
+  font-size: 0.8rem;
+  color: var(--an-muted);
+  line-height: 1.35;
+}
+
+.reg-path__go {
+  color: var(--an-blue);
+  font-weight: 700;
+  margin-top: 0.15rem;
+}
+
+html[data-portal-theme="oscuro"] .reg-path {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+html[data-portal-theme="oscuro"] .reg-path:hover {
+  background: rgba(31, 122, 212, 0.14);
+}
+
+html[data-portal-theme="oscuro"] .reg-path__body strong {
+  color: #eef5ff;
+}
+
+.ope-bullets {
+  margin: 0 0 1.1rem;
+  padding-left: 1.15rem;
+  color: var(--an-muted);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+
+.ope-bullets li + li {
+  margin-top: 0.35rem;
+}
+
+html[data-portal-theme="oscuro"] .ope-bullets {
+  color: rgba(238, 245, 255, 0.88);
 }
 
 .role-seg {
@@ -443,39 +995,17 @@ html[data-portal-theme="oscuro"] .auth-card .sub {
   line-height: 1.35;
 }
 
-.field {
-  display: grid;
-  gap: 0.35rem;
-  margin-bottom: 0.95rem;
-}
-
-.field label,
-.field > span {
-  font-size: 0.86rem;
-  font-weight: 600;
-  color: var(--an-ink);
-}
-
-.field input {
-  border: 1px solid var(--an-line);
-  border-radius: var(--radius-sm);
-  padding: 0.78rem 0.9rem;
-  background: var(--an-mist);
-  color: var(--an-ink);
-  outline: none;
-  font: inherit;
-}
-
-.field input:focus {
-  border-color: var(--an-sky);
-  box-shadow: 0 0 0 3px rgba(31, 122, 212, 0.15);
-}
+/* .field / inputs: floating labels en floating-label.css */
 
 .captcha-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1.2fr) auto minmax(0, 1fr);
-  gap: 0.45rem;
+  display: flex;
+  flex-wrap: nowrap;
   align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  max-width: 38rem;
+  margin-inline: auto;
 }
 
 .captcha-box {
@@ -489,23 +1019,38 @@ html[data-portal-theme="oscuro"] .auth-card .sub {
   font-family: var(--font-display);
   font-weight: 700;
   user-select: none;
+  flex: 0 0 auto;
 }
 
 img.captcha-box {
-  width: 140px;
-  height: 48px;
+  width: 120px;
+  height: 44px;
   object-fit: contain;
   padding: 0;
   background: #fff;
+  border-radius: 8px;
+  flex: 0 0 auto;
 }
 
 .captcha-refresh {
+  flex: 0 0 auto;
+}
+
+button.captcha-refresh.mat-mdc-icon-button {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
   border: 1px solid var(--an-line);
+  border-radius: 8px;
   background: #fff;
-  border-radius: var(--radius-sm);
-  width: 2.4rem;
-  height: 2.4rem;
-  cursor: pointer;
+}
+
+.captcha-row .mat-auth-field {
+  flex: 1 1 16.5rem;
+  width: 16.5rem;
+  max-width: 18rem;
+  min-width: 15.5rem;
+  margin: 0;
 }
 
 .captcha-hint {

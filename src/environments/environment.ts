@@ -10,6 +10,11 @@ export const environment = {
    * Así el listener OCE guarda token/cookies como en el portal real.
    */
   hostIp: '',
+  /**
+   * Temporal: salida Charter → portal SUMA legacy (#/home).
+   * Local apunta a suma-dev (mismo backend del proxy).
+   */
+  legacyPortalHome: 'https://suma-dev.aduana.gob.bo/portal/index.html#/home',
   keycloak: {
     url: 'https://desa-login.aduana.gob.bo',
     realm: 'login',

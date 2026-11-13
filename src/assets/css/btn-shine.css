@@ -1,0 +1,193 @@
+/**
+ * Shine Hover / Light Sweep — botones portal + Angular Material.
+ */
+.btn,
+.btn-solid,
+.btn-primary,
+.btn-ghost,
+.btn-soft,
+.btn-inline,
+.icon-btn,
+.captcha-refresh,
+.banner-info-tab,
+.reg-path,
+button.mfa-method,
+a.btn,
+.mat-mdc-button,
+.mat-mdc-outlined-button,
+.mat-mdc-unelevated-button,
+.mat-mdc-raised-button,
+.mat-mdc-icon-button,
+a.mat-mdc-button-base {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+/* theme-fab usa position:fixed en login-auth; no forzar relative aquí */
+.theme-fab {
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.btn::after,
+.btn-solid::after,
+.btn-primary::after,
+.btn-ghost::after,
+.btn-soft::after,
+.btn-inline::after,
+.icon-btn::after,
+.theme-fab::after,
+.captcha-refresh::after,
+.banner-info-tab::after,
+.reg-path::after,
+button.mfa-method::after,
+a.btn::after,
+.mat-mdc-button::after,
+.mat-mdc-outlined-button::after,
+.mat-mdc-unelevated-button::after,
+.mat-mdc-raised-button::after,
+.mat-mdc-icon-button::after,
+a.mat-mdc-button-base::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(255, 255, 255, 0.45) 48%,
+    rgba(255, 255, 255, 0.75) 50%,
+    rgba(255, 255, 255, 0.45) 52%,
+    transparent 65%
+  );
+  transform: translateX(-130%) skewX(-18deg);
+  transition: transform 0.55s ease;
+}
+
+html[data-portal-theme="oscuro"] .btn::after,
+html[data-portal-theme="oscuro"] .btn-solid::after,
+html[data-portal-theme="oscuro"] .btn-primary::after,
+html[data-portal-theme="oscuro"] .btn-ghost::after,
+html[data-portal-theme="oscuro"] .btn-soft::after,
+html[data-portal-theme="oscuro"] .btn-inline::after,
+html[data-portal-theme="oscuro"] .icon-btn::after,
+html[data-portal-theme="oscuro"] .theme-fab::after,
+html[data-portal-theme="oscuro"] .captcha-refresh::after,
+html[data-portal-theme="oscuro"] .banner-info-tab::after,
+html[data-portal-theme="oscuro"] .reg-path::after,
+html[data-portal-theme="oscuro"] button.mfa-method::after,
+html[data-portal-theme="oscuro"] a.btn::after,
+html[data-portal-theme="oscuro"] .mat-mdc-button::after,
+html[data-portal-theme="oscuro"] .mat-mdc-outlined-button::after,
+html[data-portal-theme="oscuro"] .mat-mdc-unelevated-button::after,
+html[data-portal-theme="oscuro"] .mat-mdc-raised-button::after,
+html[data-portal-theme="oscuro"] .mat-mdc-icon-button::after,
+html[data-portal-theme="oscuro"] a.mat-mdc-button-base::after {
+  background: linear-gradient(
+    105deg,
+    transparent 35%,
+    rgba(240, 193, 75, 0.18) 48%,
+    rgba(255, 255, 255, 0.38) 50%,
+    rgba(240, 193, 75, 0.18) 52%,
+    transparent 65%
+  );
+}
+
+.btn:hover::after,
+.btn-solid:hover::after,
+.btn-primary:hover::after,
+.btn-ghost:hover::after,
+.btn-soft:hover::after,
+.btn-inline:hover::after,
+.icon-btn:hover::after,
+.theme-fab:hover::after,
+.captcha-refresh:hover::after,
+.banner-info-tab:hover::after,
+.reg-path:hover::after,
+button.mfa-method:hover::after,
+a.btn:hover::after,
+.mat-mdc-button:hover::after,
+.mat-mdc-outlined-button:hover::after,
+.mat-mdc-unelevated-button:hover::after,
+.mat-mdc-raised-button:hover::after,
+.mat-mdc-icon-button:hover::after,
+a.mat-mdc-button-base:hover::after {
+  transform: translateX(130%) skewX(-18deg);
+}
+
+.btn:disabled::after,
+.btn-primary:disabled::after,
+.btn-solid:disabled::after,
+.btn-inline:disabled::after,
+a.btn[aria-disabled="true"]::after,
+.mat-mdc-button:disabled::after,
+.mat-mdc-outlined-button:disabled::after,
+.mat-mdc-unelevated-button:disabled::after,
+.mat-mdc-raised-button:disabled::after,
+.mat-mdc-icon-button:disabled::after,
+a.mat-mdc-button-base[aria-disabled="true"]::after {
+  display: none;
+}
+
+/* El texto/icono queda por encima del brillo */
+.btn > *,
+.btn-solid > *,
+.btn-primary > *,
+.btn-ghost > *,
+.btn-soft > *,
+.icon-btn > *,
+.theme-fab > *,
+.reg-path > *,
+button.mfa-method > *,
+.mat-mdc-button > .mat-icon,
+.mat-mdc-button > .mdc-button__label,
+.mat-mdc-outlined-button > .mat-icon,
+.mat-mdc-outlined-button > .mdc-button__label,
+.mat-mdc-unelevated-button > .mat-icon,
+.mat-mdc-unelevated-button > .mdc-button__label,
+.mat-mdc-raised-button > .mat-icon,
+.mat-mdc-raised-button > .mdc-button__label,
+.mat-mdc-icon-button > .mat-icon,
+a.mat-mdc-button-base > .mat-icon,
+a.mat-mdc-button-base > .mdc-button__label {
+  position: relative;
+  z-index: 2;
+}
+
+/* Ripple Material debajo del shine, etiqueta encima */
+.mat-mdc-button .mat-mdc-button-persistent-ripple,
+.mat-mdc-outlined-button .mat-mdc-button-persistent-ripple,
+.mat-mdc-unelevated-button .mat-mdc-button-persistent-ripple,
+.mat-mdc-raised-button .mat-mdc-button-persistent-ripple,
+.mat-mdc-button .mat-mdc-button-ripple,
+.mat-mdc-outlined-button .mat-mdc-button-ripple,
+.mat-mdc-unelevated-button .mat-mdc-button-ripple,
+.mat-mdc-raised-button .mat-mdc-button-ripple {
+  z-index: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn::after,
+  .btn-solid::after,
+  .btn-primary::after,
+  .btn-ghost::after,
+  .btn-soft::after,
+  .btn-inline::after,
+  .icon-btn::after,
+  .theme-fab::after,
+  .captcha-refresh::after,
+  .banner-info-tab::after,
+  .reg-path::after,
+  button.mfa-method::after,
+  a.btn::after,
+  .mat-mdc-button::after,
+  .mat-mdc-outlined-button::after,
+  .mat-mdc-unelevated-button::after,
+  .mat-mdc-raised-button::after,
+  .mat-mdc-icon-button::after,
+  a.mat-mdc-button-base::after {
+    display: none;
+  }
+}

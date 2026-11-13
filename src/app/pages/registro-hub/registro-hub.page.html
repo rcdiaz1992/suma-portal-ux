@@ -1,0 +1,64 @@
+<section class="auth-card auth-card--wide">
+  <div class="aduana-login-logo" aria-label="Aduana Nacional">
+    <img
+      class="aduana-login-logo__img aduana-login-logo__img--color"
+      src="/assets/img/logo-aduana-color.png"
+      alt="Aduana Nacional"
+      width="280"
+      height="94"
+    />
+    <img
+      class="aduana-login-logo__img aduana-login-logo__img--blanco"
+      src="/assets/img/logo-aduana-blanco.png"
+      alt="Aduana Nacional"
+      width="280"
+      height="113"
+    />
+  </div>
+
+  <nav class="flow flow--dark" aria-label="Paso actual">
+    <span class="flow-step is-current"><span class="n">1</span> Acceso</span>
+    <span class="flow-sep" aria-hidden="true"></span>
+    <span class="flow-step"><span class="n">2</span> Registro</span>
+    <span class="flow-sep" aria-hidden="true"></span>
+    <span class="flow-step"><span class="n">3</span> Destino</span>
+  </nav>
+
+  <div class="kc-head">
+    <span class="kc-logo" aria-hidden="true">+</span>
+    <div>
+      <h2>Accesos de operadores</h2>
+      <p class="sub">Como en SSO: 1·3·4 abren el login; 2 y 5 son especiales</p>
+    </div>
+  </div>
+
+  <p class="reg-note">
+    Habituales, Otros y ORF: al ingresar ven el
+    <strong>mismo login</strong>
+    (usuario, clave, captcha, olvidó clave y registrar nuevo).
+  </p>
+
+  <div class="reg-paths" role="list">
+    <a
+      *ngFor="let p of paths"
+      class="reg-path"
+      role="listitem"
+      [routerLink]="p.link"
+      [queryParams]="p.query || null"
+    >
+      <span class="reg-path__ord">{{ p.ord }}</span>
+      <span class="reg-path__body">
+        <strong>{{ p.title }}</strong>
+        <span>{{ p.desc }}</span>
+      </span>
+      <span class="reg-path__go" aria-hidden="true">→</span>
+    </a>
+  </div>
+
+  <div class="auth-actions-mat" role="group" aria-label="Navegación">
+    <a mat-stroked-button color="primary" routerLink="/login">
+      <mat-icon>arrow_back</mat-icon>
+      Volver al login
+    </a>
+  </div>
+</section>

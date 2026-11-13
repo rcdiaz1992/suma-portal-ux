@@ -1,32 +1,25 @@
 # SUMA Portal UX (Angular)
 
-App Angular 16 basada en `sen-ng-demo`. Alcance unificado: **login + registro + menú**  
-→ ver [`docs/PORTAL-UNIFICADO.md`](docs/PORTAL-UNIFICADO.md) (repos SSO + OCE).
+App Angular 16. **La entrada del portal es el login** (`/login`).  
+Backend: API SSO existente (`b-sso`). Docs: [`docs/PORTAL-UNIFICADO.md`](docs/PORTAL-UNIFICADO.md), [`docs/ENTRADA-PORTAL.md`](docs/ENTRADA-PORTAL.md).
 
 ## Flujo
 
 | Ruta | Descripción |
 |------|-------------|
-| `/login` | Slice **Externo / Interno** + usuario/clave (+ captcha interno) |
-| `/login/no-habituales` | Doble factor (código) para operadores no habituales |
-| `/hub/no-habituales` | 2 cubos: registro + operaciones |
-| `/portal` | Shell post-login + menú (mock por perfil; API SSO después) |
+| `/` → `/login` | Puerta del portal (operadores y técnicos) |
+| `/login/registro` | Accesos 1·3·4 (login con canal) · 2 MFA · 5 Charter |
+| `/login/olvidar-clave` | Recuperación de clave |
+| `/login/reset/...` | Nueva clave (token del correo) |
+| `/portal` | Shell post-login + menú |
 
-Lógica alineada al SSO actual (`indexLogin` / `indexOce` + `typeUser`):
-
-- **EXTERNO**: usuario OCE corto
-- **INTERNO**: usuario corto; backend resuelve `@aduana.gob.bo`
-- Enlace inferior → MFA no habituales → hub
-
-Auth mock en `SsoAuthService` (`environment.useMockAuth`). API real: `POST {ssoApi}/autenticar-captcha/portal`.
-
-## Arranque
+## Arranque local
 
 ```bash
 npm install
 npm start
 ```
 
-Abre http://localhost:4200/login
+Abre http://localhost:4200 → redirige a `/login`.
 
-Este directorio es el workspace Angular (`angular.json`). `ng serve` se corre aquí.
+Proxy API: `proxy.conf.js` / `proxy.conf.json` → `b-sso` en suma-dev.

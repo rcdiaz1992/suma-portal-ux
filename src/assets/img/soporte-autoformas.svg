@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" class="soporte-svg" role="img" aria-label="Soporte sistemas SUMA">
+  <style>
+    .bg-bubble { fill: #0d3a6e; opacity: 0.45; }
+    .autoforma-path {
+      fill-opacity: 0;
+      stroke: #ffffff;
+      stroke-width: 5.5;
+      stroke-linejoin: round;
+      stroke-linecap: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: afDraw 1.15s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+                 afFill 0.55s ease calc(var(--af-delay, 0s) + 0.85s) forwards;
+      animation-delay: var(--af-delay, 0s), calc(var(--af-delay, 0s) + 0.85s);
+    }
+    .af-yellow { fill: #f0b429; }
+    .af-green { fill: #3f8f4a; }
+    .af-cyan { fill: #3bb7d8; }
+    .af-text {
+      opacity: 0;
+      fill: #ffffff;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      text-anchor: middle;
+      animation: afFade 0.55s ease forwards;
+      animation-delay: calc(var(--af-delay, 0s) + 1.05s);
+    }
+    .af-mail {
+      opacity: 0;
+      fill: #ffffff;
+      font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      text-anchor: middle;
+      filter: drop-shadow(0 3px 6px rgba(0, 20, 50, 0.45));
+      animation: afFade 0.65s ease forwards;
+      animation-delay: 3.5s;
+    }
+    @keyframes afDraw { to { stroke-dashoffset: 0; } }
+    @keyframes afFill { to { fill-opacity: 1; } }
+    @keyframes afFade { to { opacity: 1; } }
+  </style>
+
+  <rect x="0" y="0" width="960" height="420" rx="18" fill="#0a3a72"/>
+
+  <g class="bg-layer" aria-hidden="true">
+    <path class="bg-bubble" d="M70 95 h230 a18 18 0 0 1 18 18 v78 a18 18 0 0 1 -18 18 h-95 l-22 28 -6 -28 h-107 a18 18 0 0 1 -18 -18 v-78 a18 18 0 0 1 18 -18 z"/>
+    <path class="bg-bubble" d="M350 70 h250 a18 18 0 0 1 18 18 v90 a18 18 0 0 1 -18 18 h-115 l-24 30 -7 -30 h-104 a18 18 0 0 1 -18 -18 v-90 a18 18 0 0 1 18 -18 z"/>
+    <path class="bg-bubble" d="M650 100 h230 a18 18 0 0 1 18 18 v72 a18 18 0 0 1 -18 18 h-100 l-20 26 -6 -26 h-104 a18 18 0 0 1 -18 -18 v-72 a18 18 0 0 1 18 -18 z"/>
+  </g>
+
+  <g style="--af-delay:0.25s">
+    <path class="autoforma-path af-yellow" pathLength="1"
+      d="M55 78 h250 a22 22 0 0 1 22 22 v88 a22 22 0 0 1 -22 22 h-108 l-26 34 -8 -34 h-108 a22 22 0 0 1 -22 -22 v-88 a22 22 0 0 1 22 -22 z"/>
+    <text class="af-text" x="182" y="118">
+      <tspan x="182" dy="0">envíe su consulta sobre el</tspan>
+      <tspan x="182" dy="24">USO y OPERACIÓN</tspan>
+      <tspan x="182" dy="24">del SUMA</tspan>
+    </text>
+  </g>
+
+  <g style="--af-delay:1.25s">
+    <path class="autoforma-path af-green" pathLength="1"
+      d="M340 58 h270 a22 22 0 0 1 22 22 v100 a22 22 0 0 1 -22 22 h-125 l-28 36 -8 -36 h-109 a22 22 0 0 1 -22 -22 v-100 a22 22 0 0 1 22 -22 z"/>
+    <text class="af-text" x="477" y="108">
+      <tspan x="477" dy="0">le asignaremos un</tspan>
+      <tspan x="477" dy="24">número de ticket</tspan>
+      <tspan x="477" dy="24">para hacer seguimiento</tspan>
+    </text>
+  </g>
+
+  <g style="--af-delay:2.25s">
+    <path class="autoforma-path af-cyan" pathLength="1"
+      d="M645 82 h250 a22 22 0 0 1 22 22 v82 a22 22 0 0 1 -22 22 h-112 l-24 32 -7 -32 h-107 a22 22 0 0 1 -22 -22 v-82 a22 22 0 0 1 22 -22 z"/>
+    <text class="af-text" x="772" y="122">
+      <tspan x="772" dy="0">reciba la respuesta</tspan>
+      <tspan x="772" dy="24">en su correo</tspan>
+      <tspan x="772" dy="24">electrónico</tspan>
+    </text>
+  </g>
+
+  <text class="af-mail" x="480" y="360">soportesistemas@aduana.gob.bo</text>
+</svg>

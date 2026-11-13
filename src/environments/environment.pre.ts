@@ -6,6 +6,7 @@ export const environment = {
   api2: 'http://10.0.2.36/otro-api-rest',
   ssoApi: 'https://suma-pre.aduana.gob.bo/b-sso/rest',
   hostIp: 'https://suma-pre.aduana.gob.bo',
+  legacyPortalHome: 'https://suma-pre.aduana.gob.bo/portal/index.html#/home',
   keycloak: {
     url: 'http://pre-login.aduana.gob.bo:8083',
     realm: 'login',
